@@ -1,0 +1,35 @@
+\chapter*{Main definitions}
+\section*{Fundamental definition}
+\begin{definition}
+    A dynamical system (DS) over the set M(usually called phase space or reference space) is a family ${\phi^t}_{t\in\mathbb{G}}$ of transformations $\phi^t:M\rightarrow M$ with the (semi)group property:
+    \begin{equation*}
+        \phi^0=id_M
+    \end{equation*}
+    \begin{equation*}
+        \phi^{t+s}=\phi^s\circ \phi^t
+    \end{equation*}
+    Note: $\mathbb{G}$ must be a commutative semigroup with neutral element with respect to the "+" operation. In practice, for the contents of this course, $\mathbb{G}=\mathbb{R},\,\mathbb{R}^+_0,\,\mathbb{Z},\,\mathbb{N}$
+\end{definition}
+
+\begin{observation}
+Differential equations not depending on time derivatives satisfy the definition.
+\end{observation}
+
+Usually the formalism is that, say x is the state now (meaning at $t=0$), then the state at time t is given by $\phi^t(x)$. 
+
+\begin{definition}
+    If $\mathbb{G}=\mathbb{R},\mathbb{R}^+_0$, then $\phi^t$ is called the flow of the DS. if, instead, $\mathbb{G}=\mathbb{Z},\mathbb{N}$ usually you rename it as $T=\phi^1,\,n=t$ where T is called a map.
+\end{definition}
+\begin{observation}
+    This is due to the fact that by just knowing T you can have enough information to know the future of the system, since \begin{equation*}
+    \phi^t=(\phi^1)^n=\underbrace{\phi^1\circ\phi^1....\circ\phi^1}_{\text{n times}}=T^n
+    \end{equation*}
+\end{observation}
+Note that from now on if $n$ is an integer exponent it means to use the transformation $n$ times. Also, if T is invertible(bijective) we denote, for $n\in\mathbb{Z}^+$:\begin{equation*}
+    T^{-n}=\underbrace{T^{-1}\circ T^{-1}.....\circ T^{-1}}_{\text{n times}}
+\end{equation*}
+Observe that $\forall n,\,m\in\mathbb{Z}$:
+\begin{equation*}
+    T^{n+m}=T^n\circ T^m
+\end{equation*}
+Notice that by having T be invertible, it means that by knowing it you can also go back in time, and as such you know everything about the system; we will see both bijective and not in this course. (here he drew a figure). 

@@ -1,0 +1,51 @@
+\documentclass{report}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm} % Required for theorem environments
+\usepackage{amsmath}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\title{Dynamical systems and ergodic theory}
+ 
+
+\usepackage{amsthm}
+
+% Custom style for theorems (italic body)
+\newtheoremstyle{myplain}
+  {\topsep}{\topsep}{\itshape}{}{\bfseries}{}{5pt}
+  {\thmname{#1}\thmnumber{ #2}\thmnote{ (\textbf{#3})}}
+
+% Custom style for definitions (upright body)
+\newtheoremstyle{mydefinition}
+  {\topsep}{\topsep}{\normalfont}{}{\bfseries}{}{5pt}
+  {\thmname{#1}\thmnumber{ #2}\thmnote{ (\textbf{#3})}}
+
+% Apply the theorem style
+\theoremstyle{myplain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+
+% Apply the definition style
+\theoremstyle{mydefinition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{observation}{Observation}[chapter]
+
+\providecommand*{\propositionautorefname}{Proposition}
+
+\begin{document}
+\include{chap0.tex}
+\include{chap1.tex}  
+
+
+\chapter{Topological dynamics}
+\chapter{Ergodic theory}
+\chapter{Possible developments}
+
+\end{document}

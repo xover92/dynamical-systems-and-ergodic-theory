@@ -1,0 +1,201 @@
+\chapter{Examples of simple dynamical systems}
+\section{Important example: autonomous ODEs}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{img/cap1/cauchy.png}
+    \caption{Representation of the quantities in an autonomous ODE.}
+    \label{fig:aut_ode}
+\end{figure}
+The most obvious example of a dynamical system is given by an ODE, which takes the form of:
+\begin{equation*}
+    \dot{x}=f(x)
+\end{equation*}
+where $M\subseteq\mathbb{R}^d,\,f:M\rightarrow\mathbb{R}^d$. 
+
+We are looking at a curve of which we know the first time derivative, and we know said derivative to be a function of position, but not of time, as shown in \autoref{fig:aut_ode}. 
+
+The aforementioned problem has, potentially, infinite solutions. What interests us are what are called Cauchy problems (also called IVP, Initial Value Problems).
+
+\begin{definition}[Cauchy problem]
+    A Cauchy problem is given by the following linear system:
+    \begin{equation}
+    \begin{cases}
+    \dot{x}=f(x) \\
+    x(0)=x_0
+    \end{cases}
+    \label{eq:cauchy}
+    \end{equation}
+\end{definition}
+Cauchy's theorem tells us that under some conditions, which we assume, the solution exists, and it's unique. (those conditions being that f(x) is a Lipschitz function). 
+
+We shall start with the classic ODE example: the harmonic oscillator.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{img/cap1/harmonic_oscillator.png}
+    \caption{Representation of a harmonic oscillator.}
+    \label{fig:harmonic_oscillator}
+\end{figure}
+
+\begin{example}[Harmonic oscillator]
+    The one dimensional harmonic oscillator is a physical system in which a mass is attracted to the origin by a force that depends on the distance to the origin itself, as shown in \autoref{fig:harmonic_oscillator}. This is described by:
+    \begin{equation}
+        \ddot{x}=-w^2x
+    \end{equation}
+    At first glance, it may look like it does not fit the definition of a Cauchy problem, since it is a second derivative instead of a first one. Turns out, all high order ODEs may be reduced to a single order one. 
+
+    The trick is to rename the first derivative. in this case:
+    \begin{equation*}
+        \begin{cases}
+            \dot{x}=v \\
+            \dot{v}=-w^2x
+        \end{cases}
+    \end{equation*}
+    Or, in matrix form:
+    \begin{equation*}
+        \dot{\begin{bmatrix}x \\ v\end{bmatrix}}=\begin{bmatrix} v \\ -w^2x\end{bmatrix}=f\left(\begin{bmatrix} x \\ v\end{bmatrix}\right)
+    \end{equation*}
+    We did increase the dimension of the phase space, but that does not get in the way of calling this a Cauchy problem.
+\end{example}
+
+Other than uniqueness and existence, we will also be implicitly assuming  all solutions to be global, i.e. defined $\forall t\in\mathbb{R}$, which is a much more restrictive condition. While finding a problem for which uniqueness and existence are not true is quite hard, the same is not true for a Cauchy problem without a global solution. Case in point:
+
+\begin{example}[of a non global solution]
+    \begin{equation*}
+        \begin{cases}
+            \dot{x}=x^2 \\
+            x(0)=1
+        \end{cases}
+    \end{equation*}
+    where $M=\mathbb{R}$.
+    Solving it by abusing math a bit:
+    \begin{equation*}
+        \frac{dx}{dt}=x^2 \Leftrightarrow \frac{dx}{x^2}=dt\Leftrightarrow\int_1^x\frac{d\xi}{\xi^2}=\int_0^td\tau\Leftrightarrow\left[-\frac{1}{\xi}\right]^x_1=t  \Leftrightarrow 1-\frac{1}{x}=t\Leftrightarrow x=\frac{1}{1-t}
+    \end{equation*}
+    \begin{tikzpicture}
+    \begin{axis}
+    % Plot left branch (x < 1)
+    \addplot [domain=-3:0.9, samples=100, blue, thick] {1/(1-x)};
+
+    % Plot right branch (x > 1)
+    \addplot [domain=1.1:5, samples=100, blue, thick] {1/(1-x)};
+
+    % Draw vertical asymptote at x = 1
+    \draw [dashed, red, thick] (axis cs:1,-10) -- (axis cs:1,10);
+    \end{axis}
+    \end{tikzpicture}
+
+    As you can see, it blows up asymptotically at 1, so it is not a global solution.
+\end{example}
+
+We shall now see the concept of flow.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/cap1/flux.png}
+    \caption{Representation of flow.}
+    \label{fig:flow}
+\end{figure}
+
+\begin{definition}
+    If $x(t;x_0)$ is the solution of \autoref{eq:cauchy}, the flow of such system is:
+    \begin{equation}
+        \phi^t(x_0)=x(t;x_0)
+        \label{eq:flow}
+    \end{equation}
+\end{definition}
+
+\begin{proposition}
+    $\phi^t_{t\in\mathbb{R}}$, as defined in \autoref{eq:flow} satisfies the group property.
+\end{proposition}
+
+\begin{proof}
+    The group properties are two:
+    \begin{equation}
+        \phi^0=id_M
+        \label{eq:identity}
+    \end{equation}
+    \begin{equation}
+        \phi^{t+s}=\phi^s\circ \phi^t
+        \label{eq:composition}
+    \end{equation}
+
+    \autoref{eq:identity} is trivial, because by definition $\phi^0(x_0)=x_0\forall\, x_0\in M$.
+
+    The second property is a bit harder. First of all, by definition:
+    \begin{equation}
+        \phi^{t+s}=\phi^t\circ\phi^s\Leftrightarrow \phi^t(\phi^s(x_0))=\phi^{t+s}(x_0)\forall x_0
+        \label{eq:proof}
+    \end{equation}
+    We define $y_1(t)=\phi^t(\phi^s(x_0))$ and $y_2(t)=\phi^{t+s}(x_0)$. We'll prove that $y_1(t)$ and $y_2(t)$ are both solutions of the following IVP:
+    \begin{equation}
+        \begin{cases}
+            \dot{y}(t)=f(y(t)) \\ y(0)=\phi^s(x_0) \forall s\in\mathbb{R},\ x_0\in M
+        \end{cases}
+    \end{equation}
+    Because of Cauchy's theorem of uniqueness, if both solve the IVP, they must be equal, thus the proposition will be proved because of \autoref{eq:proof}. 
+
+    The initial condition is true by definition:
+    \begin{equation*}
+        \begin{matrix}
+        y_1(0)=\phi^{0}(\phi^s(x_0))=\phi^s(x_0) \cr \cr y_2(0)=\phi^{0+s}(x_0)=\phi^{s}(x_0) \cr
+        \end{matrix} \Leftrightarrow y_1(0)=y_2(0)=\phi^s(x_0)\forall s\in \mathbb{R}
+    \end{equation*}
+
+    As for the other condition, for $y_1$ it's true by definition, first by the definition of $y_1$ itself, then by the definition of $\phi^t(x_0)$:
+        \begin{equation*}
+        \begin{aligned}
+        \frac{dy_1}{dt}(t)=\frac{d\phi^t}{dt}(\phi^s(x_0))=\frac{dx(t;\,\phi_s(x_0))}{dt}= \\
+        f(x(t;\,\phi^s(x_0)))=f(\phi^t(\phi^s(x_0)))=f(y_1(t))
+        \end{aligned}
+        \end{equation*}
+
+    
+    where x is the solution of the IVP over which the flow is defined, while f() for which $\dot{x}=f(x)$ is true.
+
+    In the same way, by employing the definitions of $y_2$ and flow, aided by the chain rule, we may find that the temporal derivative of $y_2$ is equal to $f(y_2)$, where f() is the same as the one for which that is true for $y_1$:
+        \begin{equation*}
+        \begin{aligned}
+        \frac{dy_2}{dt}(t)=\frac{d\phi^{t+s}}{dt}(x_0)=\frac{dx(t+s;\,x_0)}{dt}\frac{d(t+s)}{dt}= \\
+        f(x(t+s;\,x_0))=f(\phi^{t+s}(x_0))=f(y_2(t))
+        \end{aligned}
+        \end{equation*}
+    
+    So, $y_1$ and $y_2$ both solve the aforementioned IVP for every t, thus we proved the proposition.
+
+
+\end{proof}
+Let's now look a bit into the concept of flow. The flow behaves in such a way(this is why it's called a flow!) in which it never intercepts. It looks, if drawn in a stylized way, as a series of lines that never intercept, because of the uniqueness of the solution of the Cauchy problem, as shown in \autoref{fig:flow}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{img/cap1/intersection.png}
+    \caption{Representation of the hypothesis used to prove \autoref{prop:intersection}.}
+    \label{fig:intersection}
+\end{figure}
+
+\begin{proposition}
+    We define two flows $\phi^{t_1}(x_1)$ and $\phi^{t_2}(x_2)$. If $t_1\geq t_2$ and $x_1\neq x_2$, they shall never intercept. 
+    \label{prop:intersection}
+\end{proposition}
+\begin{proof}
+    RAA\footnote{Reductio ad absurdum. I will use this to signal that I am proving by contradiction.} Assume that we have two trajectories that are completely distinct apart from one singular interception. Let's call the singular interception $\bar{x}$. The following is true by definition:
+    \begin{equation*}
+        \bar{x}=\phi^{t_1}(x_1)=\phi^{t_2}(x_2)
+    \end{equation*}
+    But then, by definition of flow:
+    \begin{equation*}
+        \phi^{-t_2}(\bar{x})=\phi^{-t_2}(\phi^{t_2}(\bar{x}))=x_2
+    \end{equation*}
+    but at the same time:
+    \begin{equation*}
+        \phi^{-t_2}(\bar{x})=\phi^{-t_2}(\phi^{t_1}(x_1))=\phi^{t_1-t_2}(x_1)
+    \end{equation*}
+    The hypothesis here that the interception is just one. Starting from said hypothesis, we found another interception, namely $x_2$. This would mean, because of the uniqueness of the solution of the Cauchy problem, that the trajectories are exactly the same: but that is impossible, because we assumed that they were distinct apart from one singular point.
+\end{proof}
+
+\begin{example}[of global solution ascertained by visual inspection]
+    Suppose M is a two dimensional domain and suppose you know that at the boundary the vector field f always points inside. And suppose you know that this vector field is smooth. Then you are assured that the solution is global, because you cannot escape. 
+\end{example}
+
+Usually you can find a global solution becuase you can iteratively move inside small intervals. 
