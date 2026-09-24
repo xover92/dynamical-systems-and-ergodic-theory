@@ -156,7 +156,7 @@ We shall now see the concept of flow.
     In the same way, by employing the definitions of $y_2$ and flow, aided by the chain rule, we may find that the temporal derivative of $y_2$ is equal to $f(y_2)$, where f() is the same as the one for which that is true for $y_1$:
         \begin{equation*}
         \begin{aligned}
-        \frac{dy_2}{dt}(t)=\frac{d\phi^{t+s}}{dt}(x_0)=\frac{dx(t+s;\,x_0)}{dt}\frac{d(t+s)}{dt}= \\
+        \frac{dy_2}{dt}(t)=\frac{d\phi^{t+s}}{dt}(x_0)=\frac{dx(t+s;\,x_0)}{d(t+s)}\frac{d(t+s)}{dt}= \\
         f(x(t+s;\,x_0))=f(\phi^{t+s}(x_0))=f(y_2(t))
         \end{aligned}
         \end{equation*}
@@ -194,8 +194,236 @@ Let's now look a bit into the concept of flow. The flow behaves in such a way(th
     The hypothesis here that the interception is just one. Starting from said hypothesis, we found another interception, namely $x_2$. This would mean, because of the uniqueness of the solution of the Cauchy problem, that the trajectories are exactly the same: but that is impossible, because we assumed that they were distinct apart from one singular point.
 \end{proof}
 
+Now: keep in mind that a global solution is not hard to imagine.
+
 \begin{example}[of global solution ascertained by visual inspection]
-    Suppose M is a two dimensional domain and suppose you know that at the boundary the vector field f always points inside. And suppose you know that this vector field is smooth. Then you are assured that the solution is global, because you cannot escape. 
+    Suppose M is a two-dimensional domain and suppose you know that at the boundary the vector field f always points inside. And suppose you know that this vector field is smooth and defined inside all the domain. Then you are assured that the solution is global. This because the vector field cannot "escape" the domain, and it covers all of it. 
 \end{example}
 
-Usually you can find a global solution becuase you can iteratively move inside small intervals. 
+Usually you can find a global solution by iteratively move inside small intervals. 
+
+Now, for a little result that is more of a curiosity than anything else.
+
+\begin{proposition}
+    If $\phi^t$, a continuous DS on $M\subseteq\mathbb{R}^d$, is smooth enough\footnote{Meaning $C^1$ Lipschitz, in this case.}, then it is the flow of this ODE:
+\begin{equation*}
+    \dot{x}=\left.\frac{\partial \phi^t}{\partial t}\right|_{t=0}
+\end{equation*} 
+\end{proposition}
+\begin{proof}
+    As it is a continuous DS, it has to satisfy the semi-group property. 
+    
+    Keeping this in mind, to verify the proposition we need to define the function
+    \begin{equation*}
+        x(t,\,x_0):t\rightarrow\phi^{t}(x_0)
+    \end{equation*}
+    for all $x_0\in M$, then verify that it satisfies the ODE, given the initial condition:
+    \begin{equation*}
+        x(0,\,x_0)=x_0
+    \end{equation*}
+    The initial condition is true by definition, because $x(0, x_0)=\phi^0(x_0)=x_0$.
+
+    Then, we must verify that it does indeed solve the ODE. By definition:
+    \begin{equation*}
+        \dot{x}(t, x_0)=\frac{\partial \phi^t(x_0)}{\partial t}
+    \end{equation*}
+    then, by employing the chain rule\footnote{
+            Not immediately obvious:
+            \begin{equation*}
+                \frac{\partial \phi^{t+s}(x_0)}{\partial s}=\frac{\partial \phi^{t+s}(x_0)}{\partial(t+s)}\frac{\partial (t+s)}{\partial s}=\frac{\partial \phi^{t+s}(x_0)}{\partial(t+s)}
+            \end{equation*}
+            Now, if we evaluate that at $s=0$:
+            \begin{equation*}
+                \left.\frac{\partial \phi^{t+s}(x_0)}{\partial s}\right|_{s=0}=\left.\frac{\partial \phi^{t+s}(x_0)}{\partial(t+s)}\right|_{s=0}=\frac{\partial \phi^t(x_0)}{\partial t}
+            \end{equation*}
+        }:
+    \begin{align*}
+        \frac{\partial \phi^t(x_0)}{\partial t}=
+        \left.\frac{\partial \phi^{t+s}(x_0)}{\partial s}\right|_{s=0}=\left.\frac{\partial}{\partial s}\phi^{s}(\phi^t(x_0))\right|_{s=0}= \\
+        \left.\frac{\partial\phi^{s}}{\partial s}(\phi^t(x_0))\right|_{s=0}=\left.\frac{\partial\phi^{s}}{\partial s}(x(t,x_0))\right|_{s=0}            
+    \end{align*}
+    Then, straightforwardly:
+    \begin{equation*}
+        \dot{x}(t, x_0)=\left.\frac{\partial\phi^{s}}{\partial s}(x(t,x_0))\right|_{s=0}=\left.\frac{\partial\phi^{t}}{\partial t}(x(t,x_0))\right|_{t=0}
+    \end{equation*}
+    As ugly as that may be, it is true, since s is just a name: we can change s to t without second thoughts because it is a partial derivative, which fixes $x(t, x_0)$ in place, thus avoiding uncomfortable situations with the temporal dependency of the position.
+\end{proof}
+
+\section{Non-autonomous ODEs}
+\begin{definition}
+    A non-autonomous ODE is a differential equation of the form:
+    \begin{equation*}
+        \dot{x}=f(x,\,t)
+    \end{equation*}
+\end{definition}
+This kind of problem brings with itself some problems, mainly that you cannot use the theory of dynamical systems. Let's see why.
+\begin{example}
+    \begin{figure}[ht]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        % Plot left branch (x < 1)
+        \addplot [domain=0:2.99, samples=100, blue, thick] {0};
+
+        % Plot right branch (x > 1)
+        \addplot [domain=3.01:7, samples=100, blue, thick] {x-3};
+
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Plot of f(x, t) for the example.}
+    \end{figure}
+    
+    Let's say that:
+    \begin{equation*}
+        f(x,\,t)=\begin{cases}
+            0 \qquad 0<x<3 \\
+            x-3 \qquad 3<x
+        \end{cases}
+    \end{equation*}
+
+    Calling the flow $\phi^t(x_0)=x(t,\,x_0)$, we could easily see that the semi-group property is not satisfied. Say that you apply $\phi^2$ twice:
+    \begin{equation*}
+        \phi^2(x_0)=x_0 \Leftrightarrow \phi^2(\phi^2(x_0))=\phi^2(x_0)=x_0
+    \end{equation*}
+    quite trivially:
+    \begin{equation*}
+    \phi^4(x_0)=x_0+1 \Leftrightarrow \phi^4\neq\phi^2(\phi^2(x_0))
+    \end{equation*}
+\end{example}
+
+This renders absolutely impossible to use DS theory, at first glance. How do you go around it? 
+
+
+The first way one could think of is to notice that the IVP's initial condition is really not that much of a constraint. Let's see why this is not true.
+\begin{proposition}
+    We define an IVP as follows:
+    \begin{equation*}
+        \begin{cases}
+            \dot{x}=f(x) \\
+            x(t_0\neq0)=x_0
+        \end{cases}
+    \end{equation*}
+    we define $\phi^{t_0, t}(x_0)=x(t, x_0, t_0)$. In this case, you lose the semi-group property, i.e. $\phi^{t, s}\circ \phi^{t_0, t}=\phi^{t_0,s}$.
+\end{proposition}
+\begin{proof}
+    Homework.
+\end{proof}
+
+There is a correct workaround, and it is the following.
+
+\begin{proposition}
+    Suppose you have the following IVP, where $x\in M\subseteq\mathbb{R}^d$:
+\begin{equation*}
+    \begin{cases}
+        \dot{x}=f(x, t) \\
+        x(0)=x_0
+    \end{cases}
+\end{equation*}
+Which is built on a non-autonomous ODE. We set $y=(x, t) \in M\times\mathbb{R}\subseteq\mathbb{R}^{d+1}$ and $F(y)=F(x, t)= (f(x, t), 1)$.
+
+Then, we consider the IVP:
+\begin{equation*}
+    \begin{cases}
+       \dot{y}=F(y)\\
+       y(0)=(x_0, 0) 
+    \end{cases}
+    \label{eq:y_ode}
+\end{equation*}
+Where the dot is the derivative with respect to the newly defined "time" s,  for which the following is true:
+\begin{align*}
+    \begin{bmatrix}
+        \frac{dx}{ds}(s) \\ \frac{dt}{ds}(s)
+    \end{bmatrix}&=\begin{bmatrix}
+        f(x(s), t(s)) \\ 1
+    \end{bmatrix} \\
+   \begin{bmatrix}
+    x(0) \\ t(0)
+   \end{bmatrix}&=\begin{bmatrix}
+    x_0 \\ 0
+   \end{bmatrix}
+\end{align*}
+
+Then this is an autonomous ODE, with respect to t. 
+\end{proposition}
+\begin{proof}
+First things first, we can actually see how s behaves in respect to t from the bottom members of the matrices of its definition:
+    \begin{equation*}
+    \frac{dt}{ds}(s)=1, t(0)=0 \Leftrightarrow t(s)=s
+    \end{equation*}
+so s and t are actually the same. So, by looking at the top members, you find the previous problem with respect to t.
+\end{proof}
+\begin{observation}
+    What we are doing is the classic physics trick to consider time as a dimension as the other ones.
+\end{observation}
+
+So, basically, if you have a non-autonomous ODE you can make it an autonomous one.
+
+\section{Fixed and periodic points}
+\begin{definition}
+    Considering the usual $\mathbb{G}=\mathbb{R}, \mathbb{R}^+_0, \mathbb{Z}, \mathbb{N}$, for a DS ${\phi^t}_{t\in \mathbb{G}}$, the orbit or trajectory of $x\in M$ is defined as:
+    \begin{equation*}
+        O(x)=\{\phi^t(x)|t\in \mathbb{G}\}
+    \end{equation*}
+    In the cases of interest, we will use \begin{equation*}
+        O^{t(-)}(x)=\{\phi^t(x)|t\geq(\leq)0\}
+    \end{equation*}
+    and call it future or forward (past or backward, in the case with minus and $\leq$) orbit or trajectory. 
+\end{definition}
+\begin{definition}
+    $\bar{x}\in M$ is called a fixed point if $\phi^t(\bar{x})=\bar{x}, \forall t>0$.
+
+    Else, $\bar{x}$ is called a periodic point if $\exists T>0|\phi^T(\bar{x})=\bar{x}$, and T is called a period for $\bar{x}$. 
+
+    In the case of maps, the set of fixed points is sometimes denoted $Fix(T)={x\in M|T(x)=x} $.
+\end{definition}
+\begin{observation}
+    Clearly, in periodic cases $\phi^{t+T}(\bar{x})=\phi^t(\bar{x})$.\footnote{Provable by group property on the definition.}
+\end{observation}
+\begin{observation}
+    Notice that if $x\in Fix(T)$, then $T^n(x)=x$ which is true if and only if $x\in Fix(T^n)$; more formally:
+    \begin{equation*}
+        x\in Fix(T)\Rightarrow T^n(x)=x \Leftrightarrow x\in Fix(T^n)
+    \end{equation*} 
+
+    Also, one can very easily notice that a periodic point of T is by definition a point in $Fix(T^n)$ for some $n\in\mathbb{Z}$.
+\end{observation}
+
+\subsection{Graphical method for the orbit of a 1D map and finding fixed points}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/cap1/graphical_fixed_point.png}
+    \caption{Plot of an arbitrary invertible map and its intersection with the bisectrix of the first and third plane, where $x_f$ is a fixed point.}
+    \label{fig:g_f_p}
+\end{figure}
+\begin{example}[1D maps]
+    Consider the following kind of map: 
+    \begin{equation*}
+        T:M\subseteq\mathbb{R}\rightarrow M
+    \end{equation*}    
+    We want to find the fixed points. By definition, what you are trying to find is the points for which $x=T(x)$. Graphically, this means that by plotting $T(x)$ and then the bisectrix of the first and the third plane, and then finding their interceptions, you obtain the fixed points, as shown in \autoref{fig:g_f_p}.
+\end{example}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/cap1/graphical_algorithm.png}
+    \caption{Representation of the algorithm after the first steps and when fully executed, on an arbitrary map.}
+    \label{fig:g_a_f_p}
+\end{figure}
+Riffing from this simple method, one can develop a really easy graphical method to find the orbit of a 1D map, which works as follows, as shown in \autoref{fig:g_a_f_p}:
+\begin{enumerate}
+    \item Find $T(x_0)$ on the graph;
+    \item Draw a horizontal line from $T(x_0)$ to the bisectrix of the first and third plane;
+    \item From the intersection of the bisectrix and the just drawn horizontal line, draw a vertical one until intersecting T(x);
+    \item Repeat.
+\end{enumerate}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/cap1/example_escape.png}
+    \caption{Representation of the algorithm after some steps executed on another map.}
+    \label{fig:escape_point}
+\end{figure}
+\begin{observation}
+    In the represented case, we find that the orbit converges to the fixed point, but this is not always true, as shown in \autoref{fig:escape_point}. Just from the two examples we did, we may already infer that how the orbit behaves may have something to do with the derivative of the map. We will look further into that during this course.
+\end{observation}
+
+
+
