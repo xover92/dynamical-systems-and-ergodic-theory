@@ -417,13 +417,209 @@ Riffing from this simple method, one can develop a really easy graphical method 
 \end{enumerate}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/cap1/example_escape.png}
+    \includegraphics[width=0.6\textwidth]{img/cap1/example_escape.png}
     \caption{Representation of the algorithm after some steps executed on another map.}
     \label{fig:escape_point}
 \end{figure}
 \begin{observation}
     In the represented case, we find that the orbit converges to the fixed point, but this is not always true, as shown in \autoref{fig:escape_point}. Just from the two examples we did, we may already infer that how the orbit behaves may have something to do with the derivative of the map. We will look further into that during this course.
 \end{observation}
+\subsection{Classification of fixed points}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/cap1/fixed_points.png}
+    \caption{Representation of the types of fixed points.}
+    \label{fig:fixed_points}
+\end{figure}
+Here, we will assume that $M$ is a topological space. 
+\begin{definition}
+    A topological space is one in which the notions of open sets, closed sets and neighbourhood are defined.\footnote{Iffy as hell as a definition.}
+\end{definition}
+\begin{definition}
+    A fixed point $\bar{x}\in M$ is called:
+    \begin{itemize}
+        \item \textbf{stable} if for every neighbourhood $U$ of $\bar{x}$ exists a neighbourhood V\footnote{can be trivially proven to be inside U} of $\bar{x}$ such that for every $x\in V$, $\phi^t(x)$ is in $U$ for every positive $t$\footnote{This means that if you look close enough, you can look even closer and say if I start there I will stay close in the future.}. In math: \begin{equation*}
+            \forall U \text{ nbhd of } \bar{x}\,\exists V \text{ nbhd of } \bar{x}|\forall x\in V, \phi^t(x)\in U,\, \forall x\geq0
+        \end{equation*}(disegno)
+        \item \textbf{attractive} (or attracting) if it is stable and for every $x\in V$, $\phi^t(x)$ tends to $\bar{x}$ for infinite time. In math: \begin{equation*}
+            \forall x\in V, \lim_{t\rightarrow+\inf}\phi^t(x)=\bar{x}
+        \end{equation*}(disegno)
+        \item \textbf{unstable} if it is not stable, i.e.\footnote{Id est, which is Latin for "that is".} there is a neighbourhood $U$ of $\bar{x}$ such that for every neighbourhood $V$ of $\bar{x}$, exists and $x\in V$ and a $\bar{t}$ which is a function of said x $\bar{t}(x)$ such that $\phi^{\bar{t}}(x)$ is not in $U$. In math: \begin{equation*}
+            \exists U \text{ nbhd of } \bar{x}|\forall V \text{ nbhd of }\bar{x},\, \exists x\in V,\, \bar{t}=\bar{t}(x)|\phi^{\bar{t}}(x)\notin U
+        \end{equation*}(disegno). 
+        \item \textbf{repulsive} (or repelling) if there is a $U$ neighbourhood of $\bar{x}$ such that for every $x\in U$ there is a $\bar{t}$ which is a function of x $\bar{t}(x)$ such that $\phi^{\bar{t}}(x)$ is not in $U$. In math:
+        \begin{equation*}
+            \exists U\text{ nbhd of }\bar{x}|\forall x \in U \exists\bar{t}=\bar{t}(x)|\phi^{\bar{t}}(x)\notin U
+        \end{equation*} 
+    \end{itemize} 
+    All of these definitions are exemplified by the drawings in \autoref{fig:fixed_points}.
+\end{definition}
+\subsection{Examples of 1d dynamical systems}
+Let's now try to tackle some actual dynamical systems; the following examples are proposed models of population growth.
+\begin{example}[by Thomas Malthus]
+    In 1798, Thomas Malthus proposed the following model while trying to model the growth of population:
+    \begin{equation*}
+        \dot{x}(t)=\lambda x(t)\Rightarrow x(t)=x_0e^{\lambda t} (t\in\mathbb{R}, \lambda\in\mathbb{R})
+    \end{equation*}
+    Alternatively, with discrete time:
+    \begin{equation*}
+        x_{n-1}=\alpha x_n (\alpha\in\mathbb{R}^+)
+    \end{equation*}
+    which, using the introduced terminology, means that the map is defined as follows:
+    \begin{align*}
+    T\colon&\mathbb{R}^+\longrightarrow\mathbb{R}^+\\
+    &\phantom{+}x\mapsto \alpha x,
+     \end{align*}
+    This is not hard to solve, and the solution is:
+    \begin{equation*}
+        x_n=x_0\alpha^n
+    \end{equation*}
+    Heuristically, this means that the growth of the population is proportional to the number of people, which is reasonable. 
 
+    One quick note: oftentimes discrete time is more realistic than real time, since you cannot actually measure the population at all times.
+\end{example}
+Those models are rarely realistic, though. There are more advanced ones.
+\begin{example}[by Pierre Francois Velhurst]
+    Popularized by Robert May in 1978, the logistic model was developed by P.F. Velhurst in 1838 as means of modeling population growth.
+    \begin{equation*}
+        x_{n+1}=\alpha(A-x_n)x_n
+    \end{equation*}
+    The new modeling "step" is adding a sort of cap to the amount of people an ecosystem can support. Once that cap, which is parametrized in the equation by $A$, is surpassed, the population will have trouble surviving. This can be understood considering $\alpha(A-x_n)$ as growth coefficient: it changes in respect with the distance of the real population with the cap, also factually limiting the population: it would not make sense for $\alpha(A-x_n)$ to be negative since (differently from the continuous case) having that coefficient to be negative would make $x_{n+1}$ negative, which does not make sense. 
+    
+    We want to know the map of this system. We shall start by rearranging the terms and then changing variable:
+    \begin{equation*}
+        \frac{x_{n+1}}{A}=\alpha \left(1-\frac{x_n}{A}\right)\frac{x_n}{A}
+    \end{equation*}
+    Let's call $y=\frac{x}{A}$. Then:
+    \begin{equation*}
+        y_{n+1}=ry_n(1-y_n), \qquad r=A\alpha
+    \end{equation*}
+    We may now define:
+    \begin{align*}
+    T\colon&[0, 1]\longrightarrow[0, 1]\\
+    &\phantom{+}x\mapsto \alpha rx(1-x),
+     \end{align*}
+    The justification for the domain to be in $[0, 1]$ is obviously that, as stated before, $0\leq x\leq A$ so $0\leq\frac{x}{A}\leq1$.
+    \begin{figure}[ht]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            axis lines = left,
+            xlabel = \(x\),
+            ylabel = {\(T(x)\)},
+            legend cell align=right,
+            legend pos=north west,
+            height = 0.8\textwidth,
+            width = 0.8\textwidth
+        ]
+        % Plot left branch (x < 1)
+        \addplot [domain=0:1, samples=100, blue, solid] {0.5*x*(1-x)};
+        \addlegendentry{\(0.5x(1-x)\)}
+
+        \addplot [domain=0:1, samples=100, blue, dashed] {x*(1-x)};
+        \addlegendentry{\(x(1-x)\)}
+
+        \addplot [domain=0:1, samples=100, blue, dotted] {2*x*(1-x)};
+        \addlegendentry{\(2x(1-x)\)}
+
+        \addplot [domain=0:1, samples=100, blue, dashdotted] {3*x*(1-x)};
+        \addlegendentry{\(3x(1-x)\)}
+
+        \addplot [domain=0:1, samples=100, blue, dashdotdotted] {3.5*x*(1-x)};
+        \addlegendentry{\(3.5x(1-x)\)}
+
+        \addplot [domain=0:1, samples=100, red, thick] {x};
+        \addlegendentry{\(x\)}
+
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Plot of the logistic map and the bisectrix with varying r.}
+        \label{fig:logistic}
+    \end{figure}
+
+    As we may see in \autoref{fig:logistic}, the maximum occurs when $x=\frac{1}{2}$, which means that the maximum is $T(\frac{1}{2})=\frac{r}{4}$. Since we want it to be a self-map(domain and codomain are the same space), we have the added constraint $r\in[0, 4]$. 
+
+    We are now interested in finding the fixed points of this map. Luckily, this is one of the rare cases in which we may find the exact solutions, which we will call $x_t$ and $x_f$\footnote{For trivial and fixed.}:
+    \begin{equation*}
+        T(x)=x\Leftrightarrow -rx^2+rx=x\Leftrightarrow-rx\left(x-\frac{r-1}{r}\right)=0\Rightarrow\begin{cases}
+            x_t=0 \\ x_f=\frac{r-1}{r}
+        \end{cases}
+    \end{equation*}
+
+    Note that $x_f$ only "exists" for $r\geq1$, since we are in [0,1]. 
+    
+    We had a hunch, when we found the graphical method for the orbit, that the nature of the fixed point was related in some way with the value of the derivative of the map, more precisely with it being more or less than 1. We will prove this in general in the future, but for the time being, let's just calculate the derivative of this map:
+    \begin{equation*}
+        T'(x)=-2rx+r\Rightarrow\begin{cases}
+            T'(x_t)=r \\
+            T'(x_f)=-2r\frac{r-1}{r}+r=2-r
+        \end{cases}
+    \end{equation*}
+    Which, in turn, implies that:
+    \begin{equation*}
+        |T'(0)|<1\Leftrightarrow r<1\text{ and }|T'(x_f)|<1\Leftrightarrow1<r<3
+    \end{equation*} 
+    So, we may expect different behaviors in those four different regions of the domain of $r\in[0,4]$, namely $[0,1]$, $[1,3]$, $[3, 4]$. Let's see how true that is.
+    
+    (algoritmo grafico sui cosi per i vari casi) 
+    
+    \begin{itemize}
+        \item \textbf{$r\leq1$}: when r is less than 1, the only fixed point is given by $x_t=0$. In this case, the orbit converges quite quickly towards the origin;
+        \item \textbf{$1<r\leq2$}: when $r$ is between 1 and 2, the maximum is below the bisectrix (apart from $r=2$), which  implies that $x_f$ is in the first half of the map, or $x_f\leq0.5$. In this case, all the trajectories converge to $x_f$, apart from the one that already starts at $x_t=0$;
+        \item \textbf{$2<r\leq3$}: when $r$ increases (without surpassing 3) the behaviour is the same: the orbit converges towards $x_f$ if $x_0\neq0$ but in a different way, namely it oscillates around $x_f$ until it reaches it, overshooting and undershooting it until finally converging;
+        \item \textbf{$3<r\lessapprox3.45$}: increasing further, we can see that the orbit becomes periodic, oscillating between two points with $T=2$. So, it may be interesting to see the behaviour of the squared map, where we can see that there are 4 periodic points (namely $x_t$, $x_f$ and the two points between which it oscillates). We may also notice that the trajectory there tends to one of the two periodic points (if you don't start either in $x_t$ or $x_f$), which is a matter of "scope": the squared map only sees one of the two points in the periodic motion, thus those are attractive periodic points for the orbit as seen by $T^2(x)$;
+        \item \textbf{$r\gtrapprox3.45$}: once you go over circa 3.45, the movement becomes much more unpredictable: it is still periodic, but the periodicity will increase a lot even with small variations of r, and as such the motion will becomes much more chaotic; 
+    \end{itemize}
+    All of those situations are shown below.
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{img/cap1/cobweb_r_0.90.png}
+\caption{$r = 0.90$}
+\label{fig:cobweb_090}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{img/cap1/cobweb_r_1.60.png}
+\caption{$r = 1.60$}
+\label{fig:cobweb_160}
+\end{subfigure}\vspace{0.8em}
+
+\begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/cap1/cobweb_r_2.80.png}
+    \caption{$r = 2.80$}
+    \label{fig:cobweb_280}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/cap1/cobweb_r_3.20.png}
+    \caption{$r = 3.20$}
+    \label{fig:cobweb_320}
+\end{subfigure}
+
+\vspace{0.8em}
+
+\begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/cap1/cobweb_r_3.57.png}
+    \caption{$r = 3.57$}
+    \label{fig:cobweb_357}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/cap1/cobweb_r_3.80.png}
+    \caption{$r = 3.80$}
+    \label{fig:cobweb_380}
+\end{subfigure}
+
+\caption{Maps and trajectories with varying $r$.}
+\label{fig:cobweb_all}
+\end{figure}
+\end{example} 
 
 

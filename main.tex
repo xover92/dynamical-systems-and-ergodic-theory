@@ -1,5 +1,6 @@
 \documentclass{report}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{subcaption}
 \usepackage{wrapfig}
 \usepackage{float}
 \usepackage{amssymb}
@@ -9,6 +10,8 @@
 \usepackage{amsmath}
 \usepackage{pgfplots}
 \usepackage{amsthm}
+\usepackage{listings}
+\usepackage[numbered,framed]{matlab-prettifier}
 
 \pgfplotsset{compat=1.18}
 
@@ -51,5 +54,6 @@
 \chapter{Topological dynamics}
 \chapter{Ergodic theory}
 \chapter{Possible developments}
+\include{app.tex}
 
 \end{document}

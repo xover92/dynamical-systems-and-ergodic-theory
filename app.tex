@@ -1,0 +1,115 @@
+\chapter*{Appendix}
+\section*{Matlab code for the logistic map}
+\label{sec:matlab_cobweb}
+I took the liberty to use a slightly different code from the professor for that simulation:
+\begin{lstlisting}[style=Matlab-editor, caption={Logistic Map Script}]
+clear all
+
+close all
+
+set(groot, 'defaultFigureColor', 'w', ...
+    'defaultAxesColor', 'w', ...
+    'defaultAxesXColor', 'k', ...
+    'defaultAxesYColor', 'k', ...
+    'defaultTextColor', 'k');
+
+N=200; % number of iterations
+
+r=2.6;
+
+x0=0.95;
+
+
+xm=linspace(0,1,100);
+
+ym=map(r,xm);
+
+x = zeros(1,N);
+
+xp=zeros(1,2*N+1);
+
+yp=zeros(1,2*N+1);
+
+x(1)=x0; % initial condition (can be anything from 0 to 1)
+
+xp(1)=x0;
+
+
+for n = 1:N
+
+    x(n+1)=map(r,x(n));
+
+    xp(2*n)=xp(2*n-1);
+
+    yp(2*n)=x(n+1);
+
+    xp(2*n+1)=x(n+1);
+
+    yp(2*n+1)=x(n+1);
+
+end
+
+% Define the double-time map function
+map2 = @(r, s) map(r, map(r, s));
+ym2 = map2(r, xm);
+
+% Compute trajectory and cobweb points for the double-time map
+x2 = zeros(1, N);
+xp2 = zeros(1, 2*N+1);
+yp2 = zeros(1, 2*N+1);
+x2(1) = x0;
+xp2(1) = x0;
+
+for n = 1:N
+    x2(n+1) = map2(r, x2(n));
+    xp2(2*n) = xp2(2*n-1);
+    yp2(2*n) = x2(n+1);
+    xp2(2*n+1) = x2(n+1);
+    yp2(2*n+1) = x2(n+1);
+end
+
+% Create a single figure window with subplots
+figure;
+
+% First panel: Map function and Cobweb diagram
+subplot(1, 2, 1);
+plot(xm, xm, 'k--', 'LineWidth', 1);     % Identity line y = x
+hold on;
+plot(xm, ym, 'r', 'LineWidth', 1.5);        % Single-time map curve
+plot(xp, yp, 'b');                           % Single map cobweb trajectory
+title('T(x)');
+xlabel('x_n');
+ylabel('x_{n+1}');
+legend('y = x', 'Single Map', 'Cobweb 1x');
+grid on;
+
+%Second panel: Double map
+%subplot(1, 3, 2);
+%plot(xm, xm, 'k--', 'LineWidth', 1);     % Identity line y = x
+%hold on;
+%plot(xm, ym2, 'm', 'LineWidth', 1.5);       % Double-time map curve
+%plot(xp2, yp2, 'g');                       % Double map cobweb trajectory
+%title('T^2(x)');
+%xlabel('x_n');
+%ylabel('x_{n+1}');
+%legend('y = x', 'Double Map', 'Cobweb 2x');
+%grid on;
+
+% Second/third panel: Time series trajectory x(n)
+subplot(1, 2, 2);
+plot(x, '.-');
+xlim([0 200]);
+title('Trajectory x(n)');
+xlabel('n');
+ylabel('x_n');
+grid on;
+
+function m=map(r,s)
+m=r*s.*(1-s);
+%    m0=r*s.*(1-s);   % this is the double-time map
+%    m=r*m0.*(1-m0);
+end
+
+\end{lstlisting}
+
+One quick note: to display also the squared map, one must uncomment the middle panel and then change all the subplot() have 3 as the middle number, and also as the last one for the trajectory panel.
