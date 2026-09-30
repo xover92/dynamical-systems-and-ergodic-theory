@@ -440,13 +440,13 @@ Here, we will assume that $M$ is a topological space.
     \begin{itemize}
         \item \textbf{stable} if for every neighbourhood $U$ of $\bar{x}$ exists a neighbourhood V\footnote{can be trivially proven to be inside U} of $\bar{x}$ such that for every $x\in V$, $\phi^t(x)$ is in $U$ for every positive $t$\footnote{This means that if you look close enough, you can look even closer and say if I start there I will stay close in the future.}. In math: \begin{equation*}
             \forall U \text{ nbhd of } \bar{x}\,\exists V \text{ nbhd of } \bar{x}|\forall x\in V, \phi^t(x)\in U,\, \forall x\geq0
-        \end{equation*}(disegno)
+        \end{equation*}
         \item \textbf{attractive} (or attracting) if it is stable and for every $x\in V$, $\phi^t(x)$ tends to $\bar{x}$ for infinite time. In math: \begin{equation*}
             \forall x\in V, \lim_{t\rightarrow+\inf}\phi^t(x)=\bar{x}
-        \end{equation*}(disegno)
+        \end{equation*}
         \item \textbf{unstable} if it is not stable, i.e.\footnote{Id est, which is Latin for "that is".} there is a neighbourhood $U$ of $\bar{x}$ such that for every neighbourhood $V$ of $\bar{x}$, exists and $x\in V$ and a $\bar{t}$ which is a function of said x $\bar{t}(x)$ such that $\phi^{\bar{t}}(x)$ is not in $U$. In math: \begin{equation*}
             \exists U \text{ nbhd of } \bar{x}|\forall V \text{ nbhd of }\bar{x},\, \exists x\in V,\, \bar{t}=\bar{t}(x)|\phi^{\bar{t}}(x)\notin U
-        \end{equation*}(disegno). 
+        \end{equation*} 
         \item \textbf{repulsive} (or repelling) if there is a $U$ neighbourhood of $\bar{x}$ such that for every $x\in U$ there is a $\bar{t}$ which is a function of x $\bar{t}(x)$ such that $\phi^{\bar{t}}(x)$ is not in $U$. In math:
         \begin{equation*}
             \exists U\text{ nbhd of }\bar{x}|\forall x \in U \exists\bar{t}=\bar{t}(x)|\phi^{\bar{t}}(x)\notin U
@@ -620,6 +620,331 @@ Those models are rarely realistic, though. There are more advanced ones.
 \caption{Maps and trajectories with varying $r$.}
 \label{fig:cobweb_all}
 \end{figure}
-\end{example} 
 
+If one plots the attractive fixed points (for some n in $T^n$), as shown in \autoref{fig:bifurcation} what will be observed is that, while for $0<r<1$ the only attractive point is 0, and for $1<r<3$ it varies but is still a single point, then the number starts increasing by bifurcations (this phenomenon is called period doubling). It is not in the scope of this course to define and analyze this pattern and see if it is, or it is not chaotic. Just know that we are seeing a pattern highly determined by the initial conditions.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/cap1/bifurcation.png}
+    \caption{Bifurcation graph for the logistic map.}
+    \label{fig:bifurcation}
+\end{figure}
+\end{example}
+\subsection{Characterization of fixed points for 1D maps}
+We shall now demonstrate the hunch we had about the correlation between the derivative and the nature of the fixed point, at least in 1D.
+\begin{proposition}
+    Let $T:I\rightarrow I$, I connected set\footnote{Meaning either an interval, half line, or $\mathbb{R}.$} in $\mathbb{R}$, $T\in C^1(I)$. Let $\bar{x}\in Fix(T)$. Then:
+    \begin{enumerate}
+        \item if $|T'(\bar{x})|<1$ then $\bar{x}$ is attractive;
+        \item if $|T'(\bar{x})|>1$ then $\bar{x}$ is repelling; 
+    \end{enumerate}
+    [disegni del diagramma di cobweb]
+\end{proposition}
+\begin{proof}[1]
+Since $T\in C^1$, the derivative is continuous, so there exists a neighbourhood $U=(\bar{x}-\delta, \bar{x}+\delta)$\footnote{$]\bar{x}-\delta, \bar{x}+\delta[$} such that for every $ x\in U, |T'(x)|\leq\lambda<1$. In math:
+\begin{equation*}
+    T\in C^1, T'(\bar{x})<1\Rightarrow\exists U \textbf{ nbhd of } \bar{x}|\forall x\in U,\, |T'(x)|\leq\lambda<1,\, \lambda \text{ is close to 1.}
+\end{equation*}
 
+Let $x_0\in U$ be an arbitrary point in the neighbourhood, and we shall call $x_n=T^n(x_0)$.
+
+We can notice that, if for all $n\geq1$, $x_n$ is in U and $|x_n-\bar{x}|\leq\lambda^n|x_0-\bar{x}|$, or:
+\begin{equation}
+    n\geq1\Rightarrow x_n\in U \land |x_n-\bar{x}|\leq\lambda^n|x_0-\bar{x}| 
+    \label{eq:claim}
+\end{equation} 
+then $x_n\rightarrow x_0$, which would prove that the point is attractive. Thus, to prove the proposition we need to prove \autoref{eq:claim}.
+
+This can be done by induction.
+First, let' say that $n=1$. In that case, by definition:
+\begin{equation*}
+    |x_1-\bar{x}|=|T(x_0)-T(\bar{x})|
+\end{equation*}
+by using Lagrange's mean value theorem\footnote{Let $f \colon [a, b] \to \mathbb{R}$ be $f\in C^1$.  Then $\exists \, \psi \in (a, b)$ such that:
+\[
+f'(\psi) = \frac{f(b) - f(a)}{b - a}
+\]} we can find that, for some $\psi\in(x_0, \bar{x})\in U$\begin{equation*}
+    |T(x_0)-T(\bar{x})|=|T'(\phi)(x_0-\bar{x})|\leq\lambda|x_0-\bar{x}|
+\end{equation*}
+which is a part of the claim. Also, by cancelling the passages:
+\begin{equation*}
+    |x_1-\bar{x}|\leq\lambda|x_0-\bar{x}|\Rightarrow x_1\in U
+\end{equation*}
+which completes the verification for n=1.
+
+We are left to prove that if the statement is true for n, then it is true for n+1. The process up to a point is exactly the same: \begin{equation*}
+    |x_{n+1}-\bar{x}|=|T(x_n)-T(\bar{x})|=|T'(\psi_n)(x_n-\bar{x})|\leq\lambda|x_n-\bar{x}|
+\end{equation*}
+Now, we can find by iteration that $\lambda|x_n-\bar{x}|\leq \lambda^{n+1}|x_0-\bar{x}|$, which what we were trying to demonstrate. $x_{n+1}\in U$ is trivially proved in the same way as the first part. 
+\end{proof}
+\begin{proof}[2]
+    Homework.
+\end{proof}
+\begin{definition}
+    If $|T'(\bar{x})|=1$ the fixed point is called neutral or indifferent.
+\end{definition}
+\subsection{Fixed points for linear flows in more than 1D}
+Say you have a linear ODE with constant data:
+\begin{equation}
+    \begin{cases}
+        \dot{x}=Ax, \qquad x\in\mathbb{R}^d, \, \text{A is a constant matrix}\in\mathbb{R}^{d\times d} \\
+        x(0)=x_0\in\mathbb{R}^d
+    \end{cases}
+    \label{eq:ivp_2d}
+\end{equation}
+The solution of the initial value problem is:
+\begin{equation*}
+    x(t)=e^{tA}x_0, \, \forall A\in\mathbb{R}^{d\times d}
+\end{equation*}
+Where the exponential is defined as follows.
+\begin{definition}
+    If B is a matrix, then $e^B=\sum_{k=0}^{\infty}\frac{B^k}{k!}$.
+    Note that the series converges in the space of $d\times d$ matrices with respect to any norm, because if $||B||<\infty\Rightarrow||B^k||\leq ||B||^k$. \footnote{The definition might sound a bit iffy, in the sense that the whole "in any norm" thing is a big leap of faith. Actually, in finite dimensions, if $|\,|,||\,||, |||\,|||$ are all norms of V, $dim(V)<\infty$, then there exists a $C>1$ such that\begin{equation*}
+        C^{-1}|v|\leq||v||\leq C||v||
+    \end{equation*}
+    so, if you prove a limit with some norm it is actually true for all of them due to the definition of norm.} 
+\end{definition}
+\begin{observation}
+    There is no guarantee that A is diagonalizable. One could point out that you can prove that finding non-diagonalizable matrices is quite hard, and even then they are infinitely "close" to the diagonalizable ones, but we do not care about the space of matrices per se, we care about single matrices individually. So we have to consider the possibility that our matrix is not diagonalizable.
+\end{observation}
+
+Luckily, linear algebra comes to our aid, thanks to Jordan\footnote{Six FMVPs, six scoring titles, five MVPs, one DPOY, 10 times All-NBA, nine All-defensive team, three ASGMVP. Greatest PPG in the history of the NBA, both in the regular season and in the playoffs, and an important theorem to his name. Lebron ain't got no theorem to his name.}'s theorem.
+\begin{theorem}[Jordan's theorem]
+    Any matrix $A\in\mathbb{R}^{d\times d}$ can be put in Jordan form:
+    \begin{equation*}
+        \begin{bmatrix}
+        J_1 & 0 & \cdots & 0 \\
+        0 & J_2 & \cdots & 0 \\
+        \vdots & \vdots & \ddots & \vdots \\
+        0 & 0 & \cdots & J_k
+        \end{bmatrix}
+    \end{equation*}
+    where a Jordan block\footnote{https://youtu.be/tRhYR5DB2rg?si=qMxcfBx-5ecyhcjr} $J_i$ takes the form: \begin{equation*}
+        J_i = \begin{bmatrix}
+        \lambda_i & 1 & 0 & \cdots & 0 \\
+        0 & \lambda_i & 1 & \cdots & 0 \\
+        0 & 0 & \lambda_i & \cdots & 0 \\
+        \vdots & \vdots & \vdots & \ddots & 1 \\
+        0 & 0 & 0 & \cdots & \lambda_i
+        \end{bmatrix}
+    \end{equation*}
+    Note that Jordan blocks can be of different sizes.
+
+    Also, there exists a matrix $C\in\mathbb{C}^{d\times d}$ with a non-zero determinant, such that $A=CA_JC^{-1}$. C is called the base change matrix.
+\end{theorem}
+
+For now on, we will always assume $A$ is already in Jordan form. This is rapidly justified.
+
+\begin{proposition}
+    Starting from the problem given by \autoref{eq:ivp_2d}, one may find an equivalent problem with the Jordan form of $A$.
+\end{proposition}
+\begin{proof}
+    Starting from Jordan's theorem:
+    \begin{equation*}
+        A=CA_JC^{-1}\Leftrightarrow A_J=C^{-1}AC
+    \end{equation*}
+    which implies:
+    \begin{equation*}
+        \dot{x}=Ax\Leftrightarrow\dot{x}=CA_JC^{-1}x\Leftrightarrow C^{-1}\dot{x}=A_JC^{-1}x
+    \end{equation*}
+    So, by simply renaming $y=C^{-1}x$ and so $y_0=C^{-1}x_0$ we may easily find:\begin{equation*}
+        \begin{cases}
+            y=A_Jy \\
+            y(0)=y_0
+        \end{cases}
+    \end{equation*}
+    which is an equivalent problem.
+\end{proof}
+
+\subsubsection{Examples in 2D}
+\begin{example}
+    Let the A in \autoref{eq:ivp_2d} be:
+    \begin{equation*}
+        A= \begin{bmatrix}
+            \lambda & 0 \\
+            0 & \lambda
+        \end{bmatrix}, \qquad \lambda\neq0
+    \end{equation*}
+
+    Following what we now know, the solution has the form:
+    \begin{equation*}
+        e^{tA}=\begin{bmatrix}
+            e^{\lambda t} & 0 \\
+            0 & e^{\lambda t}
+        \end{bmatrix}
+    \end{equation*}
+    Consequently (note that here x and y are the Cartesian coordinates):
+    \begin{equation*}
+        \begin{bmatrix}
+            x(t) \\ y(t)
+        \end{bmatrix}=\begin{bmatrix}
+            x_0e^{\lambda t} \\ y_0e^{\lambda t}
+        \end{bmatrix}
+    \end{equation*}
+
+    In this kind of situations, one wants to plot y as a function of x and then show the dependency on time as an arrow. In this case, as shown in \autoref{fig:star_node}, the trajectories are attracted by the origin if $\lambda<0$, else they escape from it.
+
+    \begin{figure}[ht]
+    \centering
+    % style for trajectories
+    \tikzset{
+        traj out/.style={
+            thick, blue!70!black,
+            decoration={markings, mark=at position 0.6 with {\arrow{Stealth[length=2.5mm]}}},
+            postaction={decorate}
+        },
+        traj in/.style={
+            thick, red!70!black,
+            decoration={markings, mark=at position 0.6 with {\arrow{Stealth[length=2.5mm]}}},
+            postaction={decorate}
+        }
+    }
+
+    % lambda>0, unstable
+    \begin{tikzpicture}[scale=1.1]
+        % assi
+        \draw[-{Stealth}, gray] (-2.4,0) -- (2.5,0) node[right] {$x$};
+        \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.5) node[above] {$y$};
+
+        % trajectories
+        \foreach \a in {0,30,...,330} {
+            \draw[traj out] (0,0) -- (\a:2.2);
+        }
+        \fill (0,0) circle (1.5pt);
+        \node[below=6pt] at (0,-2.4) {$\lambda>0$};
+    \end{tikzpicture}
+    \hfill
+    % ---------- lambda < 0 : stable ----------
+    \begin{tikzpicture}[scale=1.1]
+        % assi
+        \draw[-{Stealth}, gray] (-2.4,0) -- (2.5,0) node[right] {$x$};
+        \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.5) node[above] {$y$};
+
+        % trajectories
+        \foreach \a in {0,30,...,330} {
+            \draw[traj in] (\a:2.2) -- (0,0);
+        }
+        \fill (0,0) circle (1.5pt);
+        \node[below=6pt] at (0,-2.4) {$\lambda<0$};
+    \end{tikzpicture}
+
+    \caption{Phase portrait for $A=\lambda I$. The trajectories are escaping from the origin ($\lambda>0$) or attracted by the origin ($\lambda<0$).}
+    \label{fig:star_node}
+\end{figure}
+\end{example}
+
+Let's spice things up a bit.
+
+\begin{example}
+    Let the A in \autoref{eq:ivp_2d} be:
+    \begin{equation*}
+        A=\begin{bmatrix}
+            \lambda & 0 \\
+            0 & \mu
+        \end{bmatrix}
+    \end{equation*}
+    This implies:
+    \begin{equation*}
+        \begin{bmatrix}
+            x(t) \\ y(t)
+        \end{bmatrix}=\begin{bmatrix}
+            x_0e^{\lambda t} \\ y_0e^{\mu t}
+        \end{bmatrix}
+    \end{equation*}
+    We can rework it in order to plot it, assuming we are in the non-trivial case:
+    \begin{equation*}
+        \lambda, \mu\neq0,\, \begin{bmatrix}
+            x(t) \\ y(t)
+        \end{bmatrix}=\begin{bmatrix}
+            x_0e^{\lambda t} \\ y_0e^{\mu t}
+        \end{bmatrix}\Leftrightarrow t=\frac{1}{\lambda} \ln \left(\frac{x}{x_0}\right) \Leftrightarrow y=y_0e^{\frac{\mu}{\lambda} \ln\left(\frac{x}{x_0}\right)}=y_0(\frac{x}{x_0})^{\frac{\mu}{\lambda}}. 
+    \end{equation*}
+
+    % Macro: phase portrait of x' = lambda x, y' = mu y
+% Usage: \phaseportrait{lambda}{mu}
+\newcommand{\phaseportrait}[2]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes (these are trajectories too, drawn in red below)
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    \begin{scope}
+        \clip (-2.2,-2.2) rectangle (2.2,2.2);
+
+        % Trajectories in the four quadrants: (x,y) = (x0 e^{lambda t}, y0 e^{mu t})
+        % The exponent is capped (min(...,3)) to avoid TeX dimension overflow;
+        % the capped part lies outside the clipping box anyway.
+        \foreach \sx in {1,-1} {
+            \foreach \sy in {1,-1} {
+                \foreach \xo/\yo in {1.2/0.4, 1.2/1.2, 0.5/1.2} {
+                    % full curve
+                    \draw[thin, blue!70!black, domain=-6:6, samples=200, variable=\t]
+                        plot ({\sx*\xo*exp(min(#1*\t,3))}, {\sy*\yo*exp(min(#2*\t,3))});
+                    % short piece starting at (x0,y0): carries the arrow (direction of increasing t)
+                    \draw[thin, blue!70!black, -{Stealth[length=1.8mm]},
+                          domain=0:0.2, samples=3, variable=\t]
+                        plot ({\sx*\xo*exp(#1*\t)}, {\sy*\yo*exp(#2*\t)});
+                }
+            }
+        }
+
+        % Trajectories lying on the axes (x0,0) and (0,y0)
+        \foreach \s in {1,-1} {
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
+                  domain=0:0.25, samples=3, variable=\t]
+                plot ({\s*1.2*exp(#1*\t)}, 0);
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
+                  domain=0:0.25, samples=3, variable=\t]
+                plot (0, {\s*1.2*exp(#2*\t)});
+        }
+    \end{scope}
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $\lambda=#1,\ \mu=#2$};
+\end{tikzpicture}%
+}
+
+\begin{figure}[ht]
+    \centering
+    % ---------- Row 1: |mu/lambda| > 1 (curves tangent to the x-axis at the origin) ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \phaseportrait{1}{2}
+        \caption{Unstable node, $0<\lambda<\mu$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \phaseportrait{-1}{-2}
+        \caption{Stable node, $\mu<\lambda<0$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \phaseportrait{1}{-1}
+        \caption{Saddle, $\lambda>0>\mu$.}
+    \end{subfigure}
+
+    \vspace{1em}
+
+    % ---------- Row 2: |mu/lambda| < 1 (curves tangent to the y-axis at the origin) ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \phaseportrait{2}{1}
+        \caption{Unstable node, $0<\mu<\lambda$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \phaseportrait{-2}{-1}
+        \caption{Stable node, $\lambda<\mu<0$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \phaseportrait{-1}{1}
+        \caption{Saddle, $\mu>0>\lambda$.}
+    \end{subfigure}
+
+    \caption{Phase portraits of $\dot{x}=\lambda x,\ \dot{y}=\mu y$. Blue curves are
+    $y=y_0\,(x/x_0)^{\mu/\lambda}$; red half-lines are the trajectories on the
+    coordinate axes. Arrows indicate the direction of increasing time.}
+    \label{fig:diagonal_phase_portraits}
+\end{figure}
+The results of this are shown in \autoref{fig:diagonal_phase_portraits}. 
+\end{example}
