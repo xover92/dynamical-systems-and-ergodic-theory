@@ -859,50 +859,6 @@ Let's spice things up a bit.
         \end{bmatrix}\Leftrightarrow t=\frac{1}{\lambda} \ln \left(\frac{x}{x_0}\right) \Leftrightarrow y=y_0e^{\frac{\mu}{\lambda} \ln\left(\frac{x}{x_0}\right)}=y_0(\frac{x}{x_0})^{\frac{\mu}{\lambda}}. 
     \end{equation*}
 
-    % Macro: phase portrait of x' = lambda x, y' = mu y
-% Usage: \phaseportrait{lambda}{mu}
-\newcommand{\phaseportrait}[2]{%
-\begin{tikzpicture}[scale=0.75]
-    % Coordinate axes (these are trajectories too, drawn in red below)
-    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
-    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
-
-    \begin{scope}
-        \clip (-2.2,-2.2) rectangle (2.2,2.2);
-
-        % Trajectories in the four quadrants: (x,y) = (x0 e^{lambda t}, y0 e^{mu t})
-        % The exponent is capped (min(...,3)) to avoid TeX dimension overflow;
-        % the capped part lies outside the clipping box anyway.
-        \foreach \sx in {1,-1} {
-            \foreach \sy in {1,-1} {
-                \foreach \xo/\yo in {1.2/0.4, 1.2/1.2, 0.5/1.2} {
-                    % full curve
-                    \draw[thin, blue!70!black, domain=-6:6, samples=200, variable=\t]
-                        plot ({\sx*\xo*exp(min(#1*\t,3))}, {\sy*\yo*exp(min(#2*\t,3))});
-                    % short piece starting at (x0,y0): carries the arrow (direction of increasing t)
-                    \draw[thin, blue!70!black, -{Stealth[length=1.8mm]},
-                          domain=0:0.2, samples=3, variable=\t]
-                        plot ({\sx*\xo*exp(#1*\t)}, {\sy*\yo*exp(#2*\t)});
-                }
-            }
-        }
-
-        % Trajectories lying on the axes (x0,0) and (0,y0)
-        \foreach \s in {1,-1} {
-            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
-                  domain=0:0.25, samples=3, variable=\t]
-                plot ({\s*1.2*exp(#1*\t)}, 0);
-            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
-                  domain=0:0.25, samples=3, variable=\t]
-                plot (0, {\s*1.2*exp(#2*\t)});
-        }
-    \end{scope}
-
-    \fill (0,0) circle (1.5pt);
-    \node[below] at (0,-2.4) {\small $\lambda=#1,\ \mu=#2$};
-\end{tikzpicture}%
-}
-
 \begin{figure}[ht]
     \centering
     % ---------- Row 1: |mu/lambda| > 1 (curves tangent to the x-axis at the origin) ----------
@@ -948,3 +904,281 @@ Let's spice things up a bit.
 \end{figure}
 The results of this are shown in \autoref{fig:diagonal_phase_portraits}. 
 \end{example}
+
+What about complex coefficients?
+
+\begin{example}
+    Let the A in \autoref{eq:ivp_2d} be:
+    \begin{equation*}
+        A=\begin{bmatrix}
+            a+ib & 0 \\
+            0 & a-ib
+        \end{bmatrix},\qquad a,\,b\in\mathbb{R} 
+    \end{equation*}
+    This implies, based on what was stated at the beginning of the section:
+    \begin{equation*}
+        e^{tA}=\begin{bmatrix}
+            e^{at}e^{ibt} & 0 \\
+            0 & e^{at}e^{-ibt}
+        \end{bmatrix}
+    \end{equation*}
+    since the initial condition is real, we may infer that the solution will be real. We will nonetheless prove it. 
+    
+    Let's do another change of variable, in order to have a real matrix.
+
+    Consider the following matrix:
+    \begin{equation*}
+        D=\frac{1}{\sqrt{2}}\begin{bmatrix}
+            1 & i \\
+            i & 1
+        \end{bmatrix} \Leftrightarrow D^{-1}=\frac{1}{\sqrt{2}}\begin{bmatrix}
+            1 & -i \\
+            -i & 1
+        \end{bmatrix} 
+    \end{equation*}
+    We shall use $z=D^{-1}y$. We can get to do so by using the fact that $DD^{-1}=D^{-1}D=I$ on $\dot{y}=Ay$ as following:
+    \begin{equation*}
+        \dot{y}=D^{-1}DADD^{-1}y \Leftrightarrow D^{-1}\dot{y}=D^{-1}ADD^{-1}y\Leftrightarrow \dot{z}=Bz
+    \end{equation*} 
+    where $B=D^{-1}AD$. 
+    
+    We are trying to find a real equation, so we need to prove that
+    $B\in\mathbb{R}^{2\times 2}$ and $e^{tB}\in\mathbb{R}^{2\times 2}$. 
+
+    First of all, $e^{tB}\in\mathbb{R}^{2\times 2}$ implies $B\in\mathbb{R}^{2\times 2}$ because:
+    \begin{equation*}
+    \left.\frac{d}{dt}e^{tB}\right|_{t=0}=B
+    \end{equation*}\footnote{This can be proved, if you are not convinced:
+    \begin{equation*}
+        \frac{de^{tA}}{dt}=\frac{d}{dt}\sum_{k=0}^{\infty}\frac{t^kA^k}{k!}=\sum_{k=0}^{\infty}\frac{d}{dt}\frac{t^kA^k}{k!}
+    \end{equation*}
+    But $\frac{d}{dt}\frac{t^0A^0}{0!}=0$, so we may exclude the term with $k=0$, obtaining the following:
+    \begin{equation*}
+        \sum_{k=0}^{\infty}\frac{d}{dt}\frac{t^kA^k}{k!}=\sum_{k=1}^{\infty}\frac{d}{dt}\frac{t^kA^k}{k!}=\sum_{k=1}^{\infty}\frac{t^{k-1}A^{k-1}}{(k-1)!}A=A\sum_{j=0}^{\infty}\frac{t^{j}A^{j}}{(j)!}=Ae^{tA}
+    \end{equation*}
+    which also converges with $||\,||$ in $\mathbb{R}^{d\times d}$.
+
+    It is actually as a consequence of this that $r(t)=e^{tA}r_0$ is the solution of the following IVP:\begin{equation*}
+        \begin{cases}
+            \dot{r}=Ar \\
+            r(0)=r_0
+        \end{cases}
+    \end{equation*}
+    In fact, $r(0)=Ir_0=r_0$ and \begin{equation*}
+        \dot{r}(t)=Ae^{tA}r_0=Ar(t)
+    \end{equation*}
+    }
+
+    So we only need to prove $e^{tB}\in\mathbb{R}^{2\times 2}$. We shall start by observing that:\begin{equation*}
+        e^{tB}=e^{tD^{-1}AD}=\sum_{k}\frac{t^k}{k!}(D^{-1}AD)^{k}=D^{-1}e^{tA}D
+    \end{equation*}
+    because $(D^{-1}AD)^{k}=D^{-1}A^kD$ since the $D$s simplify themselves\footnote{Imagine $k=2$. Then you have $D^{-1}ADD^{-1}AD=D^{-1}AAD$.}. We can then insert the actual values of $D$, $D^{-1}$ and $e^{tA}$ in that, and then compute the value:
+    \begin{align*}
+        D^{-1}e^{tA}D=\frac{1}{\sqrt{2}}\begin{bmatrix}
+            1 & -i \\
+            -i & 1
+        \end{bmatrix}\begin{bmatrix}
+            e^{at}e^{ibt} & 0 \\
+            0 & e^{at}e^{-ibt}
+        \end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}
+            1 & i \\
+            i & 1
+        \end{bmatrix}= \\
+        \frac{e^{at}}{2}\begin{bmatrix}
+            e^{ibt} & -ie^{-ibt} \\
+            -ie^{ibt} & e^{-ibt}
+        \end{bmatrix}\begin{bmatrix}
+            1 & i \\
+            i & 1
+        \end{bmatrix}=\frac{e^{at}}{2}\begin{bmatrix}
+            e^{ibt}+e^{-ibt} & ie^{ibt}-ie^{-ibt} \\
+            -ie^{ibt}+ie^{-ibt} & e^{ibt}+e^{-ibt}
+        \end{bmatrix}
+    \end{align*}
+    Which, remembering the polar form for complex numbers:
+    \begin{equation*}
+        \frac{e^{at}}{2}\begin{bmatrix}
+            e^{ibt}+e^{-ibt} & ie^{ibt}-ie^{-ibt} \\
+            -ie^{ibt}+ie^{-ibt} & e^{ibt}+e^{-ibt}
+        \end{bmatrix}=e^{at}\begin{bmatrix}
+            cos(bt) & -sin(bt) \\
+            sin(bt) & cos(bt)
+        \end{bmatrix}
+    \end{equation*}
+    So we have proved that\begin{equation*}
+        D^{-1}e^{tA}D=e^{at}\begin{bmatrix}
+            cos(bt) & -sin(bt) \\
+            sin(bt) & cos(bt)
+        \end{bmatrix}
+    \end{equation*}
+    which is not only a real matrix, which is what we wanted to prove, but is also the propagator, thus we have solved the IVP. The solution is, indeed, $z(t)=e^{tB}z_0$. Alternatively:\begin{equation*}
+        \begin{bmatrix}
+            x \\ y
+        \end{bmatrix}=e^{at}R_{bt}\begin{bmatrix}
+            x_0 \\ y_0
+        \end{bmatrix}
+    \end{equation*}
+    where $R_{bt}$ is a rotation matrix indicating a rotation of magnitude bt, which is the one we found. This makes it especially easy to visualize the drawings, shown in \autoref{fig:spiral_phase_portraits}.
+
+    \begin{figure}[ht]
+    \centering
+    % ---------- Row 1: a>0 (trajectories move away from the origin) ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \spiralportrait{0.25}{1.5}
+        \caption{Unstable spiral, $a>0,\ b>0$ (counterclockwise).}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \spiralportrait{0.25}{-1.5}
+        \caption{Unstable spiral, $a>0,\ b<0$ (clockwise).}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \circleportrait{1.5}
+        \caption{Center, $a=0,\ b>0$ (counterclockwise).}
+    \end{subfigure}
+
+    \vspace{1em}
+
+    % ---------- Row 2: a<0 (trajectories converge to the origin) ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \spiralportrait{-0.25}{1.5}
+        \caption{Stable spiral, $a<0,\ b>0$ (counterclockwise).}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \spiralportrait{-0.25}{-1.5}
+        \caption{Stable spiral, $a<0,\ b<0$ (clockwise).}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \circleportrait{-1.5}
+        \caption{Center, $a=0,\ b<0$ (clockwise).}
+    \end{subfigure}
+
+    \caption{Phase portraits of $\dot{z}=Bz$ with $e^{tB}=e^{at}R_{bt}$. The sign of $a$
+    determines whether trajectories move away from ($a>0$) or towards ($a<0$) the origin,
+    while the sign of $b$ determines the sense of rotation. Arrows indicate the direction
+    of increasing time.}
+    \label{fig:spiral_phase_portraits}
+\end{figure}
+\end{example}
+
+
+We are missing a case: the Jordan form\footnote{https://www.youtube.com/watch?v=0EcFQ7j4qo4 (This was the last one I promise.)}.
+\begin{example}
+    Let the A in \autoref{eq:ivp_2d} be:
+    \begin{equation*}
+        A=\begin{bmatrix}
+        \lambda & 1 \\ 0 & \lambda
+    \end{bmatrix}
+    \end{equation*}
+    where $\lambda\in\mathbb{R}$.\footnote{For some reason it's the only possible one because a complex lambda would make for a dim 4 situation?. If $\lambda$ is an e-value of $E\in\mathbb{R}^{2\times2}$, then $\bar{\lambda}$ is also one. That is not possible (i guess?) because it's four dimensions. Così ha detto a lezione, io non ho capito.}
+
+    It can be proved that \begin{equation*}
+        A^k=\begin{bmatrix}
+            \lambda^k & k\lambda^{k-1} \\
+            0 & \lambda^k
+        \end{bmatrix}
+    \end{equation*}
+    which implies:
+    \begin{align*}
+        e^{tA}=\begin{bmatrix}
+            \sum_{k=0}^{\infty}\frac{t^k\lambda^k}{k!} & \sum_{k=0}^{\infty}\frac{t^kk\lambda^{k-1}}{k!} \\ 0 & \sum_{k=0}^{\infty}\frac{t^k\lambda^k}{k!}
+        \end{bmatrix}&=\sum_{k=0}^{\infty}\frac{A^k}{k!}= \\
+        \begin{bmatrix}
+            \sum_{k=0}^{\infty}\frac{t^k\lambda^k}{k!} & \sum_{k=0}^{\infty}\frac{t^k\lambda^{k-1}}{(k-1)!} \\ 0 & \sum_{k=0}^{\infty}\frac{t^k\lambda^k}{k!}
+        \end{bmatrix}&=\begin{bmatrix}
+            e^{\lambda t} & te^{\lambda t} \\
+            0 & e^{\lambda t}
+        \end{bmatrix}
+    \end{align*}
+    So the general solution of \begin{equation*}
+    \dot{\begin{bmatrix}
+    x \\ y
+    \end{bmatrix}}=A\begin{bmatrix}
+        x \\ y
+    \end{bmatrix}, \, \begin{bmatrix}
+        x(0) \\ y(0)
+    \end{bmatrix}=\begin{bmatrix}
+        x_0 \\ y_0
+    \end{bmatrix}
+    \end{equation*}
+    is the following:\begin{equation*}
+        \begin{bmatrix}
+            e^{\lambda t} & te^{\lambda t} \\
+            0 & e^{\lambda t}
+        \end{bmatrix}\begin{bmatrix}
+            x_0 \\ y_0
+        \end{bmatrix}=\begin{bmatrix}
+            x_0e^{\lambda t}+y_0 te^{\lambda t} \\
+            y_0e^{\lambda t}
+        \end{bmatrix}
+    \end{equation*}
+    which means that:
+    \begin{equation*}
+        \begin{bmatrix}
+            x(t) \\ y(t)
+        \end{bmatrix}=\begin{bmatrix}
+            x_0e^{\lambda t}+y_0te^{\lambda t} \\ y_0e^{\lambda t}
+        \end{bmatrix}
+    \end{equation*}
+
+    We follow the standard protocol of eliminating the time dependencies for plotting reasons, by solving for time and substituting. Quite clearly, the easy one to solve for time is y here. Once done, you should find:\begin{equation*}
+        t=\frac{log(\frac{y}{y_0})}{\lambda}
+    \end{equation*}
+    Once plugged into the equation, x(y) is the following, as plotted in \autoref{fig:jordan_phase_portraits}:
+    \begin{equation*}
+        x=\frac{x_0}{y_0}y+\frac{1}{\lambda}y\log(\frac{y}{y_0})
+    \end{equation*}
+    \begin{figure}[ht]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \jordanportrait{1}
+        \caption{Unstable degenerate node, $\lambda>0$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \jordanportrait{-1}
+        \caption{Stable degenerate node, $\lambda<0$.}
+    \end{subfigure}
+
+    \caption{Phase portraits of $\dot{x}=\lambda x+y,\ \dot{y}=\lambda y$. Blue curves are
+    the trajectories with $y_0\neq0$; red half-lines are the trajectories on the $x$-axis
+    ($y_0=0$), the only invariant line. Arrows indicate the direction of increasing time.}
+    \label{fig:jordan_phase_portraits}
+\end{figure}
+\end{example}
+
+\section{Linearized ODEs around a fixed point}
+Suppose one has the following IVP: \begin{equation*}
+    \begin{cases}
+        \dot{x}=f(x),\qquad x\in M\subseteq\mathbb{R}^d \\
+        x(0)=x_0
+    \end{cases}
+\end{equation*}
+where $\bar{x}$ is a fixed point. Note that:
+\begin{equation*}
+    \bar{x}\text{ is a fixed point}\Leftrightarrow f(\bar{x})=0\Leftrightarrow (\phi^t(\bar{x})=\bar{x}\forall t\Leftrightarrow x(t, \bar{x})\text{ is a solution})\footnote{The last one meaning that if you start from $\bar{x}$ you stay in $\bar{x}.$}
+\end{equation*}
+
+We assume that $f\in C^1$. This implies that if $x$ is close to $\bar{x}$, we can use the differential and also the jacobian matrix to approximate as follows: \begin{equation*}
+    x\text{ and }\bar{x}\text{ are close}\Rightarrow f(x)=f(\bar{x})+Df_{\bar{x}}(x-\bar{x})+o(|x-\bar{x}|)\approx0+Jf_{\bar{x}}\cdot (x-\bar{x})\footnote{(as a column vector)}
+\end{equation*}
+where the Jacobian is defined as:\begin{equation*}
+        J_f(x) = \frac{\partial f}{\partial x} =
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial x_1} & \dfrac{\partial f_1}{\partial x_2} & \cdots & \dfrac{\partial f_1}{\partial x_n} \\[2ex]
+\dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} & \cdots & \dfrac{\partial f_2}{\partial x_n} \\[2ex]
+\vdots & \vdots & \ddots & \vdots \\[1ex]
+\dfrac{\partial f_m}{\partial x_1} & \dfrac{\partial f_m}{\partial x_2} & \cdots & \dfrac{\partial f_m}{\partial x_n}
+\end{bmatrix} \end{equation*}
+
+By doing so, we may linearize the ODE as follows: \begin{equation*}
+    \dot{x}=J_f(x-\bar{x})\Rightarrow \dot{y}=J_fy,\,y=x-\bar{x}
+\end{equation*}
+
+We have to remember that we are dealing with an approximated solution, extremely close to $\bar{x}$. We will later see that, in some cases, the linear system and the non-linear system are conjugate to each other for any time, if we keep close to the fixed point.

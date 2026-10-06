@@ -12,7 +12,10 @@
 \usepackage{amsthm}
 \usepackage{listings}
 \usepackage[numbered,framed]{matlab-prettifier}
+
 \usetikzlibrary{arrows.meta, decorations.markings}
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz-cache/]
 
 \pgfplotsset{compat=1.18}
 
@@ -43,6 +46,153 @@
 \newtheorem{observation}{Observation}[chapter]
 
 \providecommand*{\propositionautorefname}{Proposition}
+
+    % Macro: phase portrait of x' = lambda x, y' = mu y
+% Usage: \phaseportrait{lambda}{mu}
+\newcommand{\phaseportrait}[2]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes (these are trajectories too, drawn in red below)
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    \begin{scope}
+        \clip (-2.2,-2.2) rectangle (2.2,2.2);
+
+        % Trajectories in the four quadrants: (x,y) = (x0 e^{lambda t}, y0 e^{mu t})
+        % The exponent is capped (min(...,3)) to avoid TeX dimension overflow;
+        % the capped part lies outside the clipping box anyway.
+        \foreach \sx in {1,-1} {
+            \foreach \sy in {1,-1} {
+                \foreach \xo/\yo in {1.2/0.4, 1.2/1.2, 0.5/1.2} {
+                    % full curve
+                    \draw[thin, blue!70!black, domain=-6:6, samples=200, variable=\t]
+                        plot ({\sx*\xo*exp(min(#1*\t,3))}, {\sy*\yo*exp(min(#2*\t,3))});
+                    % short piece starting at (x0,y0): carries the arrow (direction of increasing t)
+                    \draw[thin, blue!70!black, -{Stealth[length=1.8mm]},
+                          domain=0:0.2, samples=3, variable=\t]
+                        plot ({\sx*\xo*exp(#1*\t)}, {\sy*\yo*exp(#2*\t)});
+                }
+            }
+        }
+
+        % Trajectories lying on the axes (x0,0) and (0,y0)
+        \foreach \s in {1,-1} {
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
+                  domain=0:0.25, samples=3, variable=\t]
+                plot ({\s*1.2*exp(#1*\t)}, 0);
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
+                  domain=0:0.25, samples=3, variable=\t]
+                plot (0, {\s*1.2*exp(#2*\t)});
+        }
+    \end{scope}
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $\lambda=#1,\ \mu=#2$};
+\end{tikzpicture}%
+}
+
+% Macro: phase portrait of z' = Bz with e^{tB} = e^{at} R_{bt}  (a != 0)
+% Usage: \spiralportrait{a}{b}
+% Trajectory: (x,y) = e^{at} (cos(bt), sin(bt)) * r0, i.e. r = r0 e^{at}, theta = bt.
+% If a>0 the spiral starts near the origin and winds outwards;
+% if a<0 it starts at the border of the picture and winds inwards.
+% In both cases t runs over [0,T] so that r goes between 0.08 and 2.2.
+\newcommand{\spiralportrait}[2]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    % Time needed to cross the annulus 0.08 < r < 2.2, and starting radius
+    \pgfmathsetmacro{\T}{ln(27.5)/abs(#1)}
+    \pgfmathsetmacro{\rz}{ifthenelse(#1>0,0.08,2.2)}
+
+    % Two trajectories: the second one is the first rotated by 180 degrees
+    \foreach \rot in {0,180} {
+        \begin{scope}[rotate=\rot]
+            \draw[thick, blue!70!black,
+                  domain=0:\T, samples=300, variable=\t,
+                  postaction={decorate},
+                  decoration={markings,
+                      mark=at position 0.35 with {\arrow{Stealth[length=2.2mm]}},
+                      mark=at position 0.65 with {\arrow{Stealth[length=2.2mm]}},
+                      mark=at position 0.95 with {\arrow{Stealth[length=2.2mm]}}}]
+                plot ({\rz*exp(#1*\t)*cos(deg(#2*\t))},
+                      {\rz*exp(#1*\t)*sin(deg(#2*\t))});
+        \end{scope}
+    }
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $a=#1,\ b=#2$};
+\end{tikzpicture}%
+}
+
+% Macro: case a = 0, trajectories are circles run with angular velocity b
+% Usage: \circleportrait{b}   (b>0 counterclockwise, b<0 clockwise)
+\newcommand{\circleportrait}[1]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    \pgfmathsetmacro{\endangle}{ifthenelse(#1>0,360,-360)}
+    \foreach \r in {0.7,1.4,2.1} {
+        \draw[thick, blue!70!black,
+              postaction={decorate},
+              decoration={markings,
+                  mark=at position 0.125 with {\arrow{Stealth[length=2.2mm]}},
+                  mark=at position 0.625 with {\arrow{Stealth[length=2.2mm]}}}]
+            (\r,0) arc (0:\endangle:\r);
+    }
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $a=0,\ b=#1$};
+\end{tikzpicture}%
+}
+
+% Macro: phase portrait of x' = lambda x + y, y' = lambda y   (Jordan block)
+% Usage: \jordanportrait{lambda}
+% Trajectory through (x0,y0): (x,y) = ((x0 + y0 t) e^{lambda t}, y0 e^{lambda t})
+\newcommand{\jordanportrait}[1]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    \begin{scope}
+        \clip (-2.2,-2.2) rectangle (2.2,2.2);
+
+        % Generic trajectories, starting at (x0,y0) with y0 != 0.
+        % The map (x,y) -> (-x,-y) preserves the system, so \s = -1 gives the mirrored ones.
+        % The exponent is capped (min(...,3)) to avoid TeX dimension overflow;
+        % the capped part lies outside the clipping box anyway.
+        \foreach \s in {1,-1} {
+            \foreach \xo/\yo in {-1.5/0.6, 0/0.6, 1.5/0.6, -0.8/1.5, 0.8/1.5} {
+                % full curve
+                \draw[thin, blue!70!black, domain=-6:6, samples=300, variable=\t]
+                    plot ({\s*(\xo+\yo*\t)*exp(min(#1*\t,3))},
+                          {\s*\yo*exp(min(#1*\t,3))});
+                % short piece starting at (x0,y0): carries the arrow (increasing t)
+                \draw[thin, blue!70!black, -{Stealth[length=1.8mm]},
+                      domain=0:0.2, samples=3, variable=\t]
+                    plot ({\s*(\xo+\yo*\t)*exp(#1*\t)},
+                          {\s*\yo*exp(#1*\t)});
+            }
+        }
+
+        % Trajectories on the x-axis (y0 = 0): the only straight-line trajectories
+        \foreach \s in {1,-1} {
+            \draw[thick, red!70!black] (0,0) -- (\s*2.2,0);
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]},
+                  domain=0:0.25, samples=3, variable=\t]
+                plot ({\s*1.2*exp(#1*\t)}, 0);
+        }
+    \end{scope}
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $\lambda=#1$};
+\end{tikzpicture}%
+}
 
 \begin{document}
 \maketitle
