@@ -14,7 +14,7 @@
 \usepackage[numbered,framed]{matlab-prettifier}
 
 \usetikzlibrary{arrows.meta, decorations.markings}
-\usetikzlibrary{external}
+\usetikzlibrary{external, calc}
 \tikzexternalize[prefix=tikz-cache/]
 
 \pgfplotsset{compat=1.18}
@@ -46,6 +46,7 @@
 \newtheorem{observation}{Observation}[chapter]
 
 \providecommand*{\propositionautorefname}{Proposition}
+\providecommand*{\exampleautorefname}{Example}
 
     % Macro: phase portrait of x' = lambda x, y' = mu y
 % Usage: \phaseportrait{lambda}{mu}
@@ -191,6 +192,289 @@
 
     \fill (0,0) circle (1.5pt);
     \node[below] at (0,-2.4) {\small $\lambda=#1$};
+\end{tikzpicture}%
+}
+
+% Common axes and fixed points. Window: [0,3.5]^2, with alpha=beta=gamma=delta=1.
+\newcommand{\lvframe}{%
+    \draw[-{Stealth}, gray] (-0.2,0) -- (3.7,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-0.2) -- (0,3.7) node[above] {$y$};
+    \fill (0,0) circle (1.8pt) node[below left] {\small $(0,0)$};
+    \fill (1,1) circle (1.8pt);
+    \node[below right] at (1,1) {\small $(\frac{\gamma}{\delta},\frac{\alpha}{\beta})$};
+}
+
+% Nonlinear orbit through (x0,1), integrated with the midpoint method (RK2).
+% Usage: \lvorbit{x0}{number of steps}   (dt = 0.03, so total time = 0.03*steps ~ one period)
+\newcommand{\lvorbit}[2]{%
+    \def\xc{#1}\def\yc{1}\pgfmathsetmacro{\dt}{0.03}%
+    \draw[thick, blue!70!black,
+          postaction={decorate},
+          decoration={markings,
+              mark=at position 0.12 with {\arrow{Stealth[length=2.2mm]}},
+              mark=at position 0.6 with {\arrow{Stealth[length=2.2mm]}}}]
+        (#1,1)
+        \foreach \i in {1,...,#2} {
+            \pgfextra
+                \pgfmathsetmacro{\kx}{\xc*(1-\yc)}
+                \pgfmathsetmacro{\ky}{-\yc*(1-\xc)}
+                \pgfmathsetmacro{\xh}{\xc+0.5*\dt*\kx}
+                \pgfmathsetmacro{\yh}{\yc+0.5*\dt*\ky}
+                \pgfmathsetmacro{\xn}{\xc+\dt*\xh*(1-\yh)}
+                \pgfmathsetmacro{\yn}{\yc-\dt*\yh*(1-\xh)}
+                \xdef\xc{\xn}\xdef\yc{\yn}
+            \endpgfextra
+            -- (\xc,\yc)
+        };
+}
+
+% Macro: orbits of x_{n+1} = alpha x_n, with 0 < alpha < 1 (any alpha > 0 works, see notes)
+% Usage: \discretestar{alpha}{number of points}
+% The points are (alpha^k) * x_0 on each ray, so they are computed with pgfmath, no plot needed.
+\newcommand{\discretestar}[2]{%
+\begin{tikzpicture}[scale=0.9]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.6,0) -- (2.6,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.6) -- (0,2.6) node[above] {$y$};
+
+    % Rays (the lines the orbits live on), with an arrow towards the origin
+    \foreach \a in {0,45,...,315} {
+        \draw[thin, blue!70!black, -{Stealth[length=2mm]}] (\a:2.2) -- (\a:1.1);
+        \draw[thin, blue!70!black] (\a:1.1) -- (0,0);
+    }
+
+    % Discrete points: x_k = alpha^k x_0
+    \foreach \a in {0,45,...,315} {
+        \foreach \k in {0,...,#2} {
+            \pgfmathsetmacro{\r}{2.2*(#1)^\k}
+            \fill[blue!70!black] (\a:\r) circle (1.4pt);
+        }
+    }
+
+    % Labels on the positive x-axis ray
+    \foreach \k in {0,1,2} {
+        \pgfmathsetmacro{\r}{2.2*(#1)^\k}
+        \node[above=1pt, font=\scriptsize] at (0:\r) {$x_{\k}$};
+    }
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.6) {\small $\alpha=#1$};
+\end{tikzpicture}%
+}
+
+% Macro: orbit of x_{n+1} = alpha x_n with -1 < alpha < 0 (it jumps around the origin)
+% Usage: \discretejump{alpha}{number of points}
+\newcommand{\discretejump}[2]{%
+\begin{tikzpicture}[scale=0.9]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.6,0) -- (2.6,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.6) -- (0,2.6) node[above] {$y$};
+
+    % The line through the origin that contains the orbit (angle 30 degrees)
+    \draw[thin, blue!70!black] (30:-2.4) -- (30:2.4);
+
+    % Jumps x_k -> x_{k+1} (curved arrows) and points
+    \pgfmathtruncatemacro{\Nm}{#2-1}
+    \foreach \k in {0,...,\Nm} {
+        \pgfmathsetmacro{\ra}{2.2*(#1)^\k}
+        \pgfmathsetmacro{\rb}{2.2*(#1)^(\k+1)}
+        \draw[blue!70!black, -{Stealth[length=1.8mm]}, bend left=45]
+            (30:\ra) to (30:\rb);
+    }
+    \foreach \k in {0,...,#2} {
+        \pgfmathsetmacro{\r}{2.2*(#1)^\k}
+        \fill[blue!70!black] (30:\r) circle (1.4pt);
+    }
+
+    % Labels
+    \foreach \k in {0,1,2} {
+        \pgfmathsetmacro{\r}{2.2*(#1)^\k}
+        \node[font=\scriptsize, fill=white, inner sep=1pt] at (30:\r) {$x_{\k}$};
+    }
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.6) {\small $\alpha=#1$};
+\end{tikzpicture}%
+}
+
+% Macro: orbits of (x_{n+1}, y_{n+1}) = (alpha x_n, beta y_n)
+% Usage: \diagmap{alpha}{beta}{N}{x0}{y0}{x1}{y1}
+%   N         : number of jumps drawn
+%   (x0,y0)   : first initial condition (blue), must be in the first quadrant
+%   (x1,y1)   : second initial condition (green), must be in the first quadrant
+% Curves: |y| = C |x|^p, with p = log|beta| / log|alpha|, drawn only in the quadrants
+% that the orbit actually visits (depends on the signs of alpha and beta).
+\newcommand{\diagmap}[7]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    % Exponent of the curves, signs, and number of quadrants visited
+    \pgfmathsetmacro{\pp}{ln(abs(#2))/ln(abs(#1))}
+    \pgfmathsetmacro{\sxm}{ifthenelse(#1<0,-1,1)}
+    \pgfmathsetmacro{\sym}{ifthenelse(#2<0,-1,1)}
+    \pgfmathtruncatemacro{\nq}{ifthenelse((#1>0)&&(#2>0),0,1)}
+    \pgfmathtruncatemacro{\Nm}{#3-1}
+
+    \begin{scope}
+        \clip (-2.2,-2.2) rectangle (2.2,2.2);
+
+        \foreach \xo/\yo/\col in {#4/#5/blue!70!black, #6/#7/green!50!black} {
+            % Curves containing the orbit (original quadrant, plus the mirrored one if needed)
+            \foreach \q in {0,...,\nq} {
+                \pgfmathsetmacro{\fx}{ifthenelse(\q==0,1,\sxm)}
+                \pgfmathsetmacro{\fy}{ifthenelse(\q==0,1,\sym)}
+                % The cap min(...,30) avoids "Dimension too large" near the origin
+                \draw[\col, opacity=0.45, thin, domain=0.05:2.2, samples=60,
+                      smooth, variable=\u]
+                    plot ({\fx*\u}, {\fy*\yo*min((\u/\xo)^(\pp),30)});
+            }
+            % Jumps P_n -> P_{n+1}
+            \foreach \n in {0,...,\Nm} {
+                \pgfmathsetmacro{\px}{\xo*(#1)^\n}
+                \pgfmathsetmacro{\py}{\yo*(#2)^\n}
+                \pgfmathsetmacro{\qx}{\xo*(#1)^(\n+1)}
+                \pgfmathsetmacro{\qy}{\yo*(#2)^(\n+1)}
+                \draw[gray, thin, -{Stealth[length=1.5mm]},
+                      shorten >=1.5pt, shorten <=1.5pt] (\px,\py) -- (\qx,\qy);
+            }
+            % Discrete points P_n = (alpha^n x0, beta^n y0)
+            \foreach \n in {0,...,#3} {
+                \pgfmathsetmacro{\px}{\xo*(#1)^\n}
+                \pgfmathsetmacro{\py}{\yo*(#2)^\n}
+                \fill[\col] (\px,\py) circle (1.5pt);
+            }
+        }
+    \end{scope}
+
+    % Arrows on the axes: image of the points (+-1.2,0) and (0,+-1.2) after one step.
+    % Pointing inwards = contraction, outwards = expansion; longer = stronger effect.
+    \foreach \s in {1,-1} {
+        \draw[thick, red!70!black, -{Stealth[length=2.2mm]}]
+            ({\s*1.2},0) -- ({\s*1.2*abs(#1)},0);
+        \draw[thick, red!70!black, -{Stealth[length=2.2mm]}]
+            (0,{\s*1.2}) -- (0,{\s*1.2*abs(#2)});
+    }
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $\alpha=#1,\ \beta=#2$};
+\end{tikzpicture}%
+}
+
+% Macro: orbits of (x_{n+1}, y_{n+1}) = (alpha x_n + y_n, alpha y_n), alpha > 0, alpha != 1
+% Usage: \jordanmap{alpha}{N}{x0}{y0}{x1}{y1}
+%   N        : number of jumps drawn
+%   (x0,y0), (x1,y1) : two initial conditions with y0, y1 > 0
+% Invariant curve through (x0,y0): x = (x0/y0) y + y ln(y/y0) / (alpha ln(alpha)).
+% The map commutes with (x,y) -> (-x,-y), so the curves in y<0 are the 180-degree rotated ones.
+\newcommand{\jordanmap}[6]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    \pgfmathtruncatemacro{\Nm}{#2-1}
+    \pgfmathsetmacro{\den}{#1*ln(#1)}   % alpha * ln(alpha)
+
+    \begin{scope}
+        \clip (-2.2,-2.2) rectangle (2.2,2.2);
+
+        \foreach \xo/\yo/\col in {#3/#4/blue!70!black, #5/#6/green!50!black} {
+            % Invariant curve (upper half-plane) and its rotated copy (lower half-plane)
+            \foreach \rot in {0,180} {
+                \begin{scope}[rotate=\rot]
+                    \draw[\col, opacity=0.45, thin, domain=0.02:2.2, samples=50,
+                          smooth, variable=\u]
+                        plot ({(\xo/\yo)*\u + \u*ln(\u/\yo)/\den}, {\u});
+                \end{scope}
+            }
+            % Jumps P_n -> P_{n+1}
+            \foreach \n in {0,...,\Nm} {
+                \pgfmathsetmacro{\px}{\xo*(#1)^\n + \yo*\n*(#1)^(\n-1)}
+                \pgfmathsetmacro{\py}{\yo*(#1)^\n}
+                \pgfmathsetmacro{\qx}{\xo*(#1)^(\n+1) + \yo*(\n+1)*(#1)^\n}
+                \pgfmathsetmacro{\qy}{\yo*(#1)^(\n+1)}
+                \draw[gray, thin, -{Stealth[length=1.5mm]},
+                      shorten >=1.5pt, shorten <=1.5pt] (\px,\py) -- (\qx,\qy);
+            }
+            % Discrete points P_n
+            \foreach \n in {0,...,#2} {
+                \pgfmathsetmacro{\px}{\xo*(#1)^\n + \yo*\n*(#1)^(\n-1)}
+                \pgfmathsetmacro{\py}{\yo*(#1)^\n}
+                \fill[\col] (\px,\py) circle (1.5pt);
+            }
+        }
+
+        % Invariant line y = 0: points alpha^n x_0 run along the x-axis
+        \foreach \s in {1,-1} {
+            \foreach \n in {0,...,#2} {
+                \pgfmathsetmacro{\px}{\s*1.8*(#1)^\n}
+                \fill[red!70!black] (\px,0) circle (1.4pt);
+            }
+        }
+    \end{scope}
+
+    % Arrows on the x-axis: image of (+-1.2,0) after one step
+    \foreach \s in {1,-1} {
+        \draw[thick, red!70!black, -{Stealth[length=2.2mm]}]
+            ({\s*1.2},0) -- ({\s*1.2*#1},0);
+    }
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $\alpha=#1$};
+\end{tikzpicture}%
+}
+
+% Macro: orbits of z_{n+1} = R * Rot(theta) z_n
+% Usage: \spiralmap{R}{theta in DEGREES}{N}{r0}{phi0 in DEGREES}
+%   N     : number of jumps drawn
+%   r0    : initial radius, phi0: initial angle (the second orbit is the first rotated by 180 degrees)
+% Point P_n:  radius r0*R^n, angle phi0 + n*theta.
+% Interpolating curve (t real): radius r0*R^t, angle phi0 + t*theta (a logarithmic spiral).
+\newcommand{\spiralmap}[5]{%
+\begin{tikzpicture}[scale=0.75]
+    % Coordinate axes
+    \draw[-{Stealth}, gray] (-2.4,0) -- (2.4,0) node[right] {$x$};
+    \draw[-{Stealth}, gray] (0,-2.4) -- (0,2.4) node[above] {$y$};
+
+    \pgfmathtruncatemacro{\Nm}{#3-1}
+    \pgfmathsetmacro{\lnR}{ln(#1)}
+
+    \begin{scope}
+        \clip (-2.2,-2.2) rectangle (2.2,2.2);
+
+        \foreach \rot/\col in {0/blue!70!black, 180/green!50!black} {
+            % Interpolating spiral (faded)
+            \draw[\col, opacity=0.4, thin, domain=0:#3, samples=\the\numexpr 6*#3\relax,
+                  smooth, variable=\t]
+                plot ({#4*exp(\t*\lnR)*cos(#5+\rot+\t*#2)},
+                      {#4*exp(\t*\lnR)*sin(#5+\rot+\t*#2)});
+
+            % Jumps P_n -> P_{n+1}
+            \foreach \n in {0,...,\Nm} {
+                \pgfmathsetmacro{\ra}{#4*(#1)^\n}
+                \pgfmathsetmacro{\aa}{#5+\rot+\n*#2}
+                \pgfmathsetmacro{\rb}{#4*(#1)^(\n+1)}
+                \pgfmathsetmacro{\ab}{#5+\rot+(\n+1)*#2}
+                \draw[gray, thin, -{Stealth[length=1.5mm]},
+                      shorten >=1.5pt, shorten <=1.5pt] (\aa:\ra) -- (\ab:\rb);
+            }
+
+            % Discrete points
+            \foreach \n in {0,...,#3} {
+                \pgfmathsetmacro{\ra}{#4*(#1)^\n}
+                \pgfmathsetmacro{\aa}{#5+\rot+\n*#2}
+                \fill[\col] (\aa:\ra) circle (1.5pt);
+            }
+        }
+    \end{scope}
+
+    % Label of the first point of the blue orbit
+    \node[font=\scriptsize, above right=-1pt] at (#5:#4) {$x_0$};
+
+    \fill (0,0) circle (1.5pt);
+    \node[below] at (0,-2.4) {\small $R=#1,\ \theta=#2^\circ$};
 \end{tikzpicture}%
 }
 

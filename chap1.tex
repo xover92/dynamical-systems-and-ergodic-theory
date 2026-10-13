@@ -73,6 +73,7 @@ Other than uniqueness and existence, we will also be implicitly assuming  all so
         \frac{dx}{dt}=x^2 \Leftrightarrow \frac{dx}{x^2}=dt\Leftrightarrow\int_1^x\frac{d\xi}{\xi^2}=\int_0^td\tau\Leftrightarrow\left[-\frac{1}{\xi}\right]^x_1=t  \Leftrightarrow 1-\frac{1}{x}=t\Leftrightarrow x=\frac{1}{1-t}
     \end{equation*}
     \begin{tikzpicture}
+    \centering
     \begin{axis}
     % Plot left branch (x < 1)
     \addplot [domain=-3:0.9, samples=100, blue, thick] {1/(1-x)};
@@ -835,6 +836,7 @@ For now on, we will always assume $A$ is already in Jordan form. This is rapidly
 Let's spice things up a bit.
 
 \begin{example}
+\label{ex:hyperbolic}
     Let the A in \autoref{eq:ivp_2d} be:
     \begin{equation*}
         A=\begin{bmatrix}
@@ -908,6 +910,7 @@ The results of this are shown in \autoref{fig:diagonal_phase_portraits}.
 What about complex coefficients?
 
 \begin{example}
+\label{ex:complex_coeff}
     Let the A in \autoref{eq:ivp_2d} be:
     \begin{equation*}
         A=\begin{bmatrix}
@@ -1058,14 +1061,10 @@ What about complex coefficients?
         \caption{Center, $a=0,\ b<0$ (clockwise).}
     \end{subfigure}
 
-    \caption{Phase portraits of $\dot{z}=Bz$ with $e^{tB}=e^{at}R_{bt}$. The sign of $a$
-    determines whether trajectories move away from ($a>0$) or towards ($a<0$) the origin,
-    while the sign of $b$ determines the sense of rotation. Arrows indicate the direction
-    of increasing time.}
+    \caption{Phase portraits of $\dot{z}=Bz$ with $e^{tB}=e^{at}R_{bt}$. $a$ determines whether trajectories move away from ($a>0$) or towards ($a<0$) the origin, while $b$ determines the sense of rotation. Arrows indicate the direction of time.}
     \label{fig:spiral_phase_portraits}
 \end{figure}
 \end{example}
-
 
 We are missing a case: the Jordan form\footnote{https://www.youtube.com/watch?v=0EcFQ7j4qo4 (This was the last one I promise.)}.
 \begin{example}
@@ -1178,7 +1177,560 @@ where the Jacobian is defined as:\begin{equation*}
 \end{bmatrix} \end{equation*}
 
 By doing so, we may linearize the ODE as follows: \begin{equation*}
-    \dot{x}=J_f(x-\bar{x})\Rightarrow \dot{y}=J_fy,\,y=x-\bar{x}
+    \dot{x}=J_f(x-\bar{x})\Rightarrow \dot{y}=J_fy,\qquad y=x-\bar{x}
 \end{equation*}
 
-We have to remember that we are dealing with an approximated solution, extremely close to $\bar{x}$. We will later see that, in some cases, the linear system and the non-linear system are conjugate to each other for any time, if we keep close to the fixed point.
+We have to remember that we are dealing with an approximated solution, extremely close to $\bar{x}$. We will later see that, in some cases, the linear system and the non-linear system are conjugate to each other for any time, if we keep close to the fixed point. To do that, we must first introduce hyperbolic points.
+
+\begin{definition}
+    The fixed point $\bar{x}$ is called hyperbolic if $D_{\bar{x}}f$ has no eigenvalue on the imaginary line, meaning that, letting $\lambda$ be an eigenvalue, $Im \lambda=0$ if $Re \lambda=0$.
+\end{definition}
+
+In 2D, hyperbolic behaviour is the one we found in \autoref{ex:hyperbolic}: one of the directions is contracting, while the other one is expanding. To be precise, situations in which the directions are both contracting (or expanding?) but with different magnitudes, as we found in the same example, are still considered hyperbolic. Because of this, we define truly hyperbolic points.\footnote{The professor made this distinction, but it is very uncommon in the literature.}
+
+\begin{definition}
+    The fixed point $\bar{x}$ is called truly hyperbolic if $D_{\bar{x}}f$ has one eigenvalue with a positive real part and one with a negative real part.
+\end{definition}
+
+To properly understand what is NOT hyperbolic, you may look at \autoref{ex:complex_coeff}, which gave us a spiral. As a homework, consider $A=[i 0 i 0]\Rightarrow B=[0 -1 1 0]$ and verify that $e^{tB}$ is not hyperbolic. 
+
+We are now ready to explain how legitimate the linearization we did at the start of the section is.
+
+\begin{theorem}[Hartman-Grobmann theorem for flows]
+    Let $\phi^t$ be the "partial flow"\footnote{Meaning not defined for every t} of $\dot{x}=f(x)$ where \begin{equation*}
+        f(x): \Omega\rightarrow\mathbb{R}^d,\, \Omega\subseteq \mathbb{R}^{d},\, f(x)\in C^1
+    \end{equation*}
+    Let $\bar{x}$ be a hyperbolic fixed point and let \begin{equation*}
+        \tilde{\phi}^t(y)=e^{tA}y,\qquad A=Jf_{\bar{x}}
+    \end{equation*} be the flow of $\dot{y}=Ay$.
+    
+    Then, there are a neighbourhood U of $\bar{x}$ and a neighbourhood V of 0 and a homeomorphism\footnote{A continuous bijective function with continuous inverse} h from U to V such that $\phi^t(x)=(h^{-1}\circ \tilde{\phi}^t\circ h)(x)$ for all $x\in U$ and a $t\in\mathbb{R}$ such that $\phi^t(x)\in U$, which in turn implies (it's actually an iff\footnote{If and only if}) that $h(x)$ is in U and $\tilde{\phi^t}(h(x))$ is in V.
+
+    In mathematical terms: \begin{align*}
+        \phi^t\text{ is the partial flow of }\dot{x}=f(x),\,f(x): \Omega\rightarrow\mathbb{R}^d,\, \Omega\subseteq \mathbb{R}^{d},\, f(x)\in C^1, \\
+        \bar{x}\text{ is a hyberbolic fixed point},\, \tilde{\phi}^t(y)=e^{tA}y,\, A=Jf_{\bar{x}}\text{ is the flow of }\dot{y}=Ay \Rightarrow \\
+        \exists U \text{ nbhd of } \bar{x},\, V \text{ nbhd of } 0,\, h: U\rightarrow V \text{ homeomorfism } | \\
+        \phi^t(x)=(h^{-1}\circ \tilde{\phi}^t\circ h)(x) \forall x\in U \land \exists t \in\mathbb{R}|\phi^{t}\in U(\Leftrightarrow h(x)\in V, \tilde{\phi^t}(h(x))\in V)
+    \end{align*}
+\end{theorem}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    >=Stealth,
+    every node/.style={font=\small},
+    traj/.style={thick, blue!60!black, -{Stealth[length=2.5mm]}},
+    pt/.style={circle, fill=black, inner sep=1.5pt},
+    axis/.style={gray, -{Stealth[length=2mm]}}
+]
+
+% ---------- Neighbourhood U (irregular blob) ----------
+\draw[thick, fill=gray!10, smooth cycle, tension=0.8]
+    plot coordinates {(0,0.3) (-0.1,2.2) (1.3,3.4) (3.2,3.1) (4.1,1.6) (3.0,-0.2)};
+\node at (0.5,3.0) {$U$};
+
+\node[pt, label=below:{$\bar{x}$}] (xbar) at (2,1.5) {};
+\node[pt, label=left:{$x$}] (x) at (0.9,0.8) {};
+\node[pt, label=above right:{$\phi^t(x)$}] (phix) at (3.0,2.4) {};
+\draw[traj] (x) to[out=70, in=190] (phix);
+\node[blue!60!black] at (1.2,2.0) {$\phi^t$};
+
+% ---------- Neighbourhood V (ellipse centred at 0, with axes) ----------
+\begin{scope}[xshift=8.2cm, yshift=1.5cm]
+  \draw[thick, fill=gray!10] (0,0) ellipse (2.1 and 1.7);
+  \node at (-1.5,1.3) {$V$};
+
+  % axes
+  \draw[axis] (-2.5,0) -- (2.5,0) node[right] {$y_1$};
+  \draw[axis] (0,-2.0) -- (0,2.0) node[above] {$y_2$};
+
+  \node[pt, label={[xshift=-3pt, yshift=-14pt]above right:{$0$}}] (zero) at (0,0) {};
+
+  \node[pt, label=left:{$h(x)$}] (hx) at (-1.1,-0.8) {};
+  \node[pt, label=above right:{$\tilde\phi^t(h(x))$}] (phihx) at (1.0,0.9) {};
+  \draw[traj] (hx) to[out=20, in=-130] (phihx);
+  \node[blue!60!black] at (0.6,-0.8) {$\tilde\phi^t$};
+\end{scope}
+
+% ---------- Maps h and h^{-1} ----------
+\draw[->, thick] (4.2,2.7) to[bend left=15] node[above] {$h$} (5.9,2.7);
+\draw[->, thick] (5.9,0.5) to[bend left=15] node[below] {$h^{-1}$} (4.2,0.5);
+
+\end{tikzpicture}
+\caption{The homeomorphism $h\colon U\to V$ maps the trajectory of the nonlinear flow $\phi^t$ in the neighbourhood $U$ of the hyperbolic fixed point $\bar{x}$, going from $x$ to $\phi^t(x)$, onto the trajectory of the linear flow $\tilde{\phi}^t(y)=e^{tA}y$ in the neighbourhood $V$ of the origin, going from $h(x)$ to $\tilde{\phi}^t(h(x))$. Hence $\phi^t = h^{-1}\circ\tilde{\phi}^t\circ h$ as long as the trajectory stays in $U$.}
+\label{fig:hartman-grobman}
+\end{figure}
+
+Basically, the theorem tells us that solutions are mapped in the linearized problem, when we limit ourselves to U and V. It's important thet the point is hyperbolic. Say it's not hyperbolic, say it's actually attracting: that works at all times, ??
+
+\begin{observation}
+    Although f is differentiable, h is not guaranteed to be a diffeomorphism\footnote{A differentiable bijective function with differentiable inverse.}, which means that you don't know the shape of the phase diagram in U just because you know it in V as trivially: if it was differentiable, you would have a simpler transformation.
+\end{observation}
+
+\subsubsection{Application: Lotka-Volterra equation}
+Now, we shall see an application of the theory, the Lotka-Volterra model for animal populations. The model is the following:
+\begin{equation*}
+    \begin{cases}
+        \dot{x}=x(\alpha-\beta y) \\
+        \dot{y}=-y(\gamma-\delta x) \qquad \alpha, \beta, \gamma, \delta >0 \\
+        x(0)=x_0 \\
+        y(0)=y_0 \qquad x,\, y \in \Omega,\, \Omega\subseteq (\mathbb{R}^+)^2
+    \end{cases}
+\end{equation*}
+where x is a population of preys while y is a population of predators.
+
+Let's look for the fixed points. The vector field is given by $f(x, y)=\left(\alpha x- \beta xy, -\gamma y+\delta xy\right)$, so we may proceed as follows: \begin{equation*}
+    \begin{cases}
+        x(\alpha -\beta y)=0 \\
+        -y(\gamma-\delta x)=0 
+    \end{cases} \Rightarrow (x_0,y_0)=(0, 0),\, (x_1, y_1)=\left(\frac{\gamma}{\delta}, \frac{\alpha}{\beta}\right)
+\end{equation*}
+
+Let's now linearize around the fixed points. We shall start by finding the Jacobian: \begin{equation*}
+    Df_{x,y}=Jf_{x,y}=\begin{bmatrix}
+        \partial_x f_x & \partial_y f_x \\
+        \partial_x f_y & \partial_y f_y
+    \end{bmatrix}=\begin{bmatrix}
+        \alpha-\beta y & -\beta x \\
+        \delta y & -\gamma+\delta x
+    \end{bmatrix}
+\end{equation*}
+And then we compute it at the fixed points:
+\begin{equation*}
+    Jf_{x_0, y_0}=\begin{bmatrix}
+        \alpha & 0 \\
+        0 & -\gamma
+    \end{bmatrix}
+\end{equation*}
+\begin{equation*}
+    Jf_{x_1, y_1}=\begin{bmatrix}
+        0 & -\beta\frac{\gamma}{\delta}\\
+        \delta \frac{\alpha}{\beta} & 0
+    \end{bmatrix}=A
+\end{equation*}
+
+We may ask ourselves if this is a hyperbolic point. That can be shown by computing the eigenvalues:
+\begin{equation*}
+    \det(A-\lambda I)=\lambda^2+\alpha\gamma=0 \Rightarrow \lambda= \pm i\sqrt{\alpha\gamma}
+\end{equation*}
+So, $x_1,\,y_1$ is not hyperbolic. 
+
+\begin{figure}[ht]
+    \centering
+    % ---------- (a) Linearized system ----------
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.15]
+            \lvframe
+            % Around (0,0): saddle, the axes are the invariant lines
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]}] (0,0) -- (1.3,0);
+            \draw[thick, red!70!black, -{Stealth[length=2.2mm]}] (0,1.3) -- (0,0.05);
+            % Around (1,1): centre, circles run counterclockwise
+            \foreach \r in {0.3,0.6,0.9} {
+                \draw[thick, blue!70!black, postaction={decorate},
+                      decoration={markings,
+                          mark=at position 0.12 with {\arrow{Stealth[length=2.2mm]}},
+                          mark=at position 0.62 with {\arrow{Stealth[length=2.2mm]}}}]
+                    (1,1) ++(\r,0) arc (0:360:\r);
+            }
+        \end{tikzpicture}
+        \caption{Linearized system: a saddle at $(0,0)$ and a centre at $(\frac{\gamma}{\delta},\frac{\alpha}{\beta})$ (closed orbits).}
+    \end{subfigure}\hfill
+    % ---------- (b) Nonlinear system ----------
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.15]
+            \lvframe
+            \lvorbit{1.4}{220}
+            \lvorbit{2.0}{240}
+            \lvorbit{2.8}{290}
+        \end{tikzpicture}
+        \caption{Nonlinear system: the orbits are closed curves around $(\frac{\gamma}{\delta},\frac{\alpha}{\beta})$ and never reach $(0,0)$.}
+    \end{subfigure}
+
+    \caption{Phase portraits of the Lotka-Volterra model with $\alpha=\beta=\gamma=\delta=1$.
+    Arrows indicate the direction of increasing time (counterclockwise around the second fixed point).}
+    \label{fig:lotka_volterra}
+\end{figure}
+
+\begin{proposition}
+    This system has a constant of motion Q: \begin{equation*}
+    Q: (\mathbb{R}^+)^2\rightarrow\mathbb{R}, \qquad Q=-\delta x+\gamma log x -\beta y+\alpha log y
+\end{equation*}
+\end{proposition}
+\begin{proof}
+    We aim at proving that for every solution $x(t),\, y(t)$, $\frac{dQ}{dt}=0$. 
+    
+    So, by substituting the values of $\dot{x}$ and $\dot{y}$, we may easily see that: \begin{equation*}
+    \dot{Q}=-\delta \dot{x}+\gamma \frac{\dot{x}}{x}-\beta \dot{y}+\alpha \frac{\dot{y}}{y}=-\alpha \delta x +\beta\delta xy+\alpha\gamma-\beta\gamma y+\beta\gamma y-\beta\delta xy-\alpha\gamma+\alpha\delta x=0\end{equation*}
+\end{proof}
+
+
+\section{Linear maps}
+Let $T(x)$ be a linear map defined as follows\footnote{Assume B to be in Jordan form.}: \begin{equation}
+    T(x)=Bx,\, x\in\mathbb{R}^d,\, B\in\mathbb{R}^{d\times d}
+    \label{eq:lin_map}
+\end{equation}
+The system solves itself. The orbit O is the following\footnote{$O(x)$ may be occasionally called $x_n=B^{n}x_0$ from now on.}:
+\begin{equation*}
+    O(x)=(B^nx)_{n\in\mathbb{N}}
+\end{equation*}
+
+The set of fixed points of this map is given by: \begin{equation*}
+    Fix(T)=Ker(B-I)
+\end{equation*}
+which directly implies that $0\in Fix(T)$.
+In other words, finding the fixed points means to solve the following equation:
+\begin{equation*}
+    Bx=x \Rightarrow (B-I)x=0
+\end{equation*}
+
+\subsection{Exhaustive list of examples in 2D}
+\begin{example}
+    Let the B in \autoref{eq:lin_map} be defined as follows:
+    \begin{equation*}
+        B=\begin{bmatrix}
+            \alpha & 0 \\  0 & \alpha
+        \end{bmatrix}=\alpha I
+    \end{equation*}
+    We may easily find that:
+    \begin{equation*}
+        \begin{bmatrix}
+            x_n \\ y_n
+        \end{bmatrix}=\begin{bmatrix}
+            \alpha^n x_0 \\ \alpha^n y_0
+        \end{bmatrix}
+    \end{equation*}
+
+    \begin{figure}[ht]
+        \centering
+        \begin{subfigure}[t]{0.48\textwidth}
+            \centering
+            \discretestar{0.7}{8}
+            \caption{$0<\alpha<1$: the points lie on straight lines and approach the origin monotonically.}
+        \end{subfigure}\hfill
+        \begin{subfigure}[t]{0.48\textwidth}
+            \centering
+            \discretejump{-0.7}{8}
+            \caption{$-1<\alpha<0$: the points alternate between the two sides of the origin on the same line.}
+        \end{subfigure}
+
+        \caption{Orbits of $x_{n+1}=\alpha x_n$ for $B=\alpha I$. Dots are the discrete points $x_n=\alpha^n x_0$. Since $|\alpha|<1$, the origin is attracting and the distance to it decreases exponentially, as $|\alpha|^n$.}
+        \label{fig:discrete_star}
+    \end{figure}
+\end{example}
+
+\begin{example}
+    Let the B in \autoref{eq:lin_map} be defined as follows:
+    \begin{equation*}
+        B=\begin{bmatrix}
+           \alpha & 0 \\ 0 & \beta 
+        \end{bmatrix},\qquad \alpha,\,\beta\in\mathbb{R}
+    \end{equation*}
+    We may, again, easily find the solution to be the following: \begin{equation*}
+        \begin{bmatrix}
+            x_n \\ y_n
+        \end{bmatrix}=\begin{bmatrix}
+            \alpha^n x_0 \\ \beta^n y_0
+        \end{bmatrix}
+    \end{equation*}
+
+    To find the line, we want to eliminate $n$ from the system. We may easily find: \begin{equation*}
+        \frac{\log\left(\left|\frac{x_n}{x_0}\right|\right)}{\log(|\alpha|)}=n=\frac{\log\left(\left|\frac{y_n}{y_0}\right|\right)}{\log(|\beta|)}
+    \end{equation*}
+    By equating them: \begin{align*}
+        \log\left(\left|\frac{y_n}{y_0}\right|\right)=\frac{\log|\beta|}{\log|\alpha|}\log\left(\left|\frac{x_n}{x_0}\right|\right)&\Rightarrow\left|\frac{y_n}{y_0}\right|=\left|\frac{x_n}{x_0}\right|^{\frac{\log|\beta|}{\log|\alpha|}}\Rightarrow \\
+        |y|=C|x|^{\frac{\log|\beta|}{\log|\alpha|}},\qquad& C=\left|\frac{y_0}{x_0}\right|
+    \end{align*}
+
+    \begin{figure}[ht]
+    \centering
+    % ---------- Row 1: attractive cases, 0 < |beta| < |alpha| < 1 ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \diagmap{0.7}{0.49}{8}{2}{1.5}{2}{0.5}
+        \caption{Attractive node, $0<\beta<\alpha<1$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \diagmap{-0.7}{0.49}{8}{2}{1.5}{2}{0.5}
+        \caption{$-1<\alpha<0<\beta$: points jump around the $y$-axis.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \diagmap{0.7}{-0.49}{8}{2}{1.5}{2}{0.5}
+        \caption{$\alpha>0>\beta$: points jump around the $x$-axis.}
+    \end{subfigure}
+
+    \vspace{1em}
+
+    % ---------- Row 2: both negative, repulsive node, saddle ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \diagmap{-0.7}{-0.49}{8}{2}{1.5}{2}{0.5}
+        \caption{$\alpha,\beta<0$: points jump around the origin (quadrants I, III, I, III, \dots).}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \diagmap{1.3}{1.69}{4}{0.4}{0.1}{0.4}{0.3}
+        \caption{Repulsive node, $1<\alpha<\beta$.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \diagmap{1.3}{0.6}{5}{0.5}{2}{0.3}{1}
+        \caption{Saddle, $\beta<1<\alpha$: the $y$-axis contracts, the $x$-axis expands.}
+    \end{subfigure}
+    \caption{Orbits of $(x_{n+1},y_{n+1})=(\alpha x_n,\beta y_n)$. Dots are the points
+    $(\alpha^n x_0,\beta^n y_0)$ for two initial conditions, grey arrows are the jumps $x_n\to x_{n+1}$, and the curves are $|y|=C|x|^{\log|\beta|/\log|\alpha|}$. Red arrows on the axes show the effect of one step: inwards for contraction, outwards for expansion.}
+    \label{fig:diagonal_maps}
+\end{figure}
+\end{example}
+
+This example may also serve to introduce the concept of invariant curves.
+\begin{definition}
+    Any curve which contains an entire orbit is called an invariant curve. 
+\end{definition}
+
+Also, this whole hyperbolic behaviour can explain why we observe chaos: as much as that may be pub talk, the idea is easily inferrable from what we know. Imagine you are trying to repeat a trajectory: you mill, almost surely, miss the exact initial conditions. This will be mitigated on contracting directions, in which the trajectory will get closer. But say one direction is expanding: then the new trajectory, in that direction, will exponentially get further away from the points of the initial trajectory, thus making every one of them wildly different over some minor difference in initial conditions, as shown in the picture below. Obviously, in the real world, those differences may be minimal but will nonetheless be unpredictable. In general, truly hyperbolic points are important in physics because expanding directions are really common in Hamiltonian dynamics.
+
+\begin{tikzpicture}[>=Stealth, font=\small]
+ 
+  \definecolor{contr}{RGB}{30,90,200}
+  \definecolor{expan}{RGB}{210,40,40}
+  \definecolor{gener}{RGB}{20,140,60}
+ 
+  % orbita di riferimento x_1, ..., x_4
+  \coordinate (x1) at (0,0);
+  \coordinate (x2) at (3,0.8);
+  \coordinate (x3) at (6,0.2);
+  \coordinate (x4) at (9,1.0);
+ 
+  % orbita partita sull'asse che si contrae (spostamento orizzontale)
+  \coordinate (b1) at (-0.9,0);
+  \coordinate (b2) at (2.6,0.8);
+  \coordinate (b3) at (5.8,0.2);
+  \coordinate (b4) at (8.9,1.0);
+ 
+  % orbita partita sull'asse che si espande (spostamento verticale)
+  \coordinate (r1) at (0,0.4);
+  \coordinate (r2) at (3,1.5);
+  \coordinate (r3) at (6,1.5);
+  \coordinate (r4) at (9,3.3);
+ 
+  % orbita partita in un punto generico (entrambe le componenti)
+  \coordinate (g1) at (-0.9,0.3);
+  \coordinate (g2) at (2.6,1.35);
+  \coordinate (g3) at (5.8,1.05);
+  \coordinate (g4) at (8.9,2.5);
+ 
+  % assi locali: stessi in ogni punto
+  \foreach \k in {1,2,3,4}{
+    \begin{scope}[shift={(x\k)}]
+      \draw[contr, thick, ->] (-0.8,0) -- (-0.2,0);
+      \draw[contr, thick, ->] ( 0.8,0) -- ( 0.2,0);
+      \draw[expan, thick, ->] (0, 0.2) -- (0, 0.8);
+      \draw[expan, thick, ->] (0,-0.2) -- (0,-0.8);
+    \end{scope}
+  }
+ 
+  % curve
+  \draw[very thick] (x1) to[bend left=10] (x2) to[bend right=10] (x3) to[bend left=10] (x4);
+  \draw[thick, contr, dashed] (b1) to[bend left=10] (b2) to[bend right=10] (b3) to[bend left=10] (b4);
+  \draw[thick, expan, dashed] (r1) to[bend left=10] (r2) to[bend right=10] (r3) to[bend left=10] (r4);
+  \draw[thick, gener, dashed] (g1) to[bend left=10] (g2) to[bend right=10] (g3) to[bend left=10] (g4);
+ 
+  % punti
+  \foreach \k in {1,2,3,4}{
+    \fill (x\k) circle (2pt);
+    \fill[contr] (b\k) circle (1.8pt);
+    \fill[expan] (r\k) circle (1.8pt);
+    \fill[gener] (g\k) circle (1.8pt);
+  }
+ 
+  % etichette
+  \node[below right] at (x1) {$x_1$};
+  \node[below right] at (x2) {$x_2$};
+  \node[below right] at (x3) {$x_3$};
+  \node[below right] at (x4) {$x_4$};
+ 
+  % legenda
+  \draw[thick, contr, dashed] (0,-1.7) -- (0.7,-1.7);
+  \node[right] at (0.8,-1.7) {on contracting axis};
+  \draw[thick, expan, dashed] (3.7,-1.7) -- (4.4,-1.7);
+  \node[right] at (4.4,-1.7) {on expanding axis};
+  \draw[thick, gener, dashed] (7.2,-1.7) -- (7.9,-1.7);
+  \node[right] at (8.0,-1.7) {generic point};
+ 
+\end{tikzpicture}
+
+\begin{example}
+    \begin{figure}[ht]
+        \centering
+        \begin{subfigure}[t]{0.48\textwidth}
+            \centering
+            \jordanmap{0.7}{10}{-2}{1.2}{-2}{0.5}
+            \caption{$0<\alpha<1$: attractive, the orbits go to the origin.}
+        \end{subfigure}\hfill
+        \begin{subfigure}[t]{0.48\textwidth}
+            \centering
+            \jordanmap{1.4}{5}{-0.3}{0.15}{0.5}{0.1}
+            \caption{$\alpha>1$: repulsive, the orbits leave the origin.}
+        \end{subfigure}
+
+        \caption{Orbits of $(x_{n+1},y_{n+1})=(\alpha x_n+y_n,\ \alpha y_n)$. Dots are the points
+        $P_n$ for two initial conditions (blue and green), thin grey arrows are the jumps
+        $P_n\to P_{n+1}$, and the faded curves are the invariant curves
+        $x=\frac{x_0}{y_0}y+\frac{y\log(y/y_0)}{\alpha\log\alpha}$.
+        The red dots and arrows on the $x$-axis show the only invariant line.}
+        \label{fig:jordan_maps}
+    \end{figure}
+    Let the B in \autoref{eq:lin_map} be defined as follows:
+    \begin{equation*}
+        B=\begin{bmatrix}
+            \alpha & 1 \\ 0 & \alpha
+        \end{bmatrix}, \qquad\alpha\in\mathbb{R}
+    \end{equation*}
+    \begin{equation*}
+        B^n=\begin{bmatrix}
+            \alpha^n & n\alpha^{n-1} \\ 0 & \alpha^n
+        \end{bmatrix}\Rightarrow\begin{bmatrix}
+            x_n \\ y_n
+        \end{bmatrix}=\begin{bmatrix}
+            x_0\alpha^n+y_0n\alpha^{n-1} \\ y_0\alpha^n
+        \end{bmatrix}
+    \end{equation*}
+    Assuming $\alpha\in\mathbb{R}^+/\{1\}$\footnote{Homework: do the case $\alpha\in\mathbb{R}^-/{-1}$.}. We use the usual technique to find the invariant curve: \begin{equation*}
+        n=\frac{\log\left(\frac{y_n}{y_0}\right)}{\log(\alpha)}
+    \end{equation*}
+    Plug that in $x_n$ and you get:
+    \begin{equation*}
+        x_n=\frac{y_n}{y_0}x_0+\frac{\log\left(\frac{y_n}{y_0}\right)}{\log(\alpha)}\frac{1}{\alpha}\frac{y_n}{y_0}\Rightarrow x=\frac{x_0}{y_0}y+\frac{y\log\left(\frac{y_n}{y_0}\right)}{\alpha \log(\alpha)}
+    \end{equation*}
+    (disegno dell'aspetto per alpha maggiore di 1 e anche minore ma maggiore di 0, stessa cosa che per le ODE comunque) 
+
+    In general, the equation is given by:\begin{equation*}
+        x=y(C+\frac{\log|y|}{\alpha \log|\alpha|})
+    \end{equation*}
+\end{example}
+
+\begin{example}
+    \begin{figure}[ht]
+        \centering
+        \begin{subfigure}[t]{0.48\textwidth}
+            \centering
+            \spiralmap{1.2}{-40}{12}{0.25}{20}
+            \caption{$R>1,\ \theta<0$: repulsive, the points spiral outwards clockwise.}
+        \end{subfigure}\hfill
+        \begin{subfigure}[t]{0.48\textwidth}
+            \centering
+            \spiralmap{0.85}{35}{14}{2}{20}
+            \caption{$0<R<1,\ \theta>0$: attractive, the points spiral inwards counterclockwise.}
+        \end{subfigure}
+
+        \caption{Orbits of $z_{n+1}=\hat{B}z_n$ with $\hat{B}=R\,R_\theta$. Dots are the points
+        $z_n=R^nR_{n\theta}z_0$ for two initial conditions (blue and green, one the 180° rotation of the other),
+        thin grey arrows are the jumps $z_n\to z_{n+1}$, and the faded curves are the
+        logarithmic spirals interpolating them.}
+        \label{fig:spiral_maps}
+    \end{figure}
+    Let the B in \autoref{eq:lin_map} be defined as follows:
+    \begin{equation*}
+        B=\begin{bmatrix}
+            c+id & 0 \\ 0 & c-id
+        \end{bmatrix}=\begin{bmatrix}
+            Re^{i\theta} & 0 \\ 0 & Re^{-i\theta}
+        \end{bmatrix},\, R=\sqrt{c^2+d^2},\, \theta=\arctan\left(\frac{d}{c}\right)
+    \end{equation*}
+    Taking the usual $D=
+        \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & i \\ i & 1
+    \end{bmatrix}$, we do:\begin{equation*}
+        D^{-1}BD=R\begin{bmatrix}
+            cos(\theta) & -sin(\theta) \\
+            sin(\theta) & cos(\theta)
+        \end{bmatrix}=\hat{B}
+    \end{equation*}
+    We change coordinates, $z=D^{-1}x$, which impiles \begin{equation*}
+        x_{n+1}=Bx_n \iff z_{n+1}=\hat{B}z_n
+    \end{equation*}
+
+    Witht the usual abuse of notation: \begin{equation*} \begin{bmatrix}
+        x_n \\ y_n
+         \end{bmatrix}
+    =\hat{B}\begin{bmatrix}
+        x_0 \\ y_0   \end{bmatrix}=R^n R_{n\theta}\frac{x_0}{y_0} \end{equation*}
+    \footnote{HW find the equation of the invariant curve (e.g. in polar coordinates)}
+\end{example}
+
+The reason we studied these examples is to approximate other maps.
+
+\subsection{Linearization of a map around a fixed point}
+
+\begin{tikzpicture}[>=Stealth, font=\small]
+ 
+  \definecolor{vec}{RGB}{30,90,200}
+  \definecolor{img}{RGB}{210,40,40}
+ 
+  % =================== sinistra: coordinate originali ===================
+  \begin{scope}
+    \draw[->, gray] (-0.3,0) -- (4.8,0) node[right] {$x_1$};
+    \draw[->, gray] (0,-0.3) -- (0,4.2) node[above] {$x_2$};
+    \node[below left, gray] at (0,0) {$0$};
+ 
+    % punto fisso, x e T(x)
+    \coordinate (xbar) at (2,1.5);
+    \coordinate (x)    at (3.2,2.3);
+    \coordinate (Tx)   at (2.6,2.9);
+ 
+    \draw[->, gray, thin] (0,0) -- (xbar);
+    \draw[->, vec, thick] (xbar) -- (x);
+    \draw[->, img, thick] (xbar) -- (Tx);
+    \draw[->, dashed, thick] (x) to[bend right=30] (Tx);
+ 
+    \fill (xbar) circle (2pt) node[below right] {$\bar x$};
+    \fill[vec] (x)  circle (2pt) node[right] {$x$};
+    \fill[img] (Tx) circle (2pt) node[above left] {$T(x)$};
+ 
+    \node[vec, below right, align=left] at (3.0,1.7) {$x-\bar x$};
+    \node[img, left=3pt] at (2.3,2.2) {$T(x)-\bar x$};
+ 
+    \node[above] at (2.2,4.6) {original coordinates};
+  \end{scope}
+ 
+  % =================== freccia di traslazione ===================
+  \draw[->, thick] (5.2,2.2) -- (7.2,2.2) node[midway, above] {$y=x-\bar x$};
+ 
+  % =================== destra: coordinate traslate ===================
+  \begin{scope}[shift={(10.4,1.5)}]
+    \draw[->, gray] (-2.4,0) -- (3.0,0) node[right] {$y_1$};
+    \draw[->, gray] (0,-1.7) -- (0,2.9) node[above] {$y_2$};
+ 
+    \coordinate (y)  at (1.2,0.8);
+    \coordinate (By) at (0.6,1.4);
+ 
+    \draw[->, vec, thick] (0,0) -- (y);
+    \draw[->, img, thick] (0,0) -- (By);
+    \draw[->, dashed, thick] (y) to[bend right=30] (By)
+      node[midway, right=2pt] {$\hat T$};
+ 
+    \fill (0,0) circle (2pt) node[below left] {$\bar x\mapsto 0$};
+    \fill[vec] (y)  circle (2pt) node[right] {$y$};
+    \fill[img] (By) circle (2pt) node[above left] {$\hat T(y)\approx By$};
+ 
+    \node[above] at (0.3,3.1) {coordinates centred at $\bar x$};
+  \end{scope}
+ 
+\end{tikzpicture}
+
+
+Suppose you have a map $T:M\rightarrow M$, $M\subseteq\mathbb{R}^d$ and that $T$ is $C^1$, and suppose you have a fixed point $\bar{x}\in Fix(T)$.
+
+For x close to $\bar{x}$, $T(x)=T(\bar{x})+J_{\bar{x}}T(x-\bar{x})+o(|x-\bar{x}|)$, calling the Jacobian B we can say:\begin{equation*}
+    T(x)-\bar{x}\approx B(x-\bar{x})
+\end{equation*}
+
+If we change coordinates, calling $y=x-\bar{x}$, then \begin{equation*}
+    \hat{T}(y)=T(y+\bar{x})-\bar{x}
+\end{equation*}
+and we can say \begin{equation*}
+    \hat{T}(y)\approx By
+\end{equation*}
