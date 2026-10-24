@@ -72,8 +72,9 @@ Other than uniqueness and existence, we will also be implicitly assuming  all so
     \begin{equation*}
         \frac{dx}{dt}=x^2 \Leftrightarrow \frac{dx}{x^2}=dt\Leftrightarrow\int_1^x\frac{d\xi}{\xi^2}=\int_0^td\tau\Leftrightarrow\left[-\frac{1}{\xi}\right]^x_1=t  \Leftrightarrow 1-\frac{1}{x}=t\Leftrightarrow x=\frac{1}{1-t}
     \end{equation*}
-    \begin{tikzpicture}
+
     \centering
+    \begin{tikzpicture}
     \begin{axis}
     % Plot left branch (x < 1)
     \addplot [domain=-3:0.9, samples=100, blue, thick] {1/(1-x)};
@@ -1724,7 +1725,10 @@ The reason we studied these examples is to approximate other maps.
 
 Suppose you have a map $T:M\rightarrow M$, $M\subseteq\mathbb{R}^d$ and that $T$ is $C^1$, and suppose you have a fixed point $\bar{x}\in Fix(T)$.
 
-For x close to $\bar{x}$, $T(x)=T(\bar{x})+J_{\bar{x}}T(x-\bar{x})+o(|x-\bar{x}|)$, calling the Jacobian B we can say:\begin{equation*}
+For x close to $\bar{x}$, \begin{equation*}
+    T(x)=T(\bar{x})+J_{\bar{x}}T(x-\bar{x})+o(|x-\bar{x}|)
+\end{equation*}
+by calling the Jacobian B and realizing that $T(\bar{x})=\bar{x}$ we can easily find:\begin{equation*}
     T(x)-\bar{x}\approx B(x-\bar{x})
 \end{equation*}
 
@@ -1734,3 +1738,211 @@ If we change coordinates, calling $y=x-\bar{x}$, then \begin{equation*}
 and we can say \begin{equation*}
     \hat{T}(y)\approx By
 \end{equation*}
+
+This implies the following: \begin{equation*}
+    \bar{x}\in Fix(T)\iff 0\in Fix(\hat{T})
+\end{equation*}
+
+Which means that $0=\hat{T}(0)$, or $0=\hat{T}(\bar{x})-\bar{x}$.
+
+In short:\begin{equation*}
+    T(x)\approx \bar{x}+B(x-\bar{x})\iff \hat{T}(y)\approx By
+\end{equation*}
+
+We shall now define what it means, in this case, to have a hyperbolic point, and develop the attached theory.
+
+\begin{definition}
+    A point $\bar{x}\in Fix(T)$ is called hyperbolic if $D_{\bar{x}}\approx J_{\bar{x}}T$ has no eigenvalue on the unit circle in $\mathbb{C}$ (i.e. no e-value has modulus 1).
+\end{definition}
+
+\begin{definition}
+    A point $\bar{x}\in Fix(T)$ is called truly hyperbolic if $D_{\bar{x}}\approx J_{\bar{x}}T$ has at least one eigenvalue inside and one outside the unit circle in $\mathbb{C}$.
+\end{definition}
+
+
+\begin{figure}[ht]
+    \centering
+    % ---------- (a) truly hyperbolic: one inside, one outside ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \eigplane{
+            \eigdot{0.45}{0}{$\lambda_1$}{above right}
+            \eigdot{1.7}{0}{$\lambda_2$}{above right}
+        }
+        \caption{Truly hyperbolic: $|\lambda_1|<1<|\lambda_2|$.}
+    \end{subfigure}\hfill
+    % ---------- (b) hyperbolic, not truly: both inside ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \eigplane{
+            \eigdot{0.4}{0.45}{$\lambda$}{above right}
+            \eigdot{0.4}{-0.45}{$\bar\lambda$}{below right}
+        }
+        \caption{Hyperbolic, not truly: $|\lambda|,|\bar\lambda|<1$.}
+    \end{subfigure}\hfill
+    % ---------- (c) not hyperbolic: on the circle ----------
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \eigplane{
+            \eigdot{0.5}{0.866}{$\lambda$}{above right}
+            \eigdot{0.5}{-0.866}{$\bar\lambda$}{below right}
+        }
+        \caption{Not hyperbolic: $|\lambda|=|\bar\lambda|=1$.}
+    \end{subfigure}
+
+    \caption{Eigenvalues of $D_{\bar{x}}T$ in the complex plane (red dots) relative to the unit
+    circle (blue). A fixed point is hyperbolic if no eigenvalue lies on the circle, and truly
+    hyperbolic if at least one lies strictly inside and at least one strictly outside.}
+    \label{fig:hyperbolic_unit_circle}
+\end{figure}
+
+\begin{definition}
+    If $A\in\mathbb{C}^{n\times n}$, we define $||A||$ as follows:\begin{equation*}
+        ||A||=max_{||x||=1}||Ax||
+    \end{equation*}
+\end{definition}
+
+\begin{observation}
+    The last definition entitles you to say that \begin{equation*}
+        ||Ax||\leq||A||\,||x|| \forall x\in\mathbb{C}^n
+    \end{equation*}
+    Which implies, by repeated application:
+    \begin{equation*}
+        ||B^nx_0||\leq ||B||^n||x_0||\rightarrow0 
+    \end{equation*}
+    if $||B||<1$.
+
+    So, this means that if a matrix has e-values with modulus less than 1, then the modulus of the matrix is too, so you know it's contracting, as it can expand as much as the modulus of all eigenvalues. Likewise, if they all have modulus bigger than 1 they are expanding. 
+\end{observation}
+
+\begin{observation}
+    Observe that $J_0\hat{T}=J_{\bar{x}}T$:
+    \begin{align*}
+        (J_0\hat{T})_{ij}=\frac{\partial \hat{T}_i(0)}{\partial y_j}&=\frac{\partial}{\partial y_j}(T_i(y+\bar{x})-\bar{x})|_{y=0}= \\
+        \left.\frac{\partial T_i(\bar{x}+y)}{\partial x_j+y_j}\right|_{y=0}&=\frac{\partial T_i}{\partial x_j}(\bar{x})=(J_{\bar{x}}T)_{ij}
+    \end{align*}
+    where we employed the usual trick with the chain rule.
+
+    \begin{figure}[ht]
+        \centering
+        \begin{tikzpicture}[scale=1.1]
+            % ---- Original axes (x, T(x)) ----
+            \draw[-{Stealth}, gray] (-0.2,0) -- (4.0,0) node[right] {$x$};
+            \draw[-{Stealth}, gray] (0,-0.2) -- (0,3.8) node[above] {$T(x)$};
+
+            % ---- New axes (y, \hat T(y)), centred at (xbar, xbar) = (1.5, 1.5) ----
+            \draw[-{Stealth}, red!70!black, dashed] (0.2,1.5) -- (4.0,1.5)
+                node[right, font=\small] {$y=x-\bar{x}$};
+            \draw[-{Stealth}, red!70!black, dashed] (1.5,0.2) -- (1.5,3.8)
+                node[above, font=\small] {$\hat{T}=T-\bar{x}$};
+
+            % ---- Diagonal and graph of T (the same curve for both coordinate systems) ----
+            \draw[gray, dotted] (0,0) -- (3.6,3.6);
+            \draw[thick, blue!70!black, domain=0.2:3.2, samples=40, smooth, variable=\x]
+                plot ({\x}, {1.5 + 0.5*(\x-1.5) + 0.2*(\x-1.5)^2});
+            \node[blue!70!black, below right] at (3.2,2.93) {graph of $T$ $=$ graph of $\hat{T}$};
+
+            % ---- Tangent at the fixed point ----
+            \draw[thick, black, domain=0.5:2.7, variable=\x]
+                plot ({\x}, {1.5 + 0.5*(\x-1.5)});
+            \node[above left, font=\small] at (0.5,1.0) {slope $=J_{\bar{x}}T=J_0\hat{T}$};
+
+            % ---- Fixed point ----
+            \fill (1.5,1.5) circle (2pt);
+            \node[below right, font=\small] at (1.5,1.5) {$\bar{x}\ \leftrightarrow\ 0$};
+            \draw[dotted] (1.5,0) -- (1.5,1.5);
+            \node[below] at (1.5,0) {$\bar{x}$};
+            \draw[dotted] (0,1.5) -- (1.5,1.5);
+            \node[left] at (0,1.5) {$\bar{x}$};
+        \end{tikzpicture}
+        \caption{One graph, two coordinate systems. In the original axes (grey) it is the map $T$ with
+        fixed point $\bar{x}$. In the translated axes (red, dashed), $y=x-\bar{x}$ and $\hat{T}=T-\bar{x}$,
+        the same curve is $\hat{T}(y)=T(y+\bar{x})-\bar{x}$ and the fixed point is the origin.
+        The tangent has the same slope in both: $J_0\hat{T}=J_{\bar{x}}T$.}
+        \label{fig:translated_map}
+    \end{figure}
+
+    So, the hyperbolicity properties of $\bar{x}$ for T are the same as 0 for $\hat{T}$
+\end{observation}
+
+We are now ready to enunciate the Hartman-Grobmann theorem for maps.
+
+\begin{theorem}[Hartman-Grobmann for maps]
+    Say $T: M\rightarrow M,\, M\subseteq\mathbb{R^d}$ is $C^1$, and $\bar{x}\in Fix(T)$ is hyperbolic with $B=D_{\bar{x}}T$. Then, calling $\tilde{T}:\mathbb{R}^d\rightarrow\mathbb{R}^d$, $\tilde{T}(y)=By$ the linearization of $T$ around $\bar{x}$, there exists $U$ nbhd of $\bar{x}$, $V$ nbhd of 0, and a homeomorfism $h: U\rightarrow V$ such that \begin{equation*}
+        T(x)=(h^{-1}\circ\tilde{T}\circ h)(x)
+    \end{equation*}
+    for all $x\in U$ such that $T(x)\in U$ (alternatively $h(x)\in V$ such that $\tilde{T(h(x))}\in V$)
+\end{theorem}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % ================= Left: U, orbits of T around xbar =================
+        \draw[blue!70!black, thick, fill=blue!5]
+            plot[smooth cycle] coordinates {(-2.3,0) (-1.2,1.9) (0.3,2.0) (1.5,1.5)
+                                            (2.2,0) (1.2,-1.8) (-0.8,-1.9) (-1.9,-1.1)};
+        \node[blue!70!black] at (0,-2.5) {$U$};
+
+        % attractive orbit: points x_n -> xbar (curved, "similar but not equal" to a line)
+        \draw[red!70!black, thick, -{Stealth[length=2mm]}, domain=1.7:0.08,
+              samples=30, smooth, variable=\x]
+            plot ({-\x}, {0.2*\x*\x});
+        \foreach \n in {0,...,6} {
+            \pgfmathsetmacro{\t}{1.7*0.65^\n}
+            \fill[red!70!black] (-\t, {0.2*\t*\t}) circle (1.6pt);
+        }
+
+        % repulsive orbit: leaves U, behaviour outside U is unknown
+        \draw[red!70!black, thick, domain=0.2:1.52, samples=20, smooth, variable=\x]
+            plot ({0.25*\x*\x}, {\x});
+        \draw[red!70!black, thick, dashed, -{Stealth[length=2mm]}, domain=1.52:2.8,
+              samples=20, smooth, variable=\x]
+            plot ({0.25*\x*\x}, {\x});
+        \foreach \n in {0,...,4} {
+            \pgfmathsetmacro{\s}{0.3*1.5^\n}
+            \fill[red!70!black] ({0.25*\s*\s}, \s) circle (1.6pt);
+        }
+        \node[red!70!black] at (1.35,2.95) {?};
+
+        \fill (0,0) circle (2pt) node[below right] {$\bar{x}$};
+
+        % ================= Arrows h and h^{-1} =================
+        \draw[-{Stealth}, thick] (2.7,0.7) -- (5.3,0.7) node[midway, above] {$h$};
+        \draw[-{Stealth}, thick] (5.3,-0.7) -- (2.7,-0.7) node[midway, below] {$h^{-1}$};
+
+        % ================= Right: V, orbits of \tilde T around 0 =================
+        \begin{scope}[shift={(8,0)}]
+            \draw[blue!70!black, thick, fill=blue!5] (0,0) circle (1.9);
+            \node[blue!70!black] at (0,-2.5) {$V$};
+
+            % eigen-directions of B (contracting: x, expanding: y)
+            \draw[-{Stealth}, gray, dashed] (-2.1,0) -- (2.1,0);
+            \draw[-{Stealth}, gray, dashed] (0,-2.1) -- (0,3.1);
+
+            % attractive orbit: straight, B^n y_0
+            \draw[red!70!black, thick, -{Stealth[length=2mm]}] (-1.7,0) -- (-0.08,0);
+            \foreach \n in {0,...,6} {
+                \pgfmathsetmacro{\t}{1.7*0.65^\n}
+                \fill[red!70!black] (-\t,0) circle (1.6pt);
+            }
+
+            % repulsive orbit: straight, leaves V
+            \draw[red!70!black, thick] (0,0.2) -- (0,1.52);
+            \draw[red!70!black, thick, dashed, -{Stealth[length=2mm]}] (0,1.52) -- (0,2.8);
+            \foreach \n in {0,...,4} {
+                \pgfmathsetmacro{\s}{0.3*1.5^\n}
+                \fill[red!70!black] (0,\s) circle (1.6pt);
+            }
+            \node[red!70!black] at (0.35,2.95) {?};
+
+            \fill (0,0) circle (2pt) node[below left] {$0$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Hartman-Grobman for maps. The homeomorphism $h$ sends the neighbourhood $U$ of $\bar{x}$
+    to a neighbourhood $V$ of $0$, and orbits of $T$ to orbits of the linearization $\tilde{T}(y)=By$
+    (here $B=\mathrm{diag}(0.65,\,1.5)$). Along the contracting direction the orbit of $T$ is a curve
+    (similar to, but not equal to, the straight orbit of $\tilde{T}$) and converges to $\bar{x}$,
+    exactly as the straight one converges to $0$. Along the expanding direction the orbits leave the
+    neighbourhood, and the theorem gives no information about what happens outside it (dashed).}
+    \label{fig:hartman_grobman_maps}
+\end{figure}

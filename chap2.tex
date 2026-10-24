@@ -1,0 +1,347 @@
+\chapter{Topological dynamics (with introduction to standard toy examples of DS)}
+In this chapter, we will be looking at dynamical systems from the point of view of limits. Let's start on one of the easiest examples.
+
+\section{Standard DS: rotation of the circle}
+
+\begin{definition}
+    $T^1$ is the 1D torus, which is defined as the interval $[0,1]$ where 0 is identified as 1 and vice versa. This definition is a bit heuristic, though. Mathematically, $T^1$ is defined as $T^1=\frac{\mathbb{R}}{\mathbb{Z}}$, i.e. all the equivalence classes of the relation  $x\backsim y \iff x-y=k\in\mathbb{Z}$ 
+\end{definition}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.9]
+        % ================= Top: segment [0,1] glued into a circle =================
+        % Segment of length 3, points at 0.15, 0.45, 0.75 of its length
+        \draw[thick] (0,0) -- (3,0);
+        \fill (0,0) circle (2pt) node[below] {$0$};
+        \fill (3,0) circle (2pt) node[below] {$1$};
+        \foreach \f/\c/\n in {0.15/red!70!black/x, 0.45/blue!70!black/y, 0.75/green!50!black/z} {
+            \fill[\c] ({3*\f},0) circle (2pt) node[above, \c] {$\n$};
+        }
+
+        % Gluing arrow
+        \draw[-{Stealth}, thick] (3.6,0) -- (5.0,0) node[midway, above, font=\small] {glue};
+
+        % Circle: same points at the same fractions of the full angle (360 deg)
+        \begin{scope}[shift={(7,0)}]
+            \draw[thick] (0,0) circle (1.1);
+            \fill (0:1.1) circle (2pt) node[right] {$0=1$};
+            \foreach \f/\c/\n in {0.15/red!70!black/x, 0.45/blue!70!black/y, 0.75/green!50!black/z} {
+                \fill[\c] ({360*\f}:1.1) circle (2pt);
+                \node[\c] at ({360*\f}:1.45) {$\n$};
+            }
+            \node[font=\small] at (0,0) {$T^1$};
+        \end{scope}
+
+        % ================= Bottom: the real line and the equivalence classes =================
+        % unit length 2.4, line at height y = -3
+        \draw[-{Stealth}, gray] (-0.6,-3) -- (10.2,-3) node[right] {$\mathbb{R}$};
+
+        % integer ticks
+        \foreach \k in {0,...,4} {
+            \draw[gray] ({2.4*\k},-2.93) -- ({2.4*\k},-3.07);
+            \node[below, font=\small] at ({2.4*\k},-3.1) {$\k$};
+        }
+
+        % the representatives in [0,1) are highlighted
+        \draw[ultra thick, black!60] (0,-3) -- (2.4,-3);
+
+        % points x+k, y+k, z+k (same colour = same equivalence class)
+        \foreach \k/\lab in {0/{}, 1/{+1}, 2/{+2}, 3/{+3}} {
+            \fill[red!70!black]   ({2.4*(\k+0.15)},-3) circle (2pt)
+                node[above, font=\scriptsize] {$x\lab$};
+            \fill[blue!70!black]  ({2.4*(\k+0.45)},-3) circle (2pt)
+                node[below=3pt, font=\scriptsize] {$y\lab$};
+            \fill[green!50!black] ({2.4*(\k+0.75)},-3) circle (2pt)
+                node[above, font=\scriptsize] {$z\lab$};
+        }
+
+        % shifts by +1 for the class of x
+        \foreach \k in {0,1,2} {
+            \draw[-{Stealth[length=1.5mm]}, red!70!black, thin, dashed]
+                ({2.4*(\k+0.15)},-2.75) to[bend left=40] ({2.4*(\k+1.15)},-2.75);
+        }
+        \node[font=\scriptsize, red!70!black] at (1.8,-2.05) {$+1$};
+
+        % label of the highlighted segment
+        \node[font=\small, black!60] at (1.2,-4.0) {$[0,1)$: one representative per class};
+    \end{tikzpicture}
+    \caption{The torus $T^1=\mathbb{R}/\mathbb{Z}$. Top: the heuristic picture, the segment $[0,1]$
+    with $0$ and $1$ glued to form a circle. Bottom: the real definition. Points of the same colour
+    differ by an integer, so they are the same point of $T^1$. Every class has exactly one
+    representative in $[0,1)$, so we can work there and glue the ends.}
+    \label{fig:torus_1d}
+\end{figure}
+
+\begin{observation}
+Topologically speaking, $T^1$ is the same as a circle. Sometimes, we will identify $T^1$ with the unit circle in the complex plane $S^1=\{z\in\mathbb{C}|\, |z|=1\}$.
+\end{observation}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.9]
+        % ================= Left: segment [0,1), length 6 =================
+        \draw[thick] (0,0) -- (6,0);
+        \fill (0,0) circle (2pt) node[below=3pt] {$0$};
+        \fill (6,0) circle (2pt) node[below=3pt] {$1$};
+
+        % Blue point: x -> x + alpha (alpha = 0.3), no wrap
+        \fill[blue!70!black] (2.1,0) circle (2pt) node[below=3pt] {$x$};
+        \fill[blue!70!black] (3.9,0) circle (2pt) node[below=3pt] {$x+\alpha$};
+        \draw[-{Stealth}, blue!70!black, thick] (2.1,0.1) to[bend left=45]
+            node[midway, above] {$\alpha$} (3.9,0.1);
+
+        % Red point: y -> {y + alpha}, wraps around (0.85 + 0.3 = 1.15 -> 0.15)
+        \fill[red!70!black] (5.1,0) circle (2pt) node[below=3pt] {$y$};
+        \fill[red!70!black] (0.9,0) circle (2pt) node[below=3pt] {$\{y+\alpha\}$};
+        \draw[red!70!black, thick, -{Stealth}] (5.1,0.1) to[bend left=30] (6.4,0.5);
+        \draw[red!70!black, thick, -{Stealth}] (-0.4,0.5) to[bend left=30] (0.9,0.1);
+        \node[red!70!black, font=\scriptsize, align=center] at (3.0,1.4)
+            {$y+\alpha>1$: it exits on the right\\and re-enters from $0$};
+        \draw[red!70!black, dotted] (6.4,0.5) -- (6.4,1.0);
+        \draw[red!70!black, dotted] (-0.4,0.5) -- (-0.4,1.0);
+
+        % ================= Right: the same on the circle =================
+        \begin{scope}[shift={(10.5,0)}]
+            \draw[thick] (0,0) circle (1.3);
+            \fill (0:1.3) circle (2pt);
+            \node[left, font=\scriptsize] at (0:1.3) {$0{=}1$};
+            \node[font=\small] at (0,0) {$T^1$};
+
+            % blue: angles 360*0.35 = 126 and 360*0.65 = 234
+            \fill[blue!70!black] (126:1.3) circle (2pt);
+            \fill[blue!70!black] (234:1.3) circle (2pt);
+            \node[blue!70!black] at (126:2.05) {$x$};
+            \node[blue!70!black] at (234:2.4) {$x+\alpha$};
+            \draw[-{Stealth}, blue!70!black, thick]
+                ({1.65*cos(126)},{1.65*sin(126)}) arc (126:234:1.65);
+            \node[blue!70!black] at (180:1.95) {$\alpha$};
+
+            % red: angles 306 and 414 (= 54), passing through 0=1
+            \fill[red!70!black] (306:1.3) circle (2pt);
+            \fill[red!70!black] (54:1.3) circle (2pt);
+            \node[red!70!black] at (306:2.05) {$y$};
+            \node[red!70!black] at (54:2.5) {$\{y+\alpha\}$};
+            \draw[-{Stealth}, red!70!black, thick]
+                ({1.65*cos(306)},{1.65*sin(306)}) arc (306:414:1.65);
+            \node[red!70!black] at (0:1.95) {$\alpha$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{The rotation $R_\alpha(x)=x+\alpha \bmod 1$. Left: on the segment $[0,1)$ it moves a point
+    by $\alpha$ to the right (blue); if it goes past $1$ it comes back from $0$ (red).
+    Right: on the circle it is a counterclockwise rotation by $\alpha$ (an angle $2\pi\alpha$),
+    and the wrap-around is just crossing the point $0=1$.}
+    \label{fig:rotation_torus}
+\end{figure}
+
+Consider $T=R_{\alpha}:T^1\rightarrow T^1, x \rightarrow x+\alpha \mod 1$ where $\alpha\in\mathbb{R}$ is a parameter, which is equivalently represented by $x\in[0, 1)\rightarrow \{x+\alpha\}$ where the curly braces indicate the fractional part.
+
+This is the same as doing 0 to $2\pi$ in a circle. Notice that it's invertible with the inverse $R^{-1}_{\alpha}:T^1\rightarrow T^1,\,x\rightarrow x-\alpha$.
+
+\begin{observation}
+    $O(x_0)=\{R_{\alpha}^n(x_0)\}_{n\in\mathbb{Z}}$ with $R^n_{\alpha}(x_0)=x+n\alpha mod 1$ 
+    Notice how this is not exactly the same as the definition, because we are truncating the integer just at the end instead of at every iteration. This may be important when dealing with computer programs, since you may want to perform the mod 1 operation just at the very end.
+\end{observation}
+
+We are now ready to make some observation about the nature of this kind of movement on the toroidal space.
+
+\begin{proposition}
+    If $\alpha=\frac{p}{q}$, $p, q\in\mathbb{Z},\, \{p, q\}=0$, all orbits are periodic with a fundamental period (i.e. the smallest of all possible periods) of $q$.
+\end{proposition}
+\begin{proof}
+    \begin{equation*}
+        R_{\alpha}^n(x)=x+n\alpha \mod 1=x+n\frac{p}{q} \mod 1
+    \end{equation*}
+    We want to prove that $x\in Fix(R_{\alpha}^n)$ for some $n$, which is the definition of a periodic point, and the minimum $n$ for which it is true is $q$.
+    So, we first show that $q$ is indeed a period:
+    \begin{equation}
+        R_{\alpha}^q(x)=x+q\frac{p}{q} \mod 1=x+p \mod 1=x
+    \end{equation}
+    because mod 1 truncates the integer, and $p\in\mathbb{Z}$. The fact that it is the minimum period is trivially determined by the fact that $\{p,q\}$.\footnote{Different from what the professor did.}
+\end{proof}
+
+\begin{proposition}
+    If $\alpha\in\mathbb{I}=\{x|x\in\mathbb{R} \land x\notin\mathbb{Q}\}$\footnote{So, irrational numbers.} then the orbit $O(x)$ is dense in $T^1$ $\forall x\in T^1$
+\end{proposition}
+\begin{proof}
+    We begin by proving that the cardinality of $O(x)=\{R_{\alpha}^n(x)\}_{n\in\mathbb{Z}}$ is $\infty$, which is demonstrated when we prove that $\alpha \in \mathbb{I}$ implies no fixed points. Proven by contradiction:
+    \begin{align*}
+        x\in Fix(R^n_{\alpha})\iff x+n\alpha \mod 1=x \mod 1\iff \\
+        n\alpha  \mod 1 =0\iff n\alpha\in\mathbb{Z}\iff\alpha\in\mathbb{Q}
+    \end{align*}
+
+    Since, by hypothesis, $\alpha\notin\mathbb{Q}$, then $\forall x\in T^1, x\notin Fix(R^n_\alpha)$, which, in turn, implies $\#O(x)=\infty\,\forall x\in T^1$. Since $T^1$ is compact, by Bolzano-Weirstrass's theorem we can say that $O(x)$ has an accumulation point, i.e. a point whose neighbourhoods always contain at least another point in the set. 
+
+    So, by definition:
+    \begin{equation*}
+        \forall \epsilon>0 \exists m,n\in\mathbb{Z}(m>n) \text{ such that } d(R_{\alpha}^n,R_{\alpha}^m)<\epsilon
+    \end{equation*}
+    
+    Now, if we accept as true that all rotations conserve the distance: \begin{equation*}
+        d(R_{\beta}(y), R_{\beta}(x))=d(x,y)\forall\beta\in\mathbb{R}
+    \end{equation*}
+    we may apply such property to the aforementioned points:
+    \begin{equation*}
+        d(R_{-n\alpha}(R_{\alpha}^m), R_{-n\alpha}(R_{\alpha}^n))=d(R^{m-n}_{\alpha}(x), x)<\epsilon
+    \end{equation*}
+    
+    m and n though are arbitrary, so if we call $k=m-n$ we just proved that $R^k_{\alpha}(x)$ is dense in $T^1$, which implies that the same is true for $O^1$.
+\end{proof}
+
+We can deal with a fun application of this fact, but before we need a lemma.
+
+\begin{lemma}
+    $\log_{10}2\notin\mathbb{Q}$
+\end{lemma}
+\begin{proof}
+    RAA If the statement is false, then $\log_{10}2\in\mathbb{Q}$, which implies the following: \begin{equation*}
+        \exists p,q\in\mathbb{N}\text{ such that }10^{p/q}=2\iff 10^p=2^q
+    \end{equation*}. 
+    That, though is impossible because powers of 2 never end with 0. 
+    
+    Alternatively, to convince us forther, we can separate $10^p=2^p5^p$, which implies $2^p5^p=2^q$, but this is only possible if p and q are 0, which does not make sense.
+\end{proof}
+
+\begin{proposition}
+    If $r\in\mathbb{Z}^+$ there exists an n such that the decimal representation of $2^n$ starts with the digits of r
+\end{proposition}
+\begin{proof} \footnote{Last part is different from the professor's, check for accuracy.}
+    Consider $R_{\alpha}: T^1\rightarrow T^1$, $\alpha=\log_{10}2\notin \mathbb{Q}$
+
+    We now notice that $\forall n\in\mathbb{N}$ we can write (uniquely) $2^n=10^{k_n}q_n$, with $k_n\in\mathbb{N}$ and $q_n\in[1,10)$. We also notice that: \begin{equation*}
+        \log_{10}(2^n)\mod 1=n\log_{10}(2)\mod 1=n\alpha=R_{\alpha}^n(0) \mod 1
+    \end{equation*}
+    and, at the same time: \begin{align*}
+        log_{10}(2^n) \mod 1=k_n+log(q_n) \mod 1&=log(q_n) \mod 1 \\\Rightarrow \{log(q_n)\}_{n\in\mathbb{N}}&=\{R_{\alpha}^n(0)\}_{n\in\mathbb{N}}
+    \end{align*}
+    Thus putting the problem on the torus. This implies, because of the last results, that $\{\log_{10}q_n\}$ is dense in $T^1$, which in turn implies that $\{q_n\}_{n\in\mathbb{N}}$ is dense in [1, 10), as shown in \autoref{fig:density_exp}. We may now end the proof by realizing that: \begin{align*}
+        A_r&=\{y\in[1, 10)| \text{the decimal representative of y starts with the digits of r}\} \\
+        &=\left[\frac{r}{10^{d-1}}, \frac{r+1}{10^{d-1}}\right),\, r\in [10^{d-1}, 10^d]
+    \end{align*}
+    So the numbers we are looking for are an interval for any $r$. Because of the definition of density, there are infinitely many points in $A_r\cap\{q_n\}_{n\in\mathbb{N}}$ for any $r$.
+
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}
+        % Scaling: X = 6x, Y = 0.45(y-1)
+
+        % ---- Axes ----
+        \draw[-{Stealth}, gray] (-0.2,0) -- (6.7,0) node[right] {$x$};
+        \draw[-{Stealth}, gray] (0,-0.2) -- (0,4.5) node[above] {$y$};
+        \node[below, font=\scriptsize] at (0,-0.05) {$0$};
+        \node[below, font=\scriptsize] at (6,-0.05) {$1$};
+        \node[left, font=\scriptsize] at (0,0) {$1$};
+        \node[left, font=\scriptsize] at (0,4.05) {$10$};
+
+        % ---- Graph of y = 10^x ----
+        \draw[thick, blue!70!black, domain=0:1, samples=30, smooth, variable=\x]
+            plot ({6*\x}, {0.45*(10^\x-1)});
+        \node[blue!70!black, above left] at (5.3,3.5) {$y=10^x$};
+
+        % ---- Interval [c,d] = [3,4] on y and its preimage [log 3, log 4] on x ----
+        \draw[dashed, green!50!black]
+            ({6*log10(3)},0) -- ({6*log10(3)},0.9) -- (0,0.9)
+            ({6*log10(4)},0) -- ({6*log10(4)},1.35) -- (0,1.35);
+        \draw[ultra thick, green!50!black] ({6*log10(3)},0) -- ({6*log10(4)},0);
+        \draw[ultra thick, green!50!black] (0,0.9) -- (0,1.35);
+        \node[green!50!black, font=\small, below] at ({6*(log10(3)+log10(4))/2},-0.1) {$[\log c,\log d]$};
+        \node[green!50!black, font=\small, left] at (-0.1,1.12) {$[c,d]$};
+
+        % ---- Some points of the dense set, and their images ----
+        \foreach \f in {0.06,0.15,0.22,0.34,0.41,0.52,0.6,0.71,0.83,0.93} {
+            \fill[blue!70!black] ({6*\f},0) circle (1.6pt);
+            \fill[red!70!black] (0,{0.45*(10^\f-1)}) circle (1.6pt);
+            \draw[gray, dotted] ({6*\f},0) -- ({6*\f},{0.45*(10^\f-1)}) -- (0,{0.45*(10^\f-1)});
+        }
+    \end{tikzpicture}
+    \caption{If a set of points (blue) is dense in $[0,1)$, it has a point in $[\log c,\log d]$,
+    and $10^x$ sends it into $[c,d]$. So the images (red) are dense in $[1,10)$.}
+    \label{fig:density_exp}
+\end{figure}
+\end{proof}
+
+\subsection{Topological dynamics}
+For now on, M is a topological space.
+\begin{definition}
+    A topological space is a space $M$ which has a topology. A topology over $M$ is a set of subsets $\tau$, called open sets, which have the following properties: \begin{itemize}
+        \item $\emptyset$ and $M$ are in $\tau$;
+        \item an arbitrary (infinite or finite) union of sets in $\tau$ belong to $\tau$;
+        \item The intersection of any finite number of members of $\tau$ belongs to $\tau$.
+    \end{itemize}
+\end{definition}
+
+We shall now define the concept of topologically transitive.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % ---- V (target set) ----
+        \draw[red!70!black, thick, fill=red!10] (7.6,0.5) circle (1.0);
+        \node[red!70!black] at (7.6,1.75) {$V$};
+
+        % ---- U (initial set) ----
+        \draw[blue!70!black, thick, fill=blue!10] (0,0) circle (0.8);
+        \node[blue!70!black] at (0,0) {$U$};
+
+        % ---- phi^{t_1}(U) ----
+        \begin{scope}[shift={(2.4,-0.9)}, rotate=-20]
+            \draw[blue!70!black, thick, fill=blue!10, fill opacity=0.7] (0,0) ellipse (1.0 and 0.5);
+        \end{scope}
+        \node[blue!70!black, font=\small] at (2.4,-1.9) {$\phi^{t_1}(U)$};
+
+        % ---- phi^{t_2}(U) ----
+        \begin{scope}[shift={(4.5,1.1)}, rotate=25]
+            \draw[blue!70!black, thick, fill=blue!10, fill opacity=0.7] (0,0) ellipse (1.4 and 0.35);
+        \end{scope}
+        \node[blue!70!black, font=\small] at (4.5,2.3) {$\phi^{t_2}(U)$};
+
+        % ---- phi^{t_3}(U): overlaps V, the overlap looks darker ----
+        \begin{scope}[shift={(6.4,-0.1)}, rotate=25]
+            \draw[blue!70!black, thick, fill=blue!25, fill opacity=0.6] (0,0) ellipse (1.7 and 0.28);
+        \end{scope}
+        \node[blue!70!black, font=\small] at (6.0,-1.5) {$\phi^{t_3}(U)$};
+
+        % ---- Time arrows between the snapshots ----
+        \draw[-{Stealth}, gray, thick] (0.8,-0.2) to[bend right=15] (1.4,-0.55);
+        \draw[-{Stealth}, gray, thick] (3.1,-0.7) to[bend left=25] (3.6,0.35);
+        \draw[-{Stealth}, gray, thick] (5.7,1.2) to[bend left=25] (6.0,0.2);
+
+        % ---- Intersection label ----
+        \node[font=\small, align=center] at (8.9,-1.2) {$\phi^{t_3}(U)\cap V\neq\emptyset$};
+        \draw[-{Stealth}, thin] (8.5,-0.9) -- (7.7,0.3);
+    \end{tikzpicture}
+    \caption{Topological transitivity. The set $U$ is evolved by the dynamics: $\phi^{t_1}(U)$,
+    $\phi^{t_2}(U)$, and so on. It is typically stretched and deformed, and for some time
+    $t(U,V)=t_3$ it meets $V$ (darker region).}
+    \label{fig:top_transitivity}
+\end{figure}
+
+\begin{definition}
+    $(M, \phi^t)$ is called topologically transitive if $\forall U, V$ nonempty open sets there exists some $t(U, V)>0$ such that $\phi^t(U)\cap V\neq \emptyset$. We are assuming t is in $\mathbb{R}, \mathbb{R}_0^+, \mathbb{Z},\mathbb{N}$.
+\end{definition}
+
+In practice, what happens is what is shown in \autoref{fig:top_transitivity} .
+
+Notice that this is a form of chaoticity.
+
+\begin{definition}
+    A locally compact separable metric space is a metric space(i.e. a set where a distance is defined) which is locally compact, which means that the closure of every ball is compact, and separable, which means that there exists a set of open sets $\{U_k\}_{k\in\mathbb{N}}$ that is a countable basis of the topology, i.e. $\forall U$ open $\exists k|U_k\subseteq U$. Reminder that open sets, in this context, are all sets with the property: \begin{equation*}
+    \forall x\in A \exists \rho>0|B_{\rho}(x)\subseteq A
+    \end{equation*}
+\end{definition}
+
+\begin{proposition}
+    Let M be a locally compact separable metric space\footnote{A good space.}, and $T:M\rightarrow M$ continuous. Then,  $(M, T)$ is topologically transitive $\iff$ there exists $x\in M$ such that $O^+(x)$ is dense.
+\end{proposition}
+\begin{proof}
+    Let's prove $\Leftarrow$ only.
+
+    Let's take $\{T^n(x)\}$, which is dense by hypothesis. This implies there exists $k,m (m>k)$ such that $T^k(x)\in U, T^m(x)\in V$\footnote{Notice that we may take $m>k$ as a hypothesis because, since the orbit is dense and the space is good, it covers the whole space an infinite number of times. This implies that I can decide which index is greater without problems.}. 
+    So, we may write: \begin{equation*}
+        T^m(x)=T^{m-k}(T^k(x))
+    \end{equation*}
+    And then notice that: \begin{equation*}
+        T^{m-k}(T^k(x))\in T^{m-k}(U)\cap V \Rightarrow T^{m-k}(U)\cap V\neq \emptyset
+    \end{equation*}
+    because $T^{m-k}(T^k(x))$ is at least one point. So, $m-k$ is the $t(U, V)$ in the definition.
+\end{proof}

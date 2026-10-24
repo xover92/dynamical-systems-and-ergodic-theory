@@ -478,6 +478,29 @@
 \end{tikzpicture}%
 }
 
+% Macro: eigenvalue plane with the unit circle; the argument contains the eigenvalues
+% Usage: \eigplane{ \eigdot{Re}{Im}{label}{anchor} ... }
+\newcommand{\eigdot}[4]{%
+    \fill[red!70!black] (#1,#2) circle (2pt) node[#4, red!70!black] {\small #3};
+}
+
+\newcommand{\eigplane}[1]{%
+\begin{tikzpicture}[scale=1.05]
+    % Inside of the unit disc (lightly shaded) and the unit circle
+    \fill[blue!10] (0,0) circle (1);
+    \draw[thick, blue!70!black] (0,0) circle (1);
+    \node[blue!70!black, font=\scriptsize] at (-0.78,-0.78) {$|\lambda|=1$};
+
+    % Axes of the complex plane
+    \draw[-{Stealth}, gray] (-2.3,0) -- (2.4,0) node[right] {$\mathrm{Re}$};
+    \draw[-{Stealth}, gray] (0,-1.8) -- (0,1.9) node[above] {$\mathrm{Im}$};
+    \draw (1,0.05) -- (1,-0.05) node[below, font=\scriptsize] {$1$};
+    \draw (-1,0.05) -- (-1,-0.05) node[below, font=\scriptsize] {$-1$};
+
+    #1
+\end{tikzpicture}%
+}
+
 \begin{document}
 \maketitle
 \tableofcontents
@@ -485,8 +508,7 @@
 
 \include{chap0.tex}
 \include{chap1.tex}  
-
-\chapter{Topological dynamics}
+\include{chap2.tex}
 \chapter{Ergodic theory}
 \chapter{Possible developments}
 \include{app.tex}
