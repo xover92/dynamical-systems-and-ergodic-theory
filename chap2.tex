@@ -317,10 +317,10 @@ We shall now define the concept of topologically transitive.
 \end{figure}
 
 \begin{definition}
-    $(M, \phi^t)$ is called topologically transitive if $\forall U, V$ nonempty open sets there exists some $t(U, V)>0$ such that $\phi^t(U)\cap V\neq \emptyset$. We are assuming t is in $\mathbb{R}, \mathbb{R}_0^+, \mathbb{Z},\mathbb{N}$.
+    $(M, \phi^t)$ is called topologically transitive if $\forall U, V$ nonempty open sets there exists some $t(U, V)\in\mathbb{G}$(i.e. $\mathbb{N, Z, R}_0^+, \mathbb{R}$) such that $\phi^t(U)\cap V\neq \emptyset$. We are assuming t is in $\mathbb{R}, \mathbb{R}_0^+, \mathbb{Z},\mathbb{N}$.
 \end{definition}
 
-In practice, what happens is what is shown in \autoref{fig:top_transitivity} .
+In practice, what happens is what is shown in \autoref{fig:top_transitivity}.
 
 Notice that this is a form of chaoticity.
 
@@ -331,10 +331,10 @@ Notice that this is a form of chaoticity.
 \end{definition}
 
 \begin{proposition}
-    Let M be a locally compact separable metric space\footnote{A good space.}, and $T:M\rightarrow M$ continuous. Then,  $(M, T)$ is topologically transitive $\iff$ there exists $x\in M$ such that $O^+(x)$ is dense.
+    Let M be a locally compact separable metric space\footnote{A good space.}, and $T:M\rightarrow M$ continuous. Then,  $(M, T)$ is topologically transitive $\iff$ there exists $x\in M$ such that $O(x)$ is dense.
 \end{proposition}
 \begin{proof}
-    Let's prove $\Leftarrow$ only.
+    Let's prove $\Leftarrow$.
 
     Let's take $\{T^n(x)\}$, which is dense by hypothesis. This implies there exists $k,m (m>k)$ such that $T^k(x)\in U, T^m(x)\in V$\footnote{Notice that we may take $m>k$ as a hypothesis because, since the orbit is dense and the space is good, it covers the whole space an infinite number of times. This implies that I can decide which index is greater without problems.}. 
     So, we may write: \begin{equation*}
@@ -344,4 +344,427 @@ Notice that this is a form of chaoticity.
         T^{m-k}(T^k(x))\in T^{m-k}(U)\cap V \Rightarrow T^{m-k}(U)\cap V\neq \emptyset
     \end{equation*}
     because $T^{m-k}(T^k(x))$ is at least one point. So, $m-k$ is the $t(U, V)$ in the definition.
+
+    \begin{figure}[ht]
+\centering
+\begin{tikzpicture}[>=Stealth, font=\footnotesize]
+
+  % nested open sets
+  \draw[thick, fill=blue!4]  (0,0)       circle (1.6);
+  \node at (-1.1,1.1) {$U_0=V_0$};
+
+  \draw[thick, fill=blue!8]  (0.15,0.1)  circle (1.1);
+  \draw[dashed, gray]        (0.15,0.1)  circle (1.17);
+  \node at (-0.55,0.75) {$V_1$};
+
+  \draw[thick, fill=blue!13] (0.25,0.12) circle (0.7);
+  \node at (-0.1,0.5) {$V_2$};
+
+  \draw[thick, fill=blue!19] (0.28,0.14) circle (0.4);
+  \node at (0.1,0.3) {\scriptsize $V_3$};
+
+  \draw[thick, fill=blue!26] (0.3,0.15)  circle (0.18);
+  \fill (0.3,0.15) circle (1pt) node[right=1pt] {\scriptsize $x$};
+
+  % basis open sets
+  \node[draw, ellipse, minimum width=1.2cm, minimum height=0.7cm, fill=orange!10] (U1) at (4.2,1.2)  {$U_1$};
+  \node[draw, ellipse, minimum width=1.2cm, minimum height=0.7cm, fill=orange!10] (U2) at (4.2,0)    {$U_2$};
+  \node[draw, ellipse, minimum width=1.2cm, minimum height=0.7cm, fill=orange!10] (U3) at (4.2,-1.2) {$U_3$};
+  \node at (4.2,-1.9) {$\vdots$};
+
+  % arrows V_k -> U_k (start points lie inside V_k)
+  \draw[->, red!70!black] (0.9,0.7)  to[bend left=15]  node[above, sloped, pos=0.5] {\scriptsize $T^{n_0}$} (U1.west);
+  \draw[->, red!70!black] (0.6,0.3)  to[bend left=5]   node[above, sloped, pos=0.5] {\scriptsize $T^{n_1}$} (U2.west);
+  \draw[->, red!70!black] (0.4,0.2)  to[bend right=15] node[below, sloped, pos=0.5] {\scriptsize $T^{n_2}$} (U3.west);
+
+\end{tikzpicture}
+\caption{Nested construction: $V_k\subset\overline{V_k}\subset V_{k-1}\cap T^{-n_{k-1}}U_k$, so that $T^{n_{k-1}}(V_k)\subset U_k$. The intersection $V=\bigcap_k V_k$ contains the point $x$.}
+\label{fig:nested}
+\end{figure}
+
+    Let's now prove $\Rightarrow$. 
+
+    We are going to prove that there is an orbit that visits all open sets in the countable basis. 
+
+    Take $\{U_k\}$ countable basis of the topology. Since T is topologically transitive, we know that there exists $n_0\in\mathbb{Z}$ such that $T^{n_0}U_0\cap U_1\neq \emptyset$, which implies that $U_0\cap T^{-n_0}U_1\neq \emptyset$, due to the fact that, for any function, the counter-image of an interception is the interception of the counter-images. So, if the first interception is not empty then the counter-image of the interceptions is not empty. 
+
+    Due to the openness of said interception (which is a direct consequence of the continuity of T), we may find some $V_1$, included in its closure $\bar{V_1}$ (assume it is compact), for which: \begin{equation*}
+        V_1\subset\bar{V_1}\subset U_0\cap T^{-n_0}U_1
+    \end{equation*}
+    The point is that the interception is not empty, and it contains more than one point. 
+    
+    By using again the definition of topologically transitive, we may also say that \begin{equation*}
+        \exists n_1 | T^{n_1}V_1\cap U_2\neq\emptyset\Rightarrow V_1\cap T^{-n_1}U_2\neq\emptyset,\,\text{open}
+    \end{equation*}
+    Which, again, implies that there exists some $V_2\subset\bar{V_2}\subset V_1\cap T^{-n_1}U_2$. We may repeat this process (as shown in \autoref{fig:nested}) for the whole basis:
+    \begin{equation*}
+        \exists V_k\subset\bar{V_k}\subset V_{k-1}\cap T^{-n_{k-1}}U_k
+    \end{equation*}
+    So you can say that $V=\cap_{k\in\mathbb{N}}V_k=\cap_{k\in\mathbb{N}}\bar{V_k}$, where the equality stems from the fact that the basis is infinite. By a property of locally compact separable metric spaces, closed sets cannot be empty, so $V\neq\emptyset\Rightarrow\exists x\in V$.
+
+    For every $k\in\mathbb{N},\,x\in T^{-n_{k-1}}U_k\Leftrightarrow T^{n_{k-1}}(x)\in U_k$. So O(x) intercepts all elements of the countable basis, which means that it visits all open sets. 
 \end{proof}
+
+\begin{definition}
+    Within the above general framework, if we take a dynamical system over a phase space $(M,\phi^t)$, $\phi^t$ is called minimal if all orbits are dense.
+\end{definition}
+
+Notice that minimality implies topological transitivity. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[x=4cm, y=4cm]
+        % Unit of the picture = side of the square. Dots are nodes so that their size does not depend on x, y.
+
+        % ================= Left: square with identified edges =================
+        \fill[blue!5] (0,0) rectangle (1,1);
+        % left and right edges: single arrow (identified with each other)
+        \draw[blue!70!black, thick, -{Stealth[length=2.5mm]}] (0,0) -- (0,1);
+        \draw[blue!70!black, thick, -{Stealth[length=2.5mm]}] (1,0) -- (1,1);
+        % bottom and top edges: double arrow (identified with each other)
+        \draw[red!70!black, thick, -{Stealth[length=2.5mm]Stealth[length=2.5mm]}] (0,0) -- (1,0);
+        \draw[red!70!black, thick, -{Stealth[length=2.5mm]Stealth[length=2.5mm]}] (0,1) -- (1,1);
+        \node at (0.5,0.5) {$T^2$};
+        \node[blue!70!black, font=\small, rotate=90, above] at (0,0.5) {left $\equiv$ right};
+        \node[red!70!black, font=\small, below] at (0.5,-0.02) {bottom $\equiv$ top};
+
+        % ================= Right: orbit of T_gamma, gamma = (0.35, 0.2) =================
+        \begin{scope}[shift={(1.45,0)}]
+            \fill[blue!5] (0,0) rectangle (1,1);
+            \draw[blue!70!black, thick, -{Stealth[length=2.5mm]}] (0,0) -- (0,1);
+            \draw[blue!70!black, thick, -{Stealth[length=2.5mm]}] (1,0) -- (1,1);
+            \draw[red!70!black, thick, -{Stealth[length=2.5mm]Stealth[length=2.5mm]}] (0,0) -- (1,0);
+            \draw[red!70!black, thick, -{Stealth[length=2.5mm]Stealth[length=2.5mm]}] (0,1) -- (1,1);
+
+            % Path inside the square (solid arrows = one application of T_gamma)
+            % x=(0.15,0.30) -> (0.50,0.50) -> (0.85,0.70) -> exits at (1,0.786)
+            \draw[black!70, thick, -{Stealth[length=2mm]}] (0.15,0.30) -- (0.50,0.50);
+            \draw[black!70, thick, -{Stealth[length=2mm]}] (0.50,0.50) -- (0.85,0.70);
+            \draw[black!70, thick] (0.85,0.70) -- (1,0.7857);
+            % re-enters at (0,0.786) -> T^3(x)=(0.20,0.90) -> exits at (0.375,1)
+            \draw[black!70, thick] (0,0.7857) -- (0.20,0.90);
+            \draw[black!70, thick, -{Stealth[length=2mm]}] (0.20,0.90) -- (0.375,1);
+            % re-enters at (0.375,0) -> T^4(x)=(0.55,0.10) -> T^5(x)=(0.90,0.30)
+            \draw[black!70, thick] (0.375,0) -- (0.55,0.10);
+            \draw[black!70, thick, -{Stealth[length=2mm]}] (0.55,0.10) -- (0.90,0.30);
+            % dashed hint of the wrap-around (exit point -> entry point)
+            \draw[gray, dashed, thin, -{Stealth[length=1.5mm]}] (1,0.7857) to[bend left=20] (0,0.7857);
+            \draw[gray, dashed, thin, -{Stealth[length=1.5mm]}] (0.375,1) to[bend left=20] (0.375,0);
+
+            % Points x_n = T^n(x)
+            \foreach \px/\py/\lab/\pos in {0.15/0.30/{x}/{above left},
+                                           0.50/0.50/{T_\gamma(x)}/{above left},
+                                           0.85/0.70/{T_\gamma^2(x)}/{below right},
+                                           0.20/0.90/{T_\gamma^3(x)}/{above left},
+                                           0.55/0.10/{T_\gamma^4(x)}/{below right},
+                                           0.90/0.30/{T_\gamma^5(x)}/{below right}} {
+                \node[circle, fill=blue!70!black, inner sep=1.5pt] at (\px,\py) {};
+                \node[blue!70!black, font=\scriptsize, \pos=-1pt] at (\px,\py) {$\lab$};
+            }
+
+            % The translation vector gamma
+            \draw[-{Stealth[length=2mm]}, red!70!black, thick, shorten >=1pt]
+                (0.15,0.30) -- (0.50,0.30) node[midway, below, font=\scriptsize] {$\gamma_1$};
+            \draw[-{Stealth[length=2mm]}, red!70!black, thick, shorten >=1pt]
+                (0.50,0.30) -- (0.50,0.50) node[midway, right, font=\scriptsize] {$\gamma_2$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{The torus $T^2=[0,1)^2$. Left: opposite sides are identified (same arrows = same side).
+    Right: the translation $T_\gamma(x)=x+\gamma \bmod \mathbb{Z}^2$ with $\gamma=(0.35,\,0.2)$. Each step moves the
+    point by $\gamma$; when it leaves through the right (top) side it re-enters from the left (bottom) side,
+    so the orbit winds around the torus.}
+    \label{fig:torus_translation}
+\end{figure}
+
+An example of an easy map is the discrete translations of the torus. Take $M=[0, 1)^d\approxeq T^d$(the torus). The discrete translations are defined as $T_{\gamma}:T^d\rightarrow T^d, \gamma\in\mathbb{R}^d,$ where $ T_{\gamma}=x+\gamma \mod \mathbb{Z}^d=T_{\gamma}(x_1,..,x_d)=(x_1+\gamma_1 \mod 1,..,x_d+\gamma_d \mod 1)$. Notice that we are now dealing with the generalization of the rotation. The whole thing is shown in \autoref{fig:torus_translation}.
+
+\begin{definition}
+    A set $A$ is called T-invariant if and only if $T^{-1}A=A$. A function f is called T-invariant if $f:M\rightarrow\mathbb{R}\iff f=f\circ T$. This kind of functions are oftentimes also called observables. 
+\end{definition}
+
+\begin{definition}
+    For a set $A$, $1_A$ is called the indicator and is defined as \begin{equation*}
+    1_A(x)=\begin{cases}
+                1,\, x\in A \\
+                0,\, x\notin A
+            \end{cases}
+    \end{equation*}
+\end{definition}
+
+\begin{proposition}
+    $A$ is invariant $\iff 1_A$ is invariant.
+\end{proposition}
+
+\begin{proof}
+    $A$ invariant means that $A=T^{-1}A$, which implies that $1_A=1_{T^{-1}A}$. Now, notice that $1_A\circ T=1_A(T(x))$, which is exactly the same as saying $1_A\circ T=1_{T^{-1}A}$ because $T(x)\in A \iff x\in T^{-1}A$. Since all the passages are if and only ifs, the proposition if proven.
+\end{proof}  
+
+\begin{proposition}
+    Be M a locally compact separable metric space, then \begin{align*}
+        \text{(M, T) is topologically transitive} \Rightarrow & \nexists f:M\rightarrow \mathbb{R}\text{ continuous,} \\&\text{T-invariant and non-constant.}
+    \end{align*}
+\end{proposition}
+\begin{proof}
+    We proved that (M, T) topologically transitive implies the existence of a point $x_0$ for which the orbit $O(x_0)$ is dense. Density implies that for every $x\in M$ there exists a sequence $y_i\subset O(x_0),\, y_i=T^{m_i}x_0$ such that $y_j\rightarrow x$ for $j\rightarrow\infty$. If we assume the existence of a continuous f, we may find that $f(y_j)\rightarrow f(x)$ for $j\rightarrow\infty$. Assuming that said f is also T-invariant, you get that $f(y_j)=f(T^{m_j}(x_0))=f(x_0)$. This implies that the aforementioned limit becomes an equality, because $f(y_j)$ is constant. 
+    
+    Concatenating the equalities, we get that  $\forall x\in M,\, f(x)=f(x_0)$. So, $f(x)$ is constant, which confirms the thesis since there is no f that satisfies all three of the conditions.
+\end{proof}
+
+\begin{lemma}
+    Be M  a locally compact separable metric space, T a homeomorfism, then \begin{equation*}
+        \text{T is topologically transitive} \iff \nexists U, V\neq\emptyset\text{, open, disjoint and T-invariant.}
+    \end{equation*} 
+\end{lemma}
+
+\begin{proof}
+    $\Rightarrow$ is easy. 
+    
+    RAA. Assume there exists $U, V$ non-empty, open, disjoint and T-invariant. If T is topologically transitive, then $T^{n}U\cap V\neq\emptyset$ for some n.
+    
+    Since $T^nU=U$ because they are T-invariant, so $U\cap V\neq\emptyset$, but we assumed that they were indeed disjoint.
+
+    $\Leftarrow$ is proven, again, by contradiction. 
+    
+    RAA Suppose T is not topologically transitive. 
+    
+    So, $\exists U_0, V_0$ open, non-empty sets such that $T^nU_0\cap V_0 = \emptyset \forall n\in \mathbb{Z}$\footnote{They are also disjoint, since n=0 is included and $T^0(U)=U$.}, which is simply the negation of the definition. 
+    
+    We then set $U=\cup_{n\in\mathbb{Z}}T^nU_0; V=\cup_{n\in\mathbb{Z}}T^{n}V_0$. U and V are obviously non-empty, they are open because of the fact that T is a homeomorphism and T-invariant as we are considering all $n\in\mathbb{Z}$.
+    
+    But they are also disjoint: if they were not, considering the way they are built, $T^mU_0 \cap T^kV_0\neq\emptyset$ for some m and k. Considering the fact that T is a homeomorphism, this implies that $T^{m-k}U_0\cap V_0\neq \emptyset$, which would negate the very first building block of this proof. So, U and V are non-empty, open, disjoint and T-invariant, which is a contradiction to our hypothesis.
+\end{proof}
+
+\begin{definition}
+    A vector is said to be rationally independent if is linearly independent on the field of rational numbers (i.e. there does not exist a vector $(r_0,...,r_d)\in\mathbb{Q}^{d+1}\setminus \{0\}$ such that $r_01+r_1\gamma_1+...+r_d\gamma_d=0$).
+\end{definition}
+
+\begin{proposition}
+    A vector $(1, \gamma_1,...,\gamma_d)$ is rationally independent $\underset{1}{\iff}$ there does not exist a vector $(r_0,...,r_d)\in\mathbb{Z}^{d+1}\setminus \{0\}$ such that $r_01+r_1\gamma_1+...+r_d\gamma_d=0$ $\underset{2}{\iff} k_1\gamma_1+...\notin\mathbb{Z}$ for every combination of $k_d$\footnote{https://www.youtube.com/watch?v=ZeOmeOhToiw}.
+\end{proposition}
+
+\begin{proof}
+    We shall start by proving $\underset{1}{\iff}$. 
+    
+    $\Rightarrow$ is trivial, since is such a vector does not exist in the set of rationals, it cannot exist in the set of integer numbers.
+
+    $\Leftarrow$ is a bit harder but still simple. 
+    
+    RAA if there was indeed a rational vector $(r_0,...,r_d)\in\mathbb{Q}^{d+1}\setminus \{0\}$ such that $r_01+r_1\gamma_1+...+r_d\gamma_d=0$, then we could say $r_i=\frac{p_i}{q_i},\, p_i \in \mathbb{Z}, q_i\in\mathbb{Z}\setminus\{0\}$ for every $i \in [0, d]$. This implies \begin{equation*}
+        0=r_01+r_1\gamma_1+...+r_d\gamma_d=\frac{p_0}{q_0}+\gamma_1\frac{p_1}{q_1}+...+\gamma_d\frac{p_d}{q_d}
+    \end{equation*}
+    Which can be reworked a bit as: \begin{equation*}
+        \frac{p_0}{q_0}+\gamma_1\frac{p_1}{q_1}+...+\gamma_d\frac{p_d}{q_d}=\frac{\sum_{i=0}^{d}p_i\gamma_i\prod_{j\in[0, d]\setminus\{i\}}q_j}{\prod_{n=0}^{d}q_n}
+    \end{equation*}
+    this means, though, since by concatenating the equalities we can say that the aforementioned sum is equal to 0, that there indeed exists an integer vector that satisfies the defining condition, namely $(r_0,...,r_d), r_i=p_i\prod_{j\in[0, d]\setminus\{i\}}q_j$, which contradicts the hypothesis.
+    
+    The only part left to prove is that $(r_0,...,r_d), r_i=p_i\prod_{j\in[0, d]\setminus\{i\}}q_j$ is non-zero, because the absurd only leads us to the existence of an integer vector. This is trivial because the starting vector $(r_0,...,r_d)$ was non-zero, so at least one $p_i$ is non-zero itself. Multiplying it with $\prod_{j\in[0, d]\setminus\{i\}}q_j$ cannot make it zero because all of $q_j$s are non-zero by hypothesis.
+
+    Now, we must prove $\underset{2}{\iff}$.
+
+    $\Rightarrow$ is done by contradiction. RAA if there existed some combination of $k_d$s such that $\sum_{i=1}^{d}k_i=\rho\in\mathbb{Z}$, then the vector $(-\rho, r_1, ..., r_d)$ would contradict the hypothesis:
+    \begin{equation*}
+        -\rho+\sum_{i=1}^{d}=0
+    \end{equation*}
+
+    $\Leftarrow$ is actually the same thing, because you may notice that the steps of the last proof where all if and only ifs. So you may prove it by just changing the assumptions.
+\end{proof}
+
+\begin{proposition}
+    $T_{\gamma}$ is minimal $\iff T_{\gamma}$ is topologically transitive.
+\end{proposition}
+\begin{proof}
+    $\Rightarrow$ is trivial.
+    
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[x=4cm, y=4cm]
+        % Unit of the picture = side of the square.
+
+        % ================= Left: T_theta o T_gamma = T_{gamma+theta} =================
+        % P0 = (0.05,0.10), gamma = (0.40,0.12), theta = (0.18,0.28)
+        % first path: gamma then theta (solid)
+        \draw[-{Stealth[length=2.5mm]}, blue!70!black, thick] (0.05,0.10) -- (0.45,0.22)
+            node[midway, below, font=\small] {$\gamma$};
+        \draw[-{Stealth[length=2.5mm]}, red!70!black, thick] (0.45,0.22) -- (0.63,0.50)
+            node[midway, right, font=\small] {$\theta$};
+        % second path: theta then gamma (dashed)
+        \draw[-{Stealth[length=2.5mm]}, red!70!black, thick, dashed] (0.05,0.10) -- (0.23,0.38)
+            node[midway, left, font=\small] {$\theta$};
+        \draw[-{Stealth[length=2.5mm]}, blue!70!black, thick, dashed] (0.23,0.38) -- (0.63,0.50)
+            node[midway, above, font=\small] {$\gamma$};
+        % direct arrow: gamma + theta
+        \draw[-{Stealth[length=2.5mm]}, black, thick] (0.05,0.10) -- (0.63,0.50)
+            node[pos=0.55, below right, font=\small] {$\gamma+\theta$};
+
+        \node[circle, fill, inner sep=1.5pt] at (0.05,0.10) {};
+        \node[below left, font=\small] at (0.05,0.10) {$x$};
+        \node[circle, fill, inner sep=1.5pt] at (0.63,0.50) {};
+        \node[above right, font=\small] at (0.63,0.50) {$T_\theta T_\gamma(x)=T_\gamma T_\theta(x)$};
+
+        % ================= Right: orbit of x_0 and orbit of x = x_0 + v =================
+        \begin{scope}[shift={(1.15,0)}]
+            % torus square with identified sides
+            \fill[blue!5] (0,0) rectangle (1,1);
+            \draw[blue!70!black, thick, -{Stealth[length=2.5mm]}] (0,0) -- (0,1);
+            \draw[blue!70!black, thick, -{Stealth[length=2.5mm]}] (1,0) -- (1,1);
+            \draw[red!70!black, thick, -{Stealth[length=2.5mm]Stealth[length=2.5mm]}] (0,0) -- (1,0);
+            \draw[red!70!black, thick, -{Stealth[length=2.5mm]Stealth[length=2.5mm]}] (0,1) -- (1,1);
+
+            % translation v = x - x_0 = (0.20, 0.25), shown on the first two pairs
+            \draw[-{Stealth[length=2mm]}, gray, thick] (0.15,0.30) -- (0.35,0.55)
+                node[midway, above left, font=\scriptsize] {$v$};
+            \draw[-{Stealth[length=2mm]}, gray, thick] (0.50,0.50) -- (0.70,0.75)
+                node[midway, above left, font=\scriptsize] {$v$};
+
+            % orbit of x_0 (blue): (0.15,0.30), (0.50,0.50), (0.85,0.70), (0.20,0.90), (0.55,0.10), (0.90,0.30)
+            \foreach \px/\py in {0.15/0.30, 0.50/0.50, 0.85/0.70, 0.20/0.90, 0.55/0.10, 0.90/0.30} {
+                \node[circle, fill=blue!70!black, inner sep=1.5pt] at (\px,\py) {};
+            }
+            % orbit of x (red): same points shifted by v, mod 1
+            \foreach \px/\py in {0.35/0.55, 0.70/0.75, 0.05/0.95, 0.40/0.15, 0.75/0.35, 0.10/0.55} {
+                \node[circle, fill=red!70!black, inner sep=1.5pt] at (\px,\py) {};
+            }
+            \node[blue!70!black, font=\scriptsize, below left] at (0.15,0.30) {$x_0$};
+            \node[red!70!black, font=\scriptsize, above right] at (0.35,0.55) {$x$};
+            \node[blue!70!black, font=\small] at (0.5,-0.12) {$O(x_0)$};
+            \node[red!70!black, font=\small] at (0.5,-0.2) {$O(x)=T_{v}(O(x_0))$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Left: composing two translations amounts to adding the vectors, so the order does not
+    matter ($T_\theta\circ T_\gamma=T_{\gamma+\theta}=T_\gamma\circ T_\theta$). Right: the orbit of
+    $x=x_0+v$ (red) is the orbit of $x_0$ (blue) translated by $v=x-x_0$, point by point, so $T_v$
+    maps $O(x_0)$ onto $O(x)$.}
+    \label{fig:translations_commute}
+\end{figure}
+
+    As for $\Leftarrow$, let's now show that if there exists some $x_0$ such that $O(x_0)$ is dense, then $O(x)$ is dense $\forall x\in M$. At that point, the proof would be over since we have already proven that topological transitivity implies the existence of such an orbit.
+    
+    A key observation to reach this conclusion is the following: \begin{equation*}
+        T_{\theta}\circ T_{\gamma}=T_{\gamma+\theta}
+    \end{equation*}
+    which is shown in \autoref{fig:translations_commute}; notice that we also get the commutative property from this observation. 
+    
+    At this point, we are actually done: if the orbit is dense, then by starting from somewhere else you would get the same orbit but translated. A bit more formally: if $O(x_0)=(T^n(x_0))_{n\in\mathbb{Z}}$ is dense, then \begin{equation*}
+        T_{x-x_0}T^n_{\gamma}(x_0)=T_{\gamma}^n(T_{x-x_0(x_0)})=T_{\gamma}^n(x)
+    \end{equation*}
+    so $T_{x-x_0}(O(x))=O(x)$. Realizing that $d(T_{\theta}(x), T_{\theta}(y))=d(x,y)$, then $O(x)$ is dense. 
+\end{proof}
+
+\begin{proposition}
+    $T_{\gamma}$ is topologically transitive $\iff$ the vector that defines it $(1,\gamma_1,..,\gamma_d)$ is rationally independent.
+\end{proposition}
+
+\begin{proof}
+    The proposition we will actually prove is the following: \begin{equation*}
+        T_{\gamma} \text{topologically transitive }\iff \nexists (k_1,..,k_d)\neq \vec{0}\text{ such that }\sum_{i}k_i\gamma_i\in\mathbb{Z}
+    \end{equation*}
+    which, in light of the precedent propositions, is the exact same as the one we are trying to prove. 
+
+    $\Rightarrow$ is proven by contradiction. RAA Let's assume that such a vector $k=(k_1,...,k_d)\neq0$, for which $\sum_ik_i\gamma_i=<k,\gamma>=p\in\mathbb{Z}$, actually exists. Then, we may take the following function: \begin{equation*}
+        f(x)=e^{2i\pi<k, x>}
+    \end{equation*}
+    We must observe that said function is defined on the torus, because of Euler's formula. $f(x)$ is also continuous and non-constant. This means that if we are able to show that it is also T-invariant we have completed the proof, since $T_{\gamma}$ cannot be topologically transitive if there exists such a function. We shall start by observing that:
+    \begin{equation*}
+        f(T_{\gamma}(x))=e^{2i\pi<k, x+\gamma \mod \mathbb{Z}^d>}e^{2i\pi<k, x+\gamma>}
+    \end{equation*}
+    We are able to lose the $\mod \mathbb{Z}^d$ since it is akin as subtracting an integer to the exponent which, again because of Euler's formula, is the equivalent to multiplying the whole thing by 1.
+
+    After having done that, we may substitute with $p\in\mathbb{Z}$ and use the same property: \begin{equation*}
+        f(T_{\gamma}(x))=e^{2i\pi<k, x+\gamma>}=e^{2i\pi<k, x>}e^{2i\pi<k, \gamma>}=f(x)
+    \end{equation*}
+    So, said f(x) is also T-invariant, which is absurd.
+
+    We must now prove $\Leftarrow$.
+
+    RAA Since by hypothesis T is a homeomorphism, we are proving this by contradiction by using the lemma. We start by assuming that T is not topologically transitive, which implies there exist $U\neq\emptyset$ open, $\neq M$ and T-invariant\footnote{Actually, we are guaranteed two of those, but we will only need one.}.
+    
+    So, $f=1_U$ is T-invariant too, and it is not identically equal to $1_M$. At this point, we may also verify that $f\in L^2(T^d)$, L2 meaning square integrable: this is due to the fact that it is limited in a limited space. 
+    
+    We can then employ Fourier's representation: \begin{equation*}
+    f(x)=\sum_{k\in\mathbb{Z}^d}\hat{f}_ke^{2i\pi<k, x>}
+    \end{equation*}
+    If we do the same thing to $f\circ T$ we find:
+    \begin{equation*}
+        (f\circ T)(x)=f(T(x))=\sum_{k\in\mathbb{Z}^d}\hat{f}_ke^{2i\pi<k, x+\gamma>}=\sum_{k\in\mathbb{Z}^d}\hat{f}_ke^{2i\pi<k, x>}e^{2i\pi<k, \gamma>}
+    \end{equation*}
+    Which means that $\hat{f}_ke^{2i\pi<k, \gamma>}$ is the Fourier basis of $f\circ T$. We must consider, though, that f has been established to be T-invariant (and Fourier is unique), so we should have $\hat{f}_ke^{2i\pi<k, \gamma>}=\hat{f}_k$. 
+
+    This would be possible if $<k, \gamma>$ was, somehow, an integer, which is against the hypothesis. Another possibility is that $\hat{f}_k=0$. This, though, implies $f=\hat{f}_0$, a constant. Since f is an indicator function, this must mean that f is either 1 or 0, but both are impossible because they would imply a contradiction of the initial hypothesis: either $U=\emptyset$ or $U=M$.
+\end{proof}
+
+\subsection{Poincarè sections}
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % Torus: major radius R=2.2, minor radius r=0.8, viewed from above (sin=0.6, cos=0.8)
+        % Point (u,v) on the torus -> ( (R+r cos v) cos u ,  (R+r cos v) 0.6 sin u + 0.8 r sin v )
+        \def\uz{-35}   % angle of the cross-section M_0
+
+        % ================= Left: torus, flow and cross-section =================
+        % Silhouette (approximate): outer and inner ellipse
+        \draw[thick] (0,0) ellipse (3.0 and 2.12);
+        \draw[thick] (0,0) ellipse (1.4 and 0.52);
+
+        % Flow line: two turns around the torus, slowly drifting around the tube
+        % (radius 0.68 inside the tube, u = uz + 720 t, v = 40 + 100 t)
+        \draw[blue!70!black, thick, domain=0:1, samples=160, variable=\t,
+              postaction={decorate},
+              decoration={markings,
+                  mark=at position 0.12 with {\arrow{Stealth[length=2.2mm]}},
+                  mark=at position 0.37 with {\arrow{Stealth[length=2.2mm]}},
+                  mark=at position 0.62 with {\arrow{Stealth[length=2.2mm]}},
+                  mark=at position 0.87 with {\arrow{Stealth[length=2.2mm]}}}]
+            plot ({(2.2+0.68*cos(40+100*\t))*cos(\uz+720*\t)},
+                  {(2.2+0.68*cos(40+100*\t))*0.6*sin(\uz+720*\t)+0.8*0.68*sin(40+100*\t)});
+
+        % Cross-section M_0: the whole meridian disc of the tube at u = uz
+        \filldraw[red!70!black, thick, fill=red!25, fill opacity=0.7, domain=0:360,
+                  samples=61, variable=\v]
+            plot ({(2.2+0.8*cos(\v))*cos(\uz)},
+                  {(2.2+0.8*cos(\v))*0.6*sin(\uz)+0.8*0.8*sin(\v)}) -- cycle;
+        \node[red!70!black] at (2.9,-2.5) {$M_0$};
+        \draw[red!70!black, thin, -{Stealth[length=1.5mm]}] (2.6,-2.3) -- (2.0,-1.45);
+
+        % Return points on M_0: t = 0, 0.5, 1
+        \foreach \tt/\lab/\pos in {0/{x}/{left}, 0.5/{T(x)}/{left}, 1/{T^2(x)}/{right}} {
+            \fill[blue!70!black]
+                ({(2.2+0.68*cos(40+100*\tt))*cos(\uz+720*\tt)},
+                 {(2.2+0.68*cos(40+100*\tt))*0.6*sin(\uz+720*\tt)+0.8*0.68*sin(40+100*\tt)})
+                circle (1.6pt)
+                node[\pos=2pt, font=\scriptsize] {$\lab$};
+        }
+        \node[font=\small] at (0,-2.6) {flow on $M$};
+
+        % ================= Right: the section M_0 and the first return map =================
+        \begin{scope}[shift={(7.6,-0.5)}]
+            \filldraw[red!70!black, thick, fill=red!25, fill opacity=0.7] (0,0) circle (1.3);
+            \node[red!70!black] at (0,-1.75) {$M_0$};
+
+            % same points as on the left: angle v = 40, 90, 140, radius 0.68/0.8 * 1.3
+            \foreach \a/\lab in {40/{x}, 90/{T(x)}, 140/{T^2(x)}} {
+                \fill[blue!70!black] (\a:1.1) circle (1.6pt);
+                \node[blue!70!black, font=\scriptsize] at (\a:1.5) {$\lab$};
+            }
+            \foreach \a/\b in {40/90, 90/140} {
+                \draw[-{Stealth[length=2mm]}, blue!70!black, thick,
+                      shorten >=2pt, shorten <=2pt] (\a:1.1) to[bend right=25] (\b:1.1);
+            }
+            \node[font=\small] at (0,-2.2) {first return map $T$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Poincar\'e section. Left: a flow on a torus. $M_0$ is a full cross-section of the tube,
+    so every orbit going around the torus must cross it. The orbit of $x\in M_0$ goes around and hits
+    $M_0$ again at $T(x)$, then at $T^2(x)$. Right: the section seen face-on. Recording only
+    the successive hits gives the discrete-time system $T:M_0\to M_0$, with one dimension less than $M$.}
+    \label{fig:poincare_section}
+\end{figure}
+\begin{definition}
+    Suppose you have a manifold M of dimension d, with a semi-flow $(\phi^t)_{t\in\mathbb{R}^+}$ on it. Suppose you have a sub-manifold $M_0$ of dimension d-1 and assume that\begin{itemize}
+    \item For every x in M there exists a time $t^+(x)>0$ such that $\phi^{t^+}(x)\in M_0$, and that there exists some $t^{-}>0$ such that $\phi^{t-}(x)\cap M_0\neq \emptyset$ (consider that $phi^{t-}(x)$ is a set because of the definition). Also, there exists some $\delta(x)$ such that no times with the above properties are in $[-\delta, \delta]\setminus\{0\}$ (in other words, times must not converge to 0). Set $t_{M_0}(x)=inf\{t>0|\phi^t(x)\in M_0\}\in(0,\infty)$: this is called hitting time to $M_0$, and if $x\in M_0$, return time. \footnote{Hw: realize that inf is a minimum};
+    \item for every $U_0$ in $M_0$ open set in a topology of $M_0$ (induced by the topology of M), there exists some $\epsilon=\epsilon(U_0)>0$ such that $U=\cup_{0<t<\epsilon}\phi^{-t}U_0$ is open in M. This means that $U_0=A\cap M_0$ for some A open in M. (notice that we are defining being open in the cross-section);
+    \item both $M$ and $M_0$ are "nice" spaces. 
+\end{itemize}
+
+In this case, $M_0$ is called a Poincarè section for the semi-flow $(\phi^t)_{t>0}$ and $T:M_0\rightarrow M_0$, defined $T(x)=\phi^{t_{M_0}(x)}$, is called the corresponding Poincarè map or first return map.
+\end{definition}
+
