@@ -759,12 +759,249 @@ An example of an easy map is the discrete translations of the torus. Take $M=[0,
     \label{fig:poincare_section}
 \end{figure}
 \begin{definition}
-    Suppose you have a manifold M of dimension d, with a semi-flow $(\phi^t)_{t\in\mathbb{R}^+}$ on it. Suppose you have a sub-manifold $M_0$ of dimension d-1 and assume that\begin{itemize}
-    \item For every x in M there exists a time $t^+(x)>0$ such that $\phi^{t^+}(x)\in M_0$, and that there exists some $t^{-}>0$ such that $\phi^{t-}(x)\cap M_0\neq \emptyset$ (consider that $phi^{t-}(x)$ is a set because of the definition). Also, there exists some $\delta(x)$ such that no times with the above properties are in $[-\delta, \delta]\setminus\{0\}$ (in other words, times must not converge to 0). Set $t_{M_0}(x)=inf\{t>0|\phi^t(x)\in M_0\}\in(0,\infty)$: this is called hitting time to $M_0$, and if $x\in M_0$, return time. \footnote{Hw: realize that inf is a minimum};
+    Suppose you have a manifold M of dimension d, with a semi-flow $(\phi^t)_{t\in\mathbb{R}^+}$ on it. Suppose you have a sub-manifold $M_0$ of dimension d-1 and assume that\begin{enumerate}
+    \item For every x in M there exists a time $t^+(x)>0$ such that $\phi^{t^+}(x)\in M_0$, and that there exists some $t^{-}>0$ such that $\phi^{t-}(x)\cap M_0\neq \emptyset$ (consider that $\phi^{t-}(x)$ is a set because of the definition). Also, there exists some $\delta(x)$ such that no times with the above properties are in $[-\delta, \delta]\setminus\{0\}$ (in other words, times must not converge to 0). Set $t_{M_0}(x)=inf\{t>0|\phi^t(x)\in M_0\}\in(0,\infty)$: this is called hitting time to $M_0$, and if $x\in M_0$, return time. \footnote{Hw: realize that inf is a minimum};
     \item for every $U_0$ in $M_0$ open set in a topology of $M_0$ (induced by the topology of M), there exists some $\epsilon=\epsilon(U_0)>0$ such that $U=\cup_{0<t<\epsilon}\phi^{-t}U_0$ is open in M. This means that $U_0=A\cap M_0$ for some A open in M. (notice that we are defining being open in the cross-section);
     \item both $M$ and $M_0$ are "nice" spaces. 
-\end{itemize}
+\end{enumerate}
 
 In this case, $M_0$ is called a Poincarè section for the semi-flow $(\phi^t)_{t>0}$ and $T:M_0\rightarrow M_0$, defined $T(x)=\phi^{t_{M_0}(x)}$, is called the corresponding Poincarè map or first return map.
 \end{definition}
+
+\begin{lemma}
+    Consider a manifold M where the three conditions given by the Poincarè section definition hold.
+    Then, for all (there exists(?)) $x_0\in M_0$ such that $\{\phi^t(x_0)\}_{t\geq 0}$ is dense in M $\iff$ $\{\phi^t(x_0)\}_{t\geq 0}=\{T^n_0(x_0)\}_{n\in\mathbb{N}} \cap M_0$ is dense in $M_0$, where the notation refers to the entities defined in the Poincarè section definition.
+\end{lemma}
+\begin{proof}
+    \begin{figure}[ht]
+        \centering
+        % ======================= (a) Direction => =======================
+        \begin{subfigure}[t]{\textwidth}
+            \centering
+            \begin{tikzpicture}[scale=0.9]
+                % M: rectangle [0,10] x [0,4], left and right sides identified. Flow goes left -> right.
+                \fill[blue!4] (0,0) rectangle (10,4);
+                \draw[thick] (0,0) rectangle (10,4);
+                \node[font=\small] at (0.4,3.6) {$M$};
+
+                % light flow lines in the background
+                \foreach \yy in {0.9,1.6,2.2,3.5} {
+                    \draw[gray!50, thin, -{Stealth[length=1.5mm]}] (0.3,\yy) -- (1.3,\yy);
+                    \draw[gray!50, thin, -{Stealth[length=1.5mm]}] (8.7,\yy) -- (9.7,\yy);
+                }
+
+                % M_0: full cross-section
+                \draw[red!70!black, ultra thick] (5,0) -- (5,4);
+                \node[red!70!black, above] at (5,4) {$M_0$};
+
+                % U_0 on M_0 and U = union of phi^{-t}(U_0), 0<t<epsilon
+                \fill[green!50!black, opacity=0.2] (3.6,2.4) rectangle (5,3.2);
+                \draw[green!50!black, thin, dashed] (3.6,2.4) rectangle (5,3.2);
+                \draw[green!50!black, ultra thick] (5,2.4) -- (5,3.2);
+                \node[green!50!black, font=\small, right] at (5.05,3.2) {$U_0$};
+                \node[green!50!black, font=\small, above] at (4.0,3.25)
+                    {$U=\bigcup_{0<t<\epsilon}\phi^{-t}(U_0)$};
+
+                % orbit of x_0: leaves M_0, exits on the right, re-enters on the left, enters U, hits U_0
+                \draw[blue!70!black, thick, -{Stealth[length=2.2mm]}]
+                    (5,0.4) .. controls (7,0.35) and (9,0.5) .. (10,0.5);
+                \draw[blue!70!black, thick, -{Stealth[length=2.2mm]}]
+                    (0,2.0) .. controls (1.5,2.1) and (2.8,2.55) .. (3.4,2.7)
+                            .. controls (4.2,2.78) .. (5,2.8);
+                \fill[blue!70!black] (5,0.4) circle (1.8pt) node[left=2pt, font=\scriptsize] {$x_0$};
+                \fill[blue!70!black] (3.4,2.7) circle (1.8pt)
+                    node[below=2pt, font=\scriptsize] {$\phi^{s}(x_0)\in U$};
+                \fill[blue!70!black] (5,2.8) circle (1.8pt);
+                \node[blue!70!black, font=\scriptsize, below right] at (5,2.8)
+                    {$\phi^{s+\bar{t}}(x_0)\in U_0$};
+            \end{tikzpicture}
+            \caption{($\Rightarrow$) The dense orbit of $x_0$ enters the open set $U$ at time $s$, and
+            after a further time $\bar{t}\in(0,\epsilon)$ it reaches $U_0\subseteq M_0$.}
+            \label{fig:poincare_lemma_a}
+        \end{subfigure}
+
+        \vspace{1.5em}
+
+        % ======================= (b) Direction <= =======================
+        \begin{subfigure}[t]{\textwidth}
+            \centering
+            \begin{tikzpicture}[scale=0.9]
+                \fill[blue!4] (0,0) rectangle (10,4);
+                \draw[thick] (0,0) rectangle (10,4);
+                \node[font=\small] at (0.4,3.6) {$M$};
+
+                % light flow lines in the background
+                \foreach \yy in {0.9,2.8,3.5} {
+                    \draw[gray!50, thin, -{Stealth[length=1.5mm]}] (0.3,\yy) -- (1.3,\yy);
+                    \draw[gray!50, thin, -{Stealth[length=1.5mm]}] (8.7,\yy) -- (9.7,\yy);
+                }
+
+                % M_0: full cross-section
+                \draw[red!70!black, ultra thick] (5,0) -- (5,4);
+                \node[red!70!black, above] at (5,4) {$M_0$};
+
+                % open set U in M, and x in U
+                \draw[green!50!black, thick, fill=green!50!black, fill opacity=0.15] (8,1.7) circle (0.8);
+                \node[green!50!black, font=\small] at (8,2.8) {$U$};
+                \draw[green!50!black, thin] (8,2.65) -- (8,2.4);
+
+                % V on M_0 (open, around xbar) and its image under the flow, contained in U
+                \draw[orange!80!black, ultra thick] (5,0.7) -- (5,1.5);
+                \node[orange!80!black, font=\small, left] at (5,0.8) {$V$};
+                \fill[orange!80!black, opacity=0.25] (5,0.7) -- (5,1.5) -- (8.1,2.1) -- (8.1,1.35) -- cycle;
+                \draw[orange!80!black, thin] (5,0.7) -- (8.1,1.35) (5,1.5) -- (8.1,2.1);
+
+                % xbar -> x
+                \draw[-{Stealth[length=2.2mm]}, blue!70!black, thick, shorten >=2pt] (5,1.1) -- (8,1.7);
+                \fill[blue!70!black] (5,1.1) circle (1.8pt);
+                \node[blue!70!black, font=\scriptsize, below right] at (5,1.1) {$\bar{x}$};
+                \fill[blue!70!black] (8,1.7) circle (1.8pt);
+                \node[blue!70!black, font=\scriptsize, below right] at (8,1.7) {$x$};
+                \node[orange!80!black, font=\scriptsize, fill=blue!4, inner sep=1pt] at (6.3,1.0)
+                    {$\phi^{t^-(\hat{x})}(V)\subseteq U$};
+
+                % a point of the orbit that lies in V (density in M_0)
+                \fill[blue!70!black] (5,1.35) circle (1.8pt);
+                \node[blue!70!black, font=\scriptsize, left=2pt] at (5,1.35) {$T_0^n(x_0)\in V$};
+            \end{tikzpicture}
+            \caption{($\Leftarrow$) For $x\in U$ there is $\bar{x}\in M_0$ with $\phi^{t^-}(\bar{x})=x$. By
+            continuity, a small open $V\subseteq M_0$ around $\bar{x}$ is mapped into $U$, and the orbit,
+            being dense in $M_0$, hits $V$.}
+            \label{fig:poincare_lemma_b}
+        \end{subfigure}
+
+        \caption{Proof of the lemma. In both panels $M_0$ is a section crossing the whole of $M$, the
+        flow goes left to right, and the left and right sides of $M$ are identified.}
+        \label{fig:poincare_lemma}
+    \end{figure}
+
+    We shall start by proving $\Rightarrow$. 
+
+    We take an open, non-empty set $U_0\subseteq M_0$. Then, we consider the set $U=\cup_{0<t<\epsilon(U_0)}\phi^{-t}(U_0)$, which is open in M because of (2). By hypothesis, there exists some time $s(x)>0$ such that $\phi^s(x)\in U\forall x\in M$, which implies that there must be some time $\bar{t}\in(0,\epsilon)$ such that $\phi^s (x_0)\in\phi^{-\bar{t}}(U_0)$, because of the definition of $U$ and $x_0\in M_0\subseteq M$. Because of the fact that M is a nice space, we may say $\phi^{s+\bar{t}}(x_0)\in U_0$. This implies density given the arbitrariness of $U_0$.
+
+    Then we shall prove $\Leftarrow$.
+
+    Take an open, non-empty set $U\in M$ and $x\in U$. Because of (1), there exists $\bar{x}$ such that $\bar{x}\in \phi^{-t^-(x)}\cap M_0$. This implies $\phi^{t^-}(\bar{x})=x$. 
+    
+    By hypothesis, considering that M is a nice space, $(y,x)\rightarrow\phi^{t^-(x)}(y)$ is continuous, both in $t^-(x)$ and in y. Keep this in mind.
+
+    Because of said continuity, there exists some open non-empty set $V\in M_0$\footnote{Actually, the professor took some $V\in M$ and then restricted it to $M_0$. We found that to be redundant.} and $\hat{x}\in U$ such that $\forall y\in V$, $\phi^{t^-(\hat{x})}(y)\in U$; in words, you can take some part of the section, and from that section you will be mapped into an arbitrary open set. Since everything here was arbitrary, the proof is complete.
+\end{proof}
+
+\begin{proposition}
+    If $\phi^t$ is continuous, $t_{M_0(x)}$ is continuous as well and the three properties just mentioned hold, then \begin{equation*}
+        (M, (\phi^t)_{t\geq0})\text{ is topologically }\underset{(minimal)}{transitive}\iff (M_0, T_0)\text{ is topologically }\underset{(minimal)}{transitive}
+    \end{equation*}
+    Where $T_0$ is the Poincarè map $T_0:M_0\rightarrow M_0, T_0=\phi^{t_{M_0}(x)}(x)$.
+\end{proposition}
+\begin{proof}
+    First, it must be noticed that $T_0$ is continuous, since it's a composition of continuous functions by hypothesis.
+
+    At this point, we may just use the lemma. If there is some $x_0\in M_0$ such that $\{\phi^t(x_0)\}_{t\geq 0}$, then obviously $(M_0, T_0)$ is topologically transitive (and the vice versa is true, so it's an if and only if). Because of the lemma, though, we can use the same logical process to prove that $(M, (\phi^t)_{t\geq 0})$ is topologically transitive, since we would know that $O_{\phi^t}(x)$ is dense in M for all $x\in\phi^{-s}(x_0)$ for some $s>0$, since $O_{\phi}(x_0)\subseteq O_{\phi}(x)$. Since everything we used is an if and only if, the proposition is proven.
+\end{proof}
+
+In this section, we have been dealing a lot with semi-flows, but we have never seen one. Let's see one.
+
+\begin{example}[of semi-flows- Suspension semi-flows]
+    \begin{figure}[ht]
+    \centering
+    % ======================= (a) The space M and the ceiling =======================
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.2]
+            % ceiling: \bar t(x) = 1.6 + 0.6 sin(90 x), x in [0,4]
+            \fill[blue!6] (0,0) -- plot[domain=0:4, samples=60, smooth, variable=\x]
+                ({\x},{1.6+0.6*sin(90*\x)}) -- (4,0) -- cycle;
+
+            % axes: M_0 (horizontal) and time (vertical)
+            \draw[-{Stealth}, thick, red!70!black] (-0.2,0) -- (4.5,0) node[right] {$M_0$};
+            \draw[-{Stealth}, gray] (0,-0.1) -- (0,2.9) node[above] {$t$};
+
+            % graph of \bar t
+            \draw[thick, blue!70!black, domain=0:4, samples=60, smooth, variable=\x]
+                plot ({\x},{1.6+0.6*sin(90*\x)});
+            \node[blue!70!black, right, font=\small] at (4,1.45) {$\mathrm{Graph}(\bar{t})$};
+            \node[blue!70!black, font=\small] at (2.0,0.7) {$M$};
+
+            % flow line: from (x,0) up to the graph
+            \draw[-{Stealth[length=2.2mm]}, thick] (1,0) -- (1,2.2);
+            \fill (1,0) circle (1.6pt) node[below, font=\scriptsize] {$x$};
+            \fill (1,0.9) circle (1.6pt) node[left=2pt, font=\scriptsize] {$(x,t)$};
+            \fill (1,2.2) circle (1.6pt) node[above=2pt, font=\scriptsize] {$(x,\bar{t}(x))$};
+        \end{tikzpicture}
+        \caption{The space $M=\{(x,t)\in M_0\times\mathbb{R}_0^+ \mid 0\le t\le\bar{t}(x)\}$: the region
+        under the ceiling $\mathrm{Graph}(\bar{t})$. Locally the flow just moves up, $(x,t)\mapsto(x,t+s)$.}
+        \label{fig:suspension_a}
+    \end{subfigure}
+
+    \vspace{1.5em}
+
+    % ======================= (b) Up, jump back, iterate =======================
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.2]
+            \fill[blue!6] (0,0) -- plot[domain=0:4, samples=60, smooth, variable=\x]
+                ({\x},{1.6+0.6*sin(90*\x)}) -- (4,0) -- cycle;
+            \draw[-{Stealth}, thick, red!70!black] (-0.2,0) -- (4.5,0) node[right] {$M_0$};
+            \draw[-{Stealth}, gray] (0,-0.1) -- (0,2.9) node[above] {$t$};
+            \draw[thick, blue!70!black, domain=0:4, samples=60, smooth, variable=\x]
+                plot ({\x},{1.6+0.6*sin(90*\x)});
+
+            % orbit of the base points: x -> T(x) -> T^2(x) -> T^3(x)
+            \foreach \a/\b in {0.6/2.5, 2.5/1.4, 1.4/3.3} {
+                \pgfmathsetmacro{\ha}{1.6+0.6*sin(90*\a)}
+                % up to the ceiling (the flow)
+                \draw[-{Stealth[length=2.2mm]}, thick, blue!70!black] (\a,0) -- (\a,\ha);
+                % identification (x,\bar t(x)) ~ (T(x),0): jump back to the base
+                \draw[-{Stealth[length=2mm]}, thick, dashed, red!70!black, bend left=30]
+                    (\a,\ha) to (\b,0);
+                \fill[blue!70!black] (\a,0) circle (1.6pt);
+                \fill[red!70!black] (\a,\ha) circle (1.6pt);
+            }
+            % last ascent (starting from T^3(x))
+            \draw[-{Stealth[length=2.2mm]}, thick, blue!70!black] (3.3,0) -- (3.3,1.4);
+            \fill[blue!70!black] (3.3,0) circle (1.6pt);
+
+            % labels of the base points
+            \node[below, font=\scriptsize] at (0.6,0) {$x$};
+            \node[below, font=\scriptsize] at (2.5,0) {$T(x)$};
+            \node[below, font=\scriptsize] at (1.4,0) {$T^2(x)$};
+            \node[below, font=\scriptsize] at (3.3,0) {$T^3(x)$};
+        \end{tikzpicture}
+        \caption{The semi-flow: go up from $(x,0)$ until the ceiling, then (dashed) identify
+        $(x,\bar{t}(x))$ with $(T(x),0)$ and start again. The successive returns to the base are the orbit of $T$.}
+        \label{fig:suspension_b}
+    \end{subfigure}
+
+    \caption{Suspension semi-flow over $T:M_0\to M_0$ with ceiling function $\bar{t}$.
+    If $\bar{t}$ is constant, the time to return is always the same and the semi-flow is just
+    $T$ with a discretized time.}
+    \label{fig:suspension}
+\end{figure}
+
+    Suppose you have a space M, and then some function $\bar{t}$. We then define $Graph(\bar{t})\subseteq M\times\mathbb{R}_0^+$ as the ceiling function. 
+    
+    Taking $T:M_0\rightarrow M_0$ as not necessarily injective, we define $M$ as $M=\{(x,t)\in M_0\times \mathbb{R}_0^+|0\leq t\leq \bar{t}(x)\}$. You can tink of identifying $(x, \bar{t}(x))$ with $(0, T(x))$. This is a semi flow, because although it is locally a flow when you are going up to the graph, it is not invertible for the whole way trough (since T is not invertible). 
+
+    Let's now take $M_0'=\{0\}\times M_0$; this is a Poincarè cross-section with a Poincarè map of T. 
+    
+    If the ceiling function is constant, you get simply a discretization of time.  
+\end{example}
+
+\subsection{Special dynamical system: the Kronecker flow on $T^d$}
+The Kronecker flow on $T^d$ is the flow of the ODE \begin{equation*}
+\dot{x}=\omega, \omega=(\omega_1,...,\omega_d)\in\mathbb{R}^d \end{equation*} which means that \begin{equation*}
+\phi^t=\phi^t_{\omega}=(x+\omega t) \mod \mathbb{Z}^d=(x_1+tw_1, ..., x_d+tw_d) \mod 1
+\end{equation*}
+In this context, the following proposition is true.
+
+\begin{proposition}
+    $(T^d, \phi^t_{\omega})$ is minimal $\iff\omega_1, \omega_d$ are rationally independent
+\end{proposition}
+Without losing generality, we may say $\omega_d\neq 0$, since to be rationally independent you need at least one of the omegas to be different form 0, and in the same way such a flow cannot possibly be minimal if $\omega_i=\vec{0}$.
+
+In 2d, it's quite easy to imagine a simple Poincarè section on the torus: the horizontal line. We are extending this concept to multiple dimensions: we consider $M_0=\{(x_1, x_{d-1}, 0)\in T^d\}\approxeq T^{d-1}$. Clearly, this is a Poincarè section for the flow, since $\omega_d\neq 0$, with $\forall x\in M_0, t_{M_0}(x)=1/\omega_d$. Now, we may define: \begin{equation*}
+T_0(x)\approxeq T_0(x_1,..., x_d)=(x_1+\frac{\omega_1}{\omega_d},...,x_{d-1}+\frac{\omega_{d-1}}{\omega_d})\mod 1
+\end{equation*}
+which is a discrete translation in $T^{d-1}$. It is minimal if and only if $1, \frac{\omega_1}{\omega_d}, ...\frac{\omega_{d-1}}{\omega_d}$ are rationally independent, because of the proposition about translations of the torus. This is possible if and only if $\omega_1, ...\omega_d$ are rationally independent, which is what we were trying to prove. 
 
