@@ -1005,3 +1005,291 @@ T_0(x)\approxeq T_0(x_1,..., x_d)=(x_1+\frac{\omega_1}{\omega_d},...,x_{d-1}+\fr
 \end{equation*}
 which is a discrete translation in $T^{d-1}$. It is minimal if and only if $1, \frac{\omega_1}{\omega_d}, ...\frac{\omega_{d-1}}{\omega_d}$ are rationally independent, because of the proposition about translations of the torus. This is possible if and only if $\omega_1, ...\omega_d$ are rationally independent, which is what we were trying to prove. 
 
+\begin{example}[of map]
+    \begin{figure}[ht]
+        \centering
+        \begin{tikzpicture}[scale=1]
+            % ================= Left: graph of T_2 on the unit square (side 3) =================
+            \draw[gray] (0,0) rectangle (3,3);
+            \draw[-{Stealth}, gray] (-0.2,0) -- (3.4,0) node[right] {$x$};
+            \draw[-{Stealth}, gray] (0,-0.2) -- (0,3.4) node[above] {$T_2(x)$};
+            \foreach \p/\l in {0/0, 1.5/\frac12, 3/1} {
+                \draw[gray] (\p,-0.05) -- (\p,0.05);
+                \node[below, font=\scriptsize] at (\p,-0.05) {$\l$};
+            }
+            \node[left, font=\scriptsize] at (0,3) {$1$};
+            \draw[gray, dashed, thin] (1.5,0) -- (1.5,3);
+
+            % the two branches of 2x mod 1
+            \draw[very thick, blue!70!black] (0,0) -- (1.5,3);
+            \draw[very thick, red!70!black] (1.5,0) -- (3,3);
+
+            % x = 0.15 and x' = 0.65, both sent to 0.3
+            \draw[dotted] (0.45,0) -- (0.45,0.9) -- (0,0.9);
+            \draw[dotted] (1.95,0) -- (1.95,0.9) -- (0.45,0.9);
+            \fill[blue!70!black] (0.45,0) circle (1.8pt) node[below=3pt, font=\scriptsize] {$x$};
+            \fill[red!70!black]  (1.95,0) circle (1.8pt) node[below=3pt, font=\scriptsize] {$x'$};
+            \fill (0.45,0.9) circle (1.8pt);
+            \fill (1.95,0.9) circle (1.8pt);
+            \fill (0,0.9) circle (1.8pt) node[left, font=\scriptsize] {$T_2(x)=T_2(x')$};
+
+            % ================= Right: the same map on the circle =================
+            \begin{scope}[shift={(8,1.5)}]
+                % circle, coloured by the two halves [0,1/2) and [1/2,1)
+                \draw[very thick, blue!70!black] (0:1.3) arc (0:180:1.3);
+                \draw[very thick, red!70!black]  (180:1.3) arc (180:360:1.3);
+                \fill (0:1.3) circle (1.8pt) node[right, font=\scriptsize] {$0=1$};
+                \fill (180:1.3) circle (1.8pt) node[left, font=\scriptsize] {$\frac12$};
+
+                % points at angle 360*position: x=0.15 -> 54, x'=0.65 -> 234, T_2 = 0.3 -> 108
+                \fill[blue!70!black] (54:1.3) circle (1.8pt);
+                \node[blue!70!black, font=\scriptsize] at (54:1.05) {$x$};
+                \fill[red!70!black] (234:1.3) circle (1.8pt);
+                \node[red!70!black, font=\scriptsize] at (234:1.05) {$x'$};
+                \fill (108:1.3) circle (1.8pt);
+                \node[font=\scriptsize] at (108:0.85) {$T_2(x)$};
+
+                % the images: the angle doubles. Blue moves by 54 deg, red by 234 deg (it winds once more)
+                \draw[-{Stealth[length=2mm]}, blue!70!black, thick] (54:1.65) arc (54:108:1.65);
+                \draw[-{Stealth[length=2mm]}, red!70!black, thick]  (234:1.95) arc (234:468:1.95);
+                \node[font=\small] at (0,0) {$T^1$};
+            \end{scope}
+        \end{tikzpicture}
+        \caption{The doubling map $T_2(x)=2x \bmod 1$. Left: its graph on $[0,1]^2$ has two branches,
+        each stretching half of the interval onto the whole of $[0,1)$. Right: on the circle each point
+        moves to the one with double the angle, so the circle is stretched by a factor $2$ and wrapped
+        twice around itself. The points $x$ and $x'=x+\frac12$ have the same image, so $T_2$ is not invertible.}
+        \label{fig:doubling_map}
+    \end{figure}
+    We define $T_2: T\rightarrow T$, $T_2(x)=2x \mod 1$, as shown \autoref{fig:doubling_map}.
+    
+    Thinking of the circle as $S^1=\{z\in\mathbb{C}| |z|=1\}$, then $T_2:S^1\rightarrow S^1, T_2(z)=z^2, T(e^{2i\pi\omega})=e^{4i\pi \omega}$. This is a non-invertible dynamical system, since it's subjective but not injective. The importance of this example stems from the fact that it's easy to see that even with such a simple map an increasing divergence from the starting conditions takes place. The translation did not have that, neither did the Kronecker flow. 
+    
+    Another reason for which this is particularly interesting is the fact that this map has to do with the binary representation of numbers.
+    
+    Say we are trying to represent $x\in[0,1)$ as a binary sequence of digits. So, \begin{equation}
+    x=0.d_1d_2..._2,\, d_i\in\{0,1\}
+    \label{eq:binary}
+    \end{equation}
+    where the numbers are determined by the equation
+    \begin{equation}
+        x=\sum_{i=1}^{\infty}d_i2^{-i}
+    \label{eq:decimal}
+    \end{equation}
+    Notice that the binary representation is unique, while the decimal one is not. In fact, \begin{equation*}
+    x=\sum_{i\geq 1}d_i2^i\leftrightarrow (d_i)_{i\geq1}
+    \end{equation*}
+    is almost bijective, due to the fact that the binary representation is not unique.
+    
+    To see it better, imagine the numbers $0.0\bar{1}_2$ and $0.1_2$ in the sense of the binary representation in\autoref{eq:binary}. Those are computed in the following ways: \begin{align*}
+        0.1_2=\frac{1}{2} \\
+        0.0\bar{1}_2=\sum_{i=2}^{\infty}2^{-i}=\frac{1}{2}
+    \end{align*}
+    so, we are representing the same number with two different binary representation.
+    
+    You can ignore this problem it in two possible ways: notice that the problem is only for some points $0.d_1....0\bar{1}=0.d_1...1\bar{0}$, which are a countable set. In short, this comparison fails in countably many points, which we can simply ignore, as they are countably many (i.e. not many). We may alsp make it bijective by always choosing one of the two possibilities at ambiguous points.
+
+    In this context, \begin{equation*}
+        T_2(x)=T_(\sum_{i=1}^{\infty}d_i2^{-i})=\sum_{i=1}^{\infty}d_i2^{-i+1}\mod 1=\sum_{j=0}^{\infty}d_{j+1}2^{-j}\mod 1=\sum_{j=1}^{\infty}d_{j+1}2^{-j}
+    \end{equation*}
+    where we got rid of the mod 1 because we never go over 1.
+
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % Row 0: x = 0.1011 0101... (binary digits d_1 d_2 d_3 ...)
+        \node[anchor=east] at (0.4,0) {$x=0.$};
+        \foreach \i/\d in {1/1, 2/0, 3/1, 4/1, 5/0, 6/1, 7/0, 8/1} {
+            \node[draw, minimum size=6mm, inner sep=0] at (0.8*\i,0) {$\d$};
+        }
+        \node at (0.8*9,0) {$\cdots$};
+        % first digit: highlighted and crossed out (it disappears with the mod 1)
+        \fill[red!25, opacity=0.8] (0.8-0.3,-0.3) rectangle (0.8+0.3,0.3);
+        \draw[red!70!black, thick] (0.8-0.3,-0.3) -- (0.8+0.3,0.3) (0.8-0.3,0.3) -- (0.8+0.3,-0.3);
+        \node[draw, minimum size=6mm, inner sep=0] at (0.8,0) {};
+        \node[red!70!black, font=\small] (lost) at (0.8,1.0) {$d_1$ is lost};
+        \draw[red!70!black, -{Stealth[length=1.8mm]}] (0.8,0.8) -- (0.8,0.4);
+
+        % Row 1: T_2(x) = 0.d_2 d_3 d_4 ...
+        \node[anchor=east] at (0.4,-1.7) {$T_2(x)=0.$};
+        \foreach \i/\d in {1/0, 2/1, 3/1, 4/0, 5/1, 6/0, 7/1} {
+            \node[draw, minimum size=6mm, inner sep=0] at (0.8*\i,-1.7) {$\d$};
+        }
+        \node at (0.8*8,-1.7) {$\cdots$};
+        \fill[red!25, opacity=0.8] (0.8-0.3,-1.7-0.3) rectangle (0.8+0.3,-1.7+0.3);
+        \draw[red!70!black, thick] (0.8-0.3,-2.0) -- (0.8+0.3,-1.4) (0.8-0.3,-1.4) -- (0.8+0.3,-2.0);
+        \node[draw, minimum size=6mm, inner sep=0] at (0.8,-1.7) {};
+
+        % Row 2: T_2^2(x) = 0.d_3 d_4 d_5 ...
+        \node[anchor=east] at (0.4,-3.4) {$T_2^2(x)=0.$};
+        \foreach \i/\d in {1/1, 2/1, 3/0, 4/1, 5/0, 6/1} {
+            \node[draw, minimum size=6mm, inner sep=0] at (0.8*\i,-3.4) {$\d$};
+        }
+        \node at (0.8*7,-3.4) {$\cdots$};
+
+        % Shift arrows: digit i+1 of the upper row goes to place i of the lower row
+        \foreach \i in {1,...,7} {
+            \pgfmathtruncatemacro{\j}{\i+1}
+            \draw[blue!70!black, -{Stealth[length=1.6mm]}, thin]
+                (0.8*\j,-0.32) -- (0.8*\i,-1.38);
+        }
+        \foreach \i in {1,...,6} {
+            \pgfmathtruncatemacro{\j}{\i+1}
+            \draw[blue!70!black, -{Stealth[length=1.6mm]}, thin]
+                (0.8*\j,-2.02) -- (0.8*\i,-3.08);
+        }
+    \end{tikzpicture}
+    \caption{The doubling map in binary. If $x=\sum_{i\ge1}d_i2^{-i}$, then $T_2(x)=\sum_{j\ge1}d_{j+1}2^{-j}$:
+    every digit moves one place to the left and the first digit $d_1$ (red) is discarded.
+    Applying $T_2$ again discards $d_2$, and so on: $T_2^n(x)=0.d_{n+1}d_{n+2}\dots$}
+    \label{fig:doubling_shift}
+\end{figure}
+    
+    On the other representation, this is exactly as doing \begin{equation*}
+        (d_i)_{i\geq 1}\text{ is }(d_i)_{i\geq 1}\rightarrow(d_i+1)_{i\geq 1}
+    \end{equation*}
+    which is translating the digits.  This shows that sometimes, simulating even a simple dyamical system can be challenging, since is that computers cannot deal with numerics if they do not have infinitely precise digits: every time you multiply a number by two on a computer, if you are working on this system, you are losing one binary digit.
+
+    $T_m(x)=mx \mod 1, m\in\mathbb{Z}^+$ behaves similarly.
+\end{example}
+
+We now introduce the concept of topologically mixing systems.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.9]
+        % Frames: 2 rows x 3 snapshots of the same space M (square of side 3)
+        \foreach \r in {0,-4.2} {
+            \foreach \k in {0,1,2} {
+                \begin{scope}[shift={(4.5*\k,\r)}]
+                    \fill[blue!4] (0,0) rectangle (3,3);
+                    \draw[thick] (0,0) rectangle (3,3);
+                \end{scope}
+            }
+            \draw[-{Stealth}, gray, thick] (3.2,\r+1.5) -- (4.3,\r+1.5);
+            \draw[-{Stealth}, gray, thick] (7.7,\r+1.5) -- (8.8,\r+1.5);
+        }
+
+        % ================= Row 1: U expands like a drop of oil =================
+        \draw[blue!70!black, thick, fill=blue!25] (0.7,0.7) circle (0.35);
+        \node[blue!70!black, font=\small] at (0.7,0.7) {$U$};
+        \node[font=\small] at (1.5,-0.4) {$t=0$};
+
+        \draw[blue!70!black, thick, fill=blue!25] (5.2,1.2) circle (1.0);
+        \node[font=\small] at (6.0,-0.4) {$t=t_1$};
+
+        \draw[blue!70!black, thick, fill=blue!25, rounded corners=6pt]
+            (9.1,0.1) rectangle (11.9,2.9);
+        \node[font=\small] at (10.5,-0.4) {$t\ge N$};
+
+        % ================= Row 2: U is stretched and folded into a filament =================
+        \draw[blue!70!black, thick, fill=blue!25] (0.7,-3.5) circle (0.35);
+        \node[blue!70!black, font=\small] at (0.7,-3.5) {$U$};
+        \node[font=\small] at (1.5,-4.6) {$t=0$};
+
+        \draw[blue!70!black, thick, fill=blue!25, rotate around={25:(5.6,-3.2)}]
+            (5.6,-3.2) ellipse (0.95 and 0.2);
+        \node[font=\small] at (6.0,-4.6) {$t=t_1$};
+
+        \begin{scope}[shift={(9,-4.2)}]
+            \draw[blue!70!black, line width=1.3pt, rounded corners=3pt]
+                (0.2,0.3) -- (2.8,0.3) -- (2.8,0.7) -- (0.2,0.7) -- (0.2,1.1) -- (2.8,1.1)
+                -- (2.8,1.5) -- (0.2,1.5) -- (0.2,1.9) -- (2.8,1.9) -- (2.8,2.3)
+                -- (0.2,2.3) -- (0.2,2.7) -- (2.8,2.7);
+        \end{scope}
+        \node[font=\small] at (10.5,-4.6) {$t\ge N$};
+
+        % ================= The same V and V' in every panel (drawn on top) =================
+        \foreach \r in {0,-4.2} {
+            \foreach \k in {0,1,2} {
+                \begin{scope}[shift={(4.5*\k,\r)}]
+                    \draw[red!70!black, thick, fill=red!30, fill opacity=0.6] (2.2,2.2) circle (0.3);
+                    \node[red!70!black, font=\scriptsize] at (2.2,2.2) {$V$};
+                    \draw[red!70!black, thick, fill=red!30, fill opacity=0.6] (0.8,2.3) circle (0.3);
+                    \node[red!70!black, font=\scriptsize] at (0.8,2.3) {$V'$};
+                \end{scope}
+            }
+        }
+    \end{tikzpicture}
+    \caption{Topological mixing, two ways it can happen. Top: $\phi^t(U)$ grows like a drop and
+    eventually covers all of $M$ (e.g.\ an interval under the doubling map). Bottom: $\phi^t(U)$
+    is stretched and folded into a thinner and thinner filament that comes close to every point
+    (typical of volume-preserving systems). In both cases, from time $N$ on, $\phi^t(U)$ meets
+    every open set $V$, at every time.}
+    \label{fig:top_mixing}
+\end{figure}
+
+\begin{definition}
+    A topological dynamical system $(M, \phi^t)$ is called topologically mixing if for all $U, V$ non-empty open sets there exists an $N=N(U, V)\geq 0$ such that for all $t\geq N, \phi^t(U)\cap V\neq\emptyset$
+\end{definition}
+
+Trivially, topological mixing implies topological transitivity, so it's a bit stronger as a definition.
+
+\begin{proposition}
+    $T_2$ is topologically mixing.
+\end{proposition}
+\begin{proof}
+    Let $U, V$ be two arbitrary set. There exist $N, k \in\mathbb{N}$ such that $[\frac{k}{2^N}, \frac{k+1}{2^N})\subset U$.
+    
+    Notice that $T^n_2(x)=2^nx\mod 1$\footnote{Convince yourself via this example: \begin{equation*}
+    (2x \mod 1)^2=2^2x \mod 1 
+    \end{equation*}}.
+
+    This implies that, for $n>N$, $T^n_2([\frac{k}{2^N}, \frac{k+1}{2^N}))=[0,1)$ because of the mod 1.
+    
+    This includes any V, even if we started from a subset of U.
+\end{proof}
+
+Another result on $T_2$ is the following, which is intuitively shown in \autoref{fig:fixed_points_doubling}.
+\begin{proposition}
+    $\#Fix(T_2^n)=2^n-1$
+\end{proposition}
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1.1]
+        % Unit square of side 4. Graph of T_2^2(x) = 4x mod 1: four branches y = 4(x - i), x in [i, i+1]
+        \draw[gray] (0,0) rectangle (4,4);
+        \draw[-{Stealth}, gray] (-0.2,0) -- (4.5,0) node[right] {$x$};
+        \draw[-{Stealth}, gray] (0,-0.2) -- (0,4.5) node[above] {$T_2^2(x)$};
+        \node[below, font=\scriptsize] at (0,-0.55) {$0$};
+        \node[below, font=\scriptsize] at (4,-0.55) {$1$};
+        \node[left, font=\scriptsize] at (0,4) {$1$};
+
+        % vertical dashed lines separating the branches
+        \foreach \i in {1,2,3} {
+            \draw[gray, dashed, thin] (\i,0) -- (\i,4);
+        }
+
+        % the four branches
+        \draw[very thick, blue!70!black] (0,0) -- (1,4);
+        \draw[very thick, red!70!black]  (1,0) -- (2,4);
+        \draw[very thick, blue!70!black] (2,0) -- (3,4);
+        \draw[very thick, red!70!black]  (3,0) -- (4,4);
+
+        % bisector
+        \draw[thick, black!70, dash pattern=on 4pt off 2pt] (0,0) -- (4.3,4.3)
+            node[right, font=\small] {$y=x$};
+
+        % fixed points: x = 0, 1/3, 2/3 (positions 0, 4/3, 8/3 on the picture)
+        \foreach \px/\lab in {0/{0}, 1.3333/{\frac13}, 2.6667/{\frac23}} {
+            \fill (\px,\px) circle (2.2pt);
+            \draw[dotted] (\px,\px) -- (\px,0);
+            \node[below, font=\scriptsize] at (\px,-0.05) {$\lab$};
+        }
+        % the point x = 1 is the same as x = 0 on the torus: hollow dot
+        \draw[fill=white] (4,4) circle (2.2pt);
+        \draw[dotted] (4,4) -- (4,0);
+        \node[font=\scriptsize, above left] at (4,4) {$1\equiv0$};
+    \end{tikzpicture}
+    \caption{Fixed points of $T_2^2(x)=4x \bmod 1$. The graph has $4$ branches, and each crosses the
+    bisector exactly once, at $x=0,\frac13,\frac23,1$. Since $0$ and $1$ are the same point of $T^1$
+    (hollow dot), there are $3=2^2-1$ fixed points. In general $T_2^n$ has $2^n$ branches and
+    $2^n-1$ fixed points.}
+    \label{fig:fixed_points_doubling}
+\end{figure}
+
+\begin{observation}
+    $Per(T_2)=\cup_{n\in\mathbb{Z}^+}Fix(T_2^n)$ is dense in the torus\footnote{look at the picture for the intuition}. It is also not minimal, because there are periodic points for $T^1_2$, which simply are fixed points. When you start from the periodic points, your orbit is not dense, so the system cannot be minimal.
+\end{observation}
+
+Counterintuitively, really chaotic systems have the most periodic points, as long as they are isolated.
