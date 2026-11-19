@@ -501,6 +501,22 @@
 \end{tikzpicture}%
 }
 
+% The cat, drawn in the unit square [0,1]^2 (so that it can be transformed with cm)
+\newcommand{\cat}{%
+    % ears
+    \draw[thick, fill=white] (0.24,0.58) -- (0.2,0.9) -- (0.42,0.67);
+    \draw[thick, fill=white] (0.76,0.58) -- (0.8,0.9) -- (0.58,0.67);
+    % head
+    \draw[thick, fill=white] plot[smooth cycle] coordinates
+        {(0.2,0.45) (0.3,0.25) (0.5,0.18) (0.7,0.25) (0.8,0.45) (0.7,0.62) (0.5,0.68) (0.3,0.62)};
+    % eyes, nose, whiskers
+    \fill (0.38,0.45) circle (0.03);
+    \fill (0.62,0.45) circle (0.03);
+    \fill (0.5,0.37) -- (0.46,0.41) -- (0.54,0.41) -- cycle;
+    \draw (0.2,0.38) -- (0.40,0.36) (0.2,0.30) -- (0.40,0.33)
+          (0.8,0.38) -- (0.60,0.36) (0.8,0.30) -- (0.60,0.33);
+}
+
 \begin{document}
 \maketitle
 \tableofcontents

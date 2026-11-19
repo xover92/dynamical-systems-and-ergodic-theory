@@ -1293,3 +1293,314 @@ Another result on $T_2$ is the following, which is intuitively shown in \autoref
 \end{observation}
 
 Counterintuitively, really chaotic systems have the most periodic points, as long as they are isolated.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % The circle T^1 (angle = 360 * position)
+        \draw[gray] (0,0) circle (1.6);
+        \node[font=\small] at (0,0) {$T^1$};
+
+        % V: red arc from 200 to 230 degrees; dashed rays show its extent
+        \draw[red!70!black, ultra thick] (200:1.6) arc (200:230:1.6);
+        \node[red!70!black] at (215:1.2) {$V$};
+        \draw[red!70!black, dashed, thin] (200:1.6) -- (200:3.2) (230:1.6) -- (230:3.2);
+
+        % U: blue arc from 60 to 90 degrees
+        \draw[blue!70!black, ultra thick] (60:1.6) arc (60:90:1.6);
+        \node[blue!70!black] at (75:1.2) {$U$};
+
+        % Images of U under R_alpha^n: same length (30 degrees), only shifted
+        % n_1: shift 60 -> [120,150], misses V
+        \draw[blue!70!black, thick] (120:2.0) arc (120:150:2.0);
+        \node[blue!70!black, font=\scriptsize] at (135:2.4) {$R_\alpha^{n_1}(U)$};
+
+        % n_2: shift 145 -> [205,235], meets V
+        \draw[blue!70!black, thick] (205:2.4) arc (205:235:2.4);
+        \node[blue!70!black, font=\scriptsize, fill=white, inner sep=1pt] at (220:2.85)
+            {$R_\alpha^{n_2}(U)$};
+
+        % n_3: shift 250 -> [310,340], misses V again
+        \draw[blue!70!black, thick] (310:2.8) arc (310:340:2.8);
+        \node[blue!70!black, font=\scriptsize] at (325:3.25) {$R_\alpha^{n_3}(U)$};
+
+        % rotation arrow
+        \draw[-{Stealth[length=2mm]}, gray, thick] (20:1.0) arc (20:50:1.0);
+        \node[gray, font=\scriptsize] at (35:0.75) {$R_\alpha$};
+    \end{tikzpicture}
+    \caption{Irrational rotations are not topologically mixing. $R_\alpha^n$ moves the arc $U$
+    rigidly, so $R_\alpha^n(U)$ has always the same length as $U$ and it is never stretched.
+    It meets $V$ for some $n$ (e.g.\ $n_2$), but it also misses $V$ for infinitely many $n$
+    (e.g.\ $n_1$, $n_3$), so no $N$ with $R_\alpha^n(U)\cap V\neq\emptyset$ for all $n\geq N$ exists.}
+    \label{fig:rotation_not_mixing}
+\end{figure}
+
+\begin{observation}
+    Irrational rotations of the circle are not topologically mixing, as shown in \autoref{fig:rotation_not_mixing}.
+\end{observation}
+
+\subsection{Special class of maps: hyperbolic automorphism of the torus}
+\begin{definition}
+    Hyperbolic automorphisms of the torus are maps such that \begin{equation*}
+    T_A:T^d\rightarrow T^d,\, T_A(x)=Ax \mod \mathbb{Z}^d
+    \end{equation*}
+    where $A\in\mathbb{Z}^{d\times d},\, \det A=1$\footnote{For those that like linear algebra, that is the same as saying $A\in SL_d(\mathbb{Z})$}.
+\end{definition}
+
+\begin{example}[Standard example: Arnold's cat map, d=2]
+
+    \begin{figure}[ht]
+    \centering
+    % ======================= (a) A maps the square to a parallelogram =======================
+    \begin{subfigure}[t]{0.6\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.5]
+            \draw[gray!40, thin] (0,0) grid (3,2);
+
+            % the parallelogram A([0,1]^2), cut along the unit squares it crosses
+            \foreach \ci/\cj/\col in {0/0/blue!15, 1/0/red!15, 1/1/green!20, 2/1/orange!25} {
+                \begin{scope}
+                    \clip (0,0) -- (2,1) -- (3,2) -- (1,1) -- cycle;
+                    \clip (\ci,\cj) rectangle ++(1,1);
+                    \fill[\col] (\ci,\cj) rectangle ++(1,1);
+                    \begin{scope}[cm={2,1,1,1,(0,0)}]   % matrix A: columns (2,1) and (1,1)
+                        \cat
+                    \end{scope}
+                \end{scope}
+            }
+            \draw[thick] (0,0) -- (2,1) -- (3,2) -- (1,1) -- cycle;
+
+            % original square with the cat (on top, in the first cell)
+            \draw[thick, dashed, gray] (0,0) rectangle (1,1);
+            \begin{scope}[opacity=0.55]
+                \cat
+            \end{scope}
+
+            % images of the basis vectors
+            \draw[-{Stealth[length=2mm]}, red!70!black, thick] (0,0) -- (2,1)
+                node[pos=0.6, below right, font=\scriptsize] {$A\binom{1}{0}=\binom{2}{1}$};
+            \draw[-{Stealth[length=2mm]}, blue!70!black, thick] (0,0) -- (1,1)
+                node[pos=0.55, above left, font=\scriptsize] {$A\binom{0}{1}=\binom{1}{1}$};
+        \end{tikzpicture}
+        \caption{$A$ sends the unit square to a parallelogram with vertices on integer points.
+        It crosses four unit squares, one colour each.}
+        \label{fig:cat_a}
+    \end{subfigure}\hfill
+    % ======================= (b) the pieces wrapped into the torus =======================
+    \begin{subfigure}[t]{0.35\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=2]
+            % the picture is only the unit square: the clipped material would otherwise enlarge the bounding box
+            \useasboundingbox (-0.05,-0.05) rectangle (1.05,1.05);
+
+            % each piece is translated by an integer vector (-i,-j) into [0,1]^2
+            \foreach \ci/\cj/\col in {0/0/blue!15, 1/0/red!15, 1/1/green!20, 2/1/orange!25} {
+                \begin{scope}[shift={(-\ci,-\cj)}]
+                    \clip (0,0) -- (2,1) -- (3,2) -- (1,1) -- cycle;
+                    \clip (\ci,\cj) rectangle ++(1,1);
+                    \fill[\col] (\ci,\cj) rectangle ++(1,1);
+                    \begin{scope}[cm={2,1,1,1,(0,0)}]
+                        \cat
+                    \end{scope}
+                \end{scope}
+            }
+            \draw[thick] (0,0) rectangle (1,1);
+        \end{tikzpicture}
+            \caption{Mod $\mathbb{Z}^2$ the four pieces are translated back by integer vectors into $[0,1)^2$: the cat is cut and wrapped around the torus.}
+            \label{fig:cat_b}
+    \end{subfigure}
+
+    \caption{Arnold's cat map $x\mapsto Ax \bmod \mathbb{Z}^2$ with $A=\begin{bmatrix}2&1\\1&1\end{bmatrix}$.
+    Since $A$ has integer entries, the image of the square is cut along the grid and the pieces
+    fit together exactly on the torus, so the map is well-defined and continuous.}
+    \label{fig:arnold_cat}
+\end{figure}
+
+    Let $A$ be the following matrix: \begin{equation*}
+        A=\begin{bmatrix}
+            2 & 1 \\
+            1 & 1
+        \end{bmatrix}
+    \end{equation*}
+    Let's divide $\mathbb{R}^2$ into unit squares, as the torus is the set of equivalence classes given by those unit squares. Since the matrix has integer entries, those squares become parallelograms, and said parallelograms' points lay on integer points, so the whole thing is perfectly suited for a torus; the map is also continuous. Everything is so "nice" because the entries are integers. If we put the whole thing on the torus, it would look like the cat is wrapped around the torus. 
+
+    \begin{figure}[ht]
+        \centering
+        \begin{tikzpicture}[scale=1.3]
+            % window
+            \clip (-2.6,-2.6) rectangle (3.4,2.6);
+            \draw[gray!30, thin] (-2.6,-2.6) grid (3.4,2.6);
+            \draw[-{Stealth}, gray] (-2.6,0) -- (3.3,0) node[right] {$x$};
+            \draw[-{Stealth}, gray] (0,-2.5) -- (0,2.5) node[above] {$y$};
+
+            % unit square
+            \fill[blue!8] (0,0) rectangle (1,1);
+            \draw[gray, thick] (0,0) rectangle (1,1);
+
+            % eigenlines: v^u has slope (sqrt5-1)/2 = 0.618, v^s has slope -(sqrt5+1)/2 = -1.618
+            \draw[red!70!black, thin] (-3.5,-2.163) -- (3.5,2.163);
+            \draw[blue!70!black, thin] (-1.6,2.589) -- (1.6,-2.589);
+
+            % A v^u = lambda v^u (stretched) and A v^s = lambda^{-1} v^s (shrunk), lambda = 2.618
+            \draw[-{Stealth[length=2.2mm]}, red!70!black, dashed, thick] (0,0) -- (2.618,1.618);
+            \draw[-{Stealth[length=2.2mm]}, blue!70!black, dashed, thick] (0,0) -- (0.382,-0.618);
+            \node[red!70!black, font=\scriptsize, below right] at (2.618,1.618) {$Av^u=\lambda v^u$};
+            \node[blue!70!black, font=\scriptsize, right] at (0.382,-0.618) {$Av^s=\lambda^{-1}v^s$};
+
+            % eigenvectors
+            \draw[-{Stealth[length=2.5mm]}, red!70!black, very thick] (0,0) -- (1,0.618)
+                node[above left, font=\small] {$v^u$};
+            \draw[-{Stealth[length=2.5mm]}, blue!70!black, very thick] (0,0) -- (1,-1.618)
+                node[below right, font=\small] {$v^s$};
+
+            % right-angle marker
+            \draw[black!70] (0.2127,0.1314) -- (0.3441,-0.0813) -- (0.1314,-0.2127);
+
+            \fill (0,0) circle (1.5pt);
+        \end{tikzpicture}
+        \caption{Eigen-directions of $A=\begin{bmatrix}2&1\\1&1\end{bmatrix}$. The unstable direction $v^u=(1,\frac{\sqrt5-1}{2})$
+        (red) is stretched by $\lambda=\frac{3+\sqrt5}{2}\approx2.618$, the stable direction
+        $v^s=(1,-\frac{\sqrt5+1}{2})$ (blue) is shrunk by $\lambda^{-1}\approx0.382$. The two directions are orthogonal because $A$ is symmetric.}
+        \label{fig:cat_eigenvectors}
+    \end{figure}
+
+    Let's now study A. Its eigenvalues are \begin{equation*}
+    \lambda_1=\lambda=\frac{3+\sqrt{5}}{2}\text{ and }\lambda_2=\lambda^{-1}=\frac{3-\sqrt{5}}{2}
+    \end{equation*}
+    The eigenvectors, on the other hand, are \begin{equation*}
+    v_1=(1, \frac{\sqrt{5}-1}{2})\text{ and }v_2=(1, -\frac{\sqrt{5}+1}{2})
+    \end{equation*}
+    They are usually called $v^u$ and $v^s$, and they are orthogonal, i.e. $<v^u, v^s>=0$, since A is symmetric. Let's look at periodic points. 
+\end{example}
+\begin{proposition}
+    $x\in Per(T_A)\iff x\in \mathbb{Q}^2\cap T$
+\end{proposition}
+\begin{proof}
+
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1.1]
+        % Unit square, drawn with side 5 (units of 1/q, q=5): point (i,j) means (i/5, j/5)
+        \draw[gray!40, thin] (0,0) grid (5,5);
+        \draw[thick] (0,0) rectangle (5,5);
+        \node[below, font=\scriptsize] at (0,0) {$0$};
+        \node[below, font=\scriptsize] at (5,0) {$1$};
+        \node[left, font=\scriptsize] at (0,5) {$1$};
+        \node[below, font=\scriptsize] at (1,0) {$\frac1q$};
+
+        % all the points of (Z^2/q) cap T^2 (a finite set: q^2 = 25 points)
+        \foreach \i in {0,...,4} {
+            \foreach \j in {0,...,4} {
+                \fill[gray] (\i,\j) circle (1.2pt);
+            }
+        }
+
+        % orbit of x = (1,0)/5 under T_A, A = [[2,1],[1,1]]:
+        % (1,0)->(2,1)->(0,3)->(3,3)->(4,1)->(4,0)->(3,4)->(0,2)->(2,2)->(1,4)->(1,0)
+        \foreach \n/\px/\py in {0/1/0, 1/2/1, 2/0/3, 3/3/3, 4/4/1,
+                                5/4/0, 6/3/4, 7/0/2, 8/2/2, 9/1/4} {
+            \node[circle, fill=blue!70!black, inner sep=1.6pt] (p\n) at (\px,\py) {};
+            \node[blue!70!black, font=\scriptsize, above right=-1pt] at (\px,\py) {$\n$};
+        }
+        % jumps x_n -> x_{n+1} = T_A(x_n)
+        \foreach \a/\b in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6, 6/7, 7/8, 8/9, 9/0} {
+            \draw[-{Stealth[length=2mm]}, blue!70!black, thin, shorten >=2pt, shorten <=2pt]
+                (p\a) -- (p\b);
+        }
+
+        % label of the starting point
+        \node[red!70!black, font=\small, below left] at (1,0) {$x$};
+    \end{tikzpicture}
+    \caption{Rational points are periodic for $T_A$. With $q=5$ the unit square is divided into
+    cells of side $\frac1q$, and $T_A$ maps the finite set $\frac{\mathbb{Z}^2}{q}\cap T^2$ (grey) into itself,
+    since $A$ has integer entries. The orbit of $x=\frac1q(1,0)$ (blue, numbers = time) visits
+    $10$ of the $25$ points and then returns to $x$.}
+    \label{fig:cat_rational_periodic}
+\end{figure}
+
+    Let's start from $\Leftarrow$.
+    
+    Let $x\in\mathbb{Q}^2$ be written as $x=(\frac{p_1}{q}, \frac{p_2}{q})$. This is obviously possible since you can always find a common denominator, and they do not have to be reduced to the lowest terms. We may then notice that \begin{equation*}
+        x=\left(\frac{p_1}{q}, \frac{p_2}{q}\right)=\frac{1}{q}(p_1, p_2)
+    \end{equation*}
+    which, combined with the fact that $T_A$ is invertible, implies that the orbit is the following: \begin{equation*}
+        O(x)=\left\{\frac{1}{q}A^n(p_1, p_2) \mod \mathbb{Z}^2\right\}_{n\in\mathbb{Z}}
+    \end{equation*}
+    We notice that $A^n(p_1, p_2)\in\mathbb{Z}^2$, and that, as shown in \autoref{fig:cat_rational_periodic}, implies the following:
+    \begin{equation*}
+        O(x)=\left\{\frac{1}{q}A^n(p_1, p_2) \mod \mathbb{Z}^2\right\}_{n\in\mathbb{Z}}\subseteq \frac{\mathbb{Z}^2}{q}\cap T^2
+    \end{equation*}
+    This makes the whole thing periodic, since because $(\mathbb{Z}^2/q)\cap T^2$ has a finite amount of points, so at one point you are certainly going to get to a point you already visited\footnote{This is called the \href{https://en.wikipedia.org/wiki/Pigeonhole_principle}{pigeonhole principle.}}. 
+    
+    At this point, we know that there is some periodic point. To complete the proof, we must show if this point is x. This is implied by the fact that $A$ is invertible\footnote{Observe $A^{-1}\in SL_d(\mathbb{Z})$, i.e. $A^{-1}\in\mathbb{Z}^{2\times2}, \det A=1$, $A=\begin{bmatrix}
+        a & b \\ c & d
+    \end{bmatrix}$ then $A^{-1}=\frac{1}{\det A}\begin{bmatrix}
+        d & -b \\ -c & a
+    \end{bmatrix}$ which are both in SL since the determinant is 1. 
+
+    HW $T_A\circ T_{A^{-1}}=T_{A^{-1}}\circ T_{A}=\mathbb{I}$ on $T^2$. }.  In fact, imagine that the periodic point was not the starting point: if that was the case, there would be such a point for which you could not go back in time surely, since (referring to the visualization as in the image) it would have two arrows pointing to it, i.e. two possible pasts.
+
+    Let's now prove $\Rightarrow$. 
+
+    The hypothesis that x is periodic implies, by definition, that there exists some n for which $T_A^n(x)$, which can be reworked as \begin{equation*}
+    T_A^n(x)=x\iff A^nx=x \mod 1\iff(A^n-I)x\in\mathbb{Z}^2\iff x=(A^n-I)^{-1}k
+    \end{equation*} for some k in $\mathbb{Z}^2$. 
+    
+    We know that the spectrum of such a matrix to be $\{\lambda^n-1, \lambda^{-n}-1\}$, so it does not contain 0. Using that, by knowing how to compute the inverse of a matrix (refer to note 15), we may end the proof: \begin{equation*}A^n-I\in\mathbb{Z}^{2\times2}\Rightarrow(A^n-I)^{-1}\in\mathbb{Q}^{2\times2}\Rightarrow x\in\mathbb{Q}^2 \cap T \end{equation*}
+    Where, in the last passage, we used the facts that $(A^n-I)x\in\mathbb{Z}^2$ and that we know, by hypothesis, that $x\in T$.
+\end{proof}
+\begin{observation}
+    Two corollaries of this proposition are that $Per(T_A)$ is dense in $T^2$ and that $T_A$ is not minimal.
+\end{observation}
+
+\begin{definition}
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=6]
+        % The torus T^2 = [0,1]^2, x = (0.3, 0.4)
+        \begin{scope}
+            \clip (0,0) rectangle (1,1);
+            \fill[blue!4] (0,0) rectangle (1,1);
+
+            % W^u: slope 0.618, drawn as the line through x shifted by all integer vectors (a,b)
+            \foreach \a in {-4,...,4} {
+                \foreach \b in {-4,...,4} {
+                    \draw[red!70!black, thin]
+                        ({0.3+\a-3},{0.4+\b-3*0.618}) -- ({0.3+\a+3},{0.4+\b+3*0.618});
+                }
+            }
+            % W^s: slope -1.618
+            \foreach \a in {-4,...,4} {
+                \foreach \b in {-4,...,4} {
+                    \draw[blue!70!black, thin]
+                        ({0.3+\a-2},{0.4+\b+2*1.618}) -- ({0.3+\a+2},{0.4+\b-2*1.618});
+                }
+            }
+        \end{scope}
+
+        \draw[thick] (0,0) rectangle (1,1);
+        \fill (0.3,0.4) circle (0.012) node[above right, font=\small] {$x$};
+
+        % legend
+        \draw[red!70!black, thick] (1.08,0.75) -- (1.18,0.75)
+            node[right, font=\small] {$W^u(x)$};
+        \draw[blue!70!black, thick] (1.08,0.65) -- (1.18,0.65)
+            node[right, font=\small] {$W^s(x)$};
+    \end{tikzpicture}
+    \caption{Stable and unstable manifolds of $x$ on $T^2$. Each is a straight line
+    in the direction of $v^s$ (blue) or $v^u$ (red), wrapped around the torus: every time
+    it leaves the square it re-enters from the opposite side.}
+    \label{fig:cat_manifolds}
+\end{figure}
+
+    Given $x=(x_1, x_2)\in T^2$, we define the unstable manifold as \begin{equation*}
+    W^u(x)\{y=(y_1, y_2)\in T^2| y_2-x_2=\frac{\sqrt{5}-1}{2}(y_1-x_1) \mod 1\}
+    \end{equation*}
+    while we define the stable manifold as \begin{equation*}
+        W^s(x)\{y=(y_1, y_2)\in T^2| y_2-x_2=-\frac{\sqrt{5}+1}{2}(y_1-x_1) \mod 1\}
+    \end{equation*}
+\end{definition}
+
+\begin{proposition}
+    For $y\in W^{u(s)}(x)$, the distance in the torus of $T_A^n(y), T_A^n(x)\leq C\lambda^{-|n|}$ for $n\geq (\leq) 0$ for some constant $C(x, y)$. 
+\end{proposition}
