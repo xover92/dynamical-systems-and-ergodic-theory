@@ -1553,46 +1553,123 @@ Counterintuitively, really chaotic systems have the most periodic points, as lon
     Two corollaries of this proposition are that $Per(T_A)$ is dense in $T^2$ and that $T_A$ is not minimal.
 \end{observation}
 
-\begin{definition}
-    \begin{figure}[ht]
+ \begin{figure}[ht]
     \centering
-    \begin{tikzpicture}[scale=6]
-        % The torus T^2 = [0,1]^2, x = (0.3, 0.4)
-        \begin{scope}
-            \clip (0,0) rectangle (1,1);
+    % ======================= (a) The manifolds, with arrows =======================
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=4]
+            % fix the bounding box by hand (the clipped lines would otherwise enlarge it)
+            \useasboundingbox (-0.05,-0.05) rectangle (1.5,1.05);
             \fill[blue!4] (0,0) rectangle (1,1);
 
-            % W^u: slope 0.618, drawn as the line through x shifted by all integer vectors (a,b)
-            \foreach \a in {-4,...,4} {
-                \foreach \b in {-4,...,4} {
-                    \draw[red!70!black, thin]
-                        ({0.3+\a-3},{0.4+\b-3*0.618}) -- ({0.3+\a+3},{0.4+\b+3*0.618});
-                }
-            }
-            % W^s: slope -1.618
-            \foreach \a in {-4,...,4} {
-                \foreach \b in {-4,...,4} {
-                    \draw[blue!70!black, thin]
-                        ({0.3+\a-2},{0.4+\b+2*1.618}) -- ({0.3+\a+2},{0.4+\b-2*1.618});
-                }
-            }
-        \end{scope}
+            \begin{scope}
+                \clip (0,0) rectangle (1,1);
 
-        \draw[thick] (0,0) rectangle (1,1);
-        \fill (0.3,0.4) circle (0.012) node[above right, font=\small] {$x$};
+                % W^u: direction (1, 0.618). A copy "ia" of the line passes through x+(ia, jb).
+                % On that copy the parameter is s = X - 0.3 - ia, so for ia=-1 we have s>0
+                % (arrow goes left -> right, away from x), for ia=1 s<0 (right -> left),
+                % for ia=0 the two halves start at x and go outwards.
+                \foreach \ia/\xs/\xe in {-1/0/1, 1/1/0, 0/0.3/1, 0/0.3/0} {
+                    \foreach \jb in {-1,0,1} {
+                        \draw[red!70!black, thin, postaction={decorate},
+                              decoration={markings,
+                                  mark=at position 0.5 with {\arrow{Stealth[length=1.8mm]}}}]
+                            ({\xs},{0.4+\jb+0.618*(\xs-0.3-(\ia))}) --
+                            ({\xe},{0.4+\jb+0.618*(\xe-0.3-(\ia))});
+                    }
+                }
 
-        % legend
-        \draw[red!70!black, thick] (1.08,0.75) -- (1.18,0.75)
-            node[right, font=\small] {$W^u(x)$};
-        \draw[blue!70!black, thick] (1.08,0.65) -- (1.18,0.65)
-            node[right, font=\small] {$W^s(x)$};
-    \end{tikzpicture}
-    \caption{Stable and unstable manifolds of $x$ on $T^2$. Each is a straight line
-    in the direction of $v^s$ (blue) or $v^u$ (red), wrapped around the torus: every time
-    it leaves the square it re-enters from the opposite side.}
+                % W^s: direction (1, -1.618). Same idea, but the arrows go TOWARDS x.
+                \foreach \ia/\xs/\xe in {-1/1/0, 1/0/1, 0/0/0.3, 0/1/0.3} {
+                    \foreach \jb in {-4,...,3} {
+                        \draw[blue!70!black, thin, postaction={decorate},
+                              decoration={markings,
+                                  mark=at position 0.3 with {\arrow{Stealth[length=1.8mm]}},
+                                  mark=at position 0.7 with {\arrow{Stealth[length=1.8mm]}}}]
+                            ({\xs},{0.4+\jb-1.618*(\xs-0.3-(\ia))}) --
+                            ({\xe},{0.4+\jb-1.618*(\xe-0.3-(\ia))});
+                    }
+                }
+            \end{scope}
+
+            \draw[thick] (0,0) rectangle (1,1);
+            \fill (0.3,0.4) circle (0.012) node[above right, font=\small] {$x$};
+
+            % legend
+            \draw[red!70!black, thick, -{Stealth[length=2mm]}] (1.08,0.75) -- (1.2,0.75)
+                node[right, font=\small] {$W^u(x)$};
+            \draw[blue!70!black, thick, -{Stealth[length=2mm]}] (1.2,0.62) -- (1.08,0.62);
+            \node[right, font=\small, blue!70!black] at (1.2,0.62) {$W^s(x)$};
+        \end{tikzpicture}
+        \caption{Stable and unstable manifolds of $x$ on $T^2$ (a finite piece of each). Every time a
+        line leaves the square it re-enters from the opposite side. Along $W^u$ the arrows point away
+        from $x$ (expansion), along $W^s$ they point towards $x$ (contraction).}
+        \label{fig:cat_manifolds_a}
+    \end{subfigure}
+
+    \vspace{1.5em}
+
+    % ======================= (b) Two points on each manifold, over time =======================
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            % Positions are measured ALONG the manifold, starting from p (p_n at 0).
+            % Row n sits at height -1.7 n.
+
+            % ---------- Left: two points on W^u, distance d, lambda d, lambda^2 d ----------
+            \node[red!70!black] at (1.8,1.0) {two points on $W^u$: they separate};
+            \foreach \n/\yy/\dq/\dl in {0/0/0.5/{d}, 1/-1.7/1.31/{\lambda d}, 2/-3.4/3.43/{\lambda^2 d}} {
+                \draw[red!50!black, thick] (-0.4,\yy) -- (4.0,\yy);
+                \node[left, font=\small] at (-0.5,\yy) {$n=\n$};
+                \fill (0,\yy) circle (2pt) node[above left, font=\small] {$p_{\n}$};
+                \fill[green!50!black] (\dq,\yy) circle (2pt)
+                    node[above right, font=\small, green!50!black] {$q_{\n}$};
+                \draw[<->, thin] (0,\yy-0.35) -- (\dq,\yy-0.35)
+                    node[midway, below, font=\scriptsize] {$\dl$};
+            }
+            % orbits: p_n -> p_{n+1} and q_n -> q_{n+1}
+            \foreach \yy/\qa/\qb in {0/0.5/1.31, -1.7/1.31/3.43} {
+                \draw[-{Stealth[length=2mm]}, gray, thick, shorten >=3pt, shorten <=3pt]
+                    (0,\yy) -- (0,\yy-1.7);
+                \draw[-{Stealth[length=2mm]}, green!50!black, thick, shorten >=3pt, shorten <=3pt]
+                    (\qa,\yy) -- (\qb,\yy-1.7);
+            }
+            \node[font=\scriptsize, right] at (0.05,-0.85) {$T_A$};
+
+            % ---------- Right: two points on W^s, distance d', lambda^-1 d', lambda^-2 d' ----------
+            \begin{scope}[shift={(8,0)}]
+                \node[blue!70!black] at (1.8,1.0) {two points on $W^s$: they approach};
+                \foreach \n/\yy/\dq/\dl in {0/0/3.43/{d'}, 1/-1.7/1.31/{\lambda^{-1} d'},
+                                            2/-3.4/0.5/{\lambda^{-2} d'}} {
+                    \draw[blue!50!black, thick] (-0.4,\yy) -- (4.0,\yy);
+                    \fill (0,\yy) circle (2pt) node[above left, font=\small] {$p_{\n}$};
+                    \fill[green!50!black] (\dq,\yy) circle (2pt)
+                        node[above right, font=\small, green!50!black] {$q_{\n}$};
+                    \draw[<->, thin] (0,\yy-0.35) -- (\dq,\yy-0.35)
+                        node[midway, below, font=\scriptsize] {$\dl$};
+                }
+                \foreach \yy/\qa/\qb in {0/3.43/1.31, -1.7/1.31/0.5} {
+                    \draw[-{Stealth[length=2mm]}, gray, thick, shorten >=3pt, shorten <=3pt]
+                        (0,\yy) -- (0,\yy-1.7);
+                    \draw[-{Stealth[length=2mm]}, green!50!black, thick, shorten >=3pt, shorten <=3pt]
+                        (\qa,\yy) -- (\qb,\yy-1.7);
+                }
+                \node[font=\scriptsize, right] at (0.05,-0.85) {$T_A$};
+            \end{scope}
+        \end{tikzpicture}
+        \caption{Two points $p,q$ on the same manifold and their orbits under $T_A$. Distances are measured
+        along the manifold, starting from $p$. On $W^u$ the distance is multiplied by $\lambda>1$ at each
+        step, so the points separate exponentially; on $W^s$ it is multiplied by $\lambda^{-1}<1$, so the
+        points get exponentially closer.}
+        \label{fig:cat_manifolds_b}
+    \end{subfigure}
+
+    \caption{Stable and unstable manifolds of Arnold's cat map.}
     \label{fig:cat_manifolds}
 \end{figure}
 
+\begin{definition}
     Given $x=(x_1, x_2)\in T^2$, we define the unstable manifold as \begin{equation*}
     W^u(x)\{y=(y_1, y_2)\in T^2| y_2-x_2=\frac{\sqrt{5}-1}{2}(y_1-x_1) \mod 1\}
     \end{equation*}
@@ -1601,6 +1678,366 @@ Counterintuitively, really chaotic systems have the most periodic points, as lon
     \end{equation*}
 \end{definition}
 
+Those are called stable and unstable because they are the curves with the property that, when taking two points on the unstable one, they get further away from each other, while when picking two on the stable one results in the opposite outcome, as we saw in linear maps with fixed points(although here there are no fixed points). Notice that stable and unstable manifolds' concepts are universal in the study of dynamical systems, although we defined them in the non-general framework of the cat map.
+
+This can be proven more rigorously.
+
 \begin{proposition}
-    For $y\in W^{u(s)}(x)$, the distance in the torus of $T_A^n(y), T_A^n(x)\leq C\lambda^{-|n|}$ for $n\geq (\leq) 0$ for some constant $C(x, y)$. 
+    Let $y\in \underset{W^{s}(x)}{W^{u}(x)}$. Then, considering $d()$ as the distance on the torus: \begin{equation*}
+    d(T_A^n(y), T_A^n(x))\leq C\lambda^{-|n|}
+    \end{equation*} for $n\underset{\geq}{\leq} 0$ and some constant $C(x, y)$. 
 \end{proposition}
+\begin{proof}
+    We will only prove the unstable one. 
+
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1.8]
+        % axes
+        \draw[-{Stealth}, gray] (-0.8,0) -- (3.3,0) node[right] {$x_1$};
+        \draw[-{Stealth}, gray] (0,-0.6) -- (0,2.8) node[above] {$x_2$};
+
+        % W^u(x): line through x = (0.5, 1.0), direction v^u = (1, 0.618)
+        \draw[red!70!black, thick] (-0.4,0.444) -- (2.8,2.421)
+            node[above left, font=\small] {$W^u(x)$};
+        % W^u(0): same direction, through the origin
+        \draw[red!70!black, thick] (-0.6,-0.371) -- (3.0,1.854)
+            node[below right, font=\small] {$W^u(0)$};
+
+        % points: x, y = x + 1.8 v^u = (2.3, 2.112)  and  0, y - x = (1.8, 1.112)
+        \fill[blue!70!black] (0.5,1.0) circle (0.9pt) node[above left, font=\small] {$x$};
+        \fill[blue!70!black] (2.3,2.112) circle (0.9pt) node[above left, font=\small] {$y$};
+        \fill[green!50!black] (0,0) circle (0.9pt) node[below left, font=\small] {$0$};
+        \fill[green!50!black] (1.8,1.112) circle (0.9pt) node[above left, font=\small] {$y-x$};
+
+        % the segments [x,y] and [0,y-x] (same length)
+        \draw[blue!70!black, ultra thick] (0.5,1.0) -- (2.3,2.112);
+        \draw[green!50!black, ultra thick] (0,0) -- (1.8,1.112);
+
+        % translation by -x
+        \draw[-{Stealth[length=2mm]}, gray, dashed, thick, shorten >=2pt, shorten <=2pt] (0.5,1.0) -- (0,0);
+        \draw[-{Stealth[length=2mm]}, gray, dashed, thick, shorten >=2pt, shorten <=2pt] (2.3,2.112) -- (1.8,1.112);
+        \node[gray, font=\small, right] at (0.28,0.45) {$-x$};
+        \node[gray, font=\small, right] at (2.1,1.55) {$-x$};
+
+        % labels of the distance
+        \node[blue!70!black, font=\scriptsize, rotate=31.7, above] at (1.4,1.556) {$d(x,y)$};
+        \node[green!50!black, font=\scriptsize, rotate=31.7, below] at (0.9,0.556) {$d(0,y-x)$};
+    \end{tikzpicture}
+    \caption{Local picture of the unstable manifold, unrolled in the plane. $W^u(x)$ and $W^u(0)$
+    are parallel lines with direction $v^u$. Translating by $-x$ sends $x\mapsto0$ and $y\mapsto y-x$,
+    and maps $W^u(x)$ onto $W^u(0)$. So $y\in W^u(x)\iff y-x\in W^u(0)$, and the two points are
+    at the same distance as their translates.}
+    \label{fig:manifold_translation}
+\end{figure}
+    
+    We shall start by noticing that: \begin{equation*}
+        y\in W^u(x)\iff y-x\in W^u(0)
+    \end{equation*} since they are all the straight lines with a specific slope (i.e. the silver ratio\footnote{This is related with the famous "spaghettification" effect that occurs in black holes. If said spaghettification depended on the silver ratio, you would be \href{https://shop.pastificiograziano.it/grigia-trafila-argento}{silver drawn.}}), as shown in \autoref{fig:manifold_translation}.
+
+    Then, from the definition of eigenvectors, we may also notice that \begin{equation*}
+        A^n(y-x)=(\lambda^{-1})^{|n|}y-x\Rightarrow||A^n(y-x)||_{\mathbb{R}^2}=(\lambda^{-1})^{|n|}||y-x||_{\mathbb{R}^2}
+    \end{equation*}
+    because $y-x$ is a multiple of $v^u$ (remember that n is either negative or 0). 
+    
+    But $d(T_A^n(y), T_A^n(x))\leq ||A^ny-A^nx||_{\mathbb{R}^2}$, with $n=-|n|$, because the mod 1 either makes the points either be equally distanced or closer (intuitively: the distance on the torus never makes any $\mathbb{R}^2$ distance bigger, only smaller or the same.). 
+    
+    The proof is completed by concatenating the things we know \begin{equation*}
+        d(T_A^n(y), T_A^n(x))\leq ||A^ny-A^nx||_{\mathbb{R}^2}=(\lambda^{-1})^{|n|}||y-x||_{\mathbb{R}^2}
+    \end{equation*}
+    And $||y-x||$ is the constant C\footnote{You could actually prove that $||y-x||\leq\sqrt{2}/2$ for any couple of points, thus proving a stronger claim than the proposition}.
+\end{proof}
+
+One application of this are Lagrangian coherent structures. Take for example weather forecast: you will see clouds spreading in one direction and shrinking in the other one. The machine that's doing the prediction is attempting to make an informed guess over the stable and unstable directions of the clouds.
+
+A corollary of this proposition is the following:
+\begin{proposition}
+    If $f: T^2\rightarrow\mathbb{R}$ is continuous, then \begin{equation*}
+        \forall y \in \underset{W^{s}(x)}{W^{u}(x)},\,|f(T_A^n(y))-f(T_A^n(x))|\underset{n\rightarrow\underset{+\infty}{-\infty}}{\longrightarrow} 0
+    \end{equation*}
+\end{proposition}
+\begin{proof}
+    $T^2$ is compact, which implies that f, being continuous, is actually uniformly continuous. This means that for every $\epsilon$ there is a $\delta$ for which, if $|y-x|\leq\epsilon$, then $|f(y)-f(x)|\leq \delta$. In layman terms, if you apply the function to a couple of points, they get as close as you want as the points get closer.
+
+    We will conclude the proof just in the stable case, meaning that $n\rightarrow+\infty$. In light of the fact that f is uniformly continuous:\begin{equation*}
+        |T_A^n(y)-T_A^n(x)|\underset{n\rightarrow+\infty}{\longrightarrow} 0\Rightarrow|f(T_A^n(y))-f(T_A^n(x))|\underset{n\rightarrow+\infty}{\longrightarrow} 0
+    \end{equation*}
+    Since we have just proven that the first assertion is true, then the second one must also be true.
+\end{proof}
+
+We shall now prove that the cat map is topologically mixing, which is easy to see graphically but is not as trivial to prove.
+
+\begin{theorem}
+    $T_A$ is topologically mixing.
+\end{theorem}
+\begin{proof}
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=4]
+        % Unit of the picture = side of the torus. Direction of W^u: u = (1, 0.618).
+        % The same V (centre (0.75,0.7), radius eps = 0.1) appears in both panels.
+
+        % ================= Left: U, J and V =================
+        \fill[blue!4] (0,0) rectangle (1,1);
+        \draw[thick] (0,0) rectangle (1,1);
+        \node[font=\small] at (0.5,-0.12) {$n=0$};
+
+        % V
+        \draw[green!50!black, thick, fill=green!50!black, fill opacity=0.2] (0.75,0.7) circle (0.1);
+        \node[green!50!black, font=\small] at (0.75,0.7) {$V$};
+        \draw[green!50!black, thin, <->] (0.75,0.7) -- ++(0:0.1)
+            node[pos=1.0, right, font=\scriptsize] {$\epsilon$};
+
+        % U, xbar and J = U cap W^u(xbar)  (half length 0.14 along u/|u| = (0.851,0.526))
+        \draw[blue!70!black, thick, fill=blue!70!black, fill opacity=0.15] (0.3,0.3) circle (0.17);
+        \node[blue!70!black, font=\small] at (0.14,0.46) {$U$};
+        \draw[red!70!black, very thick] (0.1556,0.2102) -- (0.4444,0.3898);
+        \node[red!70!black, font=\small, below right] at (0.32,0.35) {$J$};
+        \fill (0.3,0.3) circle (0.01) node[above left, font=\scriptsize] {$\bar{x}$};
+
+        % ================= Arrow between the panels =================
+        \draw[-{Stealth}, thick] (1.08,0.5) -- (1.42,0.5)
+            node[midway, above, font=\small] {$T_A^n$};
+        \node[font=\scriptsize, align=center] at (1.25,0.36) {$n\geq\bar{n}$};
+
+        % ================= Right: T_A^n(J), a long segment wrapped around the torus =================
+        \begin{scope}[shift={(1.5,0)}]
+            \fill[blue!4] (0,0) rectangle (1,1);
+            \node[font=\small] at (0.5,-0.12) {$n\geq\bar{n}$};
+
+            % T_A^n(J): segment through T_A^n(xbar) = (0.45,0.2), direction u, wrapped mod Z^2
+            \begin{scope}
+                \clip (0,0) rectangle (1,1);
+                \foreach \ia in {-5,...,5} {
+                    \foreach \jb in {-6,...,6} {
+                        \draw[red!70!black, thin]
+                            ({0.45+\ia-4},{0.2+\jb-4*0.618}) -- ({0.45+\ia+4},{0.2+\jb+4*0.618});
+                    }
+                }
+            \end{scope}
+            \draw[thick] (0,0) rectangle (1,1);
+
+            % V on top
+            \draw[green!50!black, thick, fill=green!50!black, fill opacity=0.25] (0.75,0.7) circle (0.1);
+            \node[green!50!black, font=\small, fill=white, fill opacity=0.8, inner sep=1pt] at (1.12,0.7) {$V$};
+            \draw[green!50!black, thin] (1.05,0.7) -- (0.85,0.7);
+
+            \fill (0.45,0.2) circle (0.01) node[below right, font=\scriptsize] {$T_A^n(\bar{x})$};
+            \node[red!70!black, font=\small] at (0.5,1.1) {$T_A^n(J)$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Proof that $T_A$ is topologically mixing. Left: a point $\bar{x}\in U$, the piece
+    $J=U\cap W^u(\bar{x})$ of the unstable manifold, and a disc of radius $\epsilon$ inside $V$.
+    Right: $T_A^n$ stretches $J$ by $\lambda^n$ along $v^u$, so $T_A^n(J)$ is a very long segment
+    wrapped around the torus. Its parallel strands become closer than $\epsilon$, hence they cross $V$,
+    and so $T_A^n(U)\cap V\neq\emptyset$ for every large $n$.}
+    \label{fig:cat_mixing}
+\end{figure}
+
+    Let U, V be as in the definition of topologically mixing. This means U is non-empty, so there is some $\bar{x}\in U$. We then define $J=U\cap W^u(\bar{x})$.  As for V, we choose an $\epsilon$ small enough that V contains a disk of radius $\epsilon$\footnote{Here I call it a disk, but a more mathematical-minded person might call this a 2D open ball of radius $\epsilon$.}; this is guaranteed to be doable by the fact that V is a non-empty open set.
+
+    Then, we define $J'=J-\bar{x}$, which implies $J'\subseteq W^u(0)$, as we have already seen. So, there exists $\bar{n}\in\mathbb{Z}^+$ such that, for every $n\geq\bar{n},\,T^nJ'$ is $\epsilon$-dense, since $T^nJ'$ gets longer and longer; in fact, the slope of $W^u(0)$ is irrational, so, by applying what we know about the Kronecker flow on $T^2$ with direction $w=(1, \frac{\sqrt{5}-1}{2})$, we can easily see the $\epsilon$-density. \footnote{I am uncertain about this part. I feel like it's not the kronecker flow. Nonetheless, he did say kronecker flow. Also, I probably erroneously called dense something that was $\epsilon$-dense before in this chapter, which is why I cannot find what he was referring to. At the same time, the density is heuristically pretty direct, so you should be able to understand the result.}
+
+    If $T^n_A(J')$ is $\epsilon$-dense, then the same is true for J, because it's a translation, meaning $T^n_A(J)=T^n_A(J')+T^n_A(\bar{x})$. This means that $T^n_A(J)\cap V\neq\emptyset$. But \begin{equation*}
+        T^n_A(J)\subseteq T^n_A(U)\Rightarrow T^n_A(U) \cap V\neq \emptyset
+    \end{equation*}
+    which is exactly the definition of topologically mixing.
+\end{proof}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % grid and axes
+        \draw[gray!30, thin] (-0.5,-0.5) grid (7.5,4.5);
+        \draw[-{Stealth}, gray] (-0.5,0) -- (7.8,0) node[right] {$x$};
+        \draw[-{Stealth}, gray] (0,-0.5) -- (0,4.8) node[above] {$y$};
+
+        % image of the unit square under A^2 - I: vertices (0,0), (4,3), (7,4), (3,1)
+        \fill[red!10] (0,0) -- (4,3) -- (7,4) -- (3,1) -- cycle;
+        % half-open boundary: the two edges through 0 are included (solid), the other two are not (dashed)
+        \draw[red!70!black, thick] (3,1) -- (0,0) -- (4,3);
+        \draw[red!70!black, thick, dashed] (4,3) -- (7,4) -- (3,1);
+
+        % the unit square and the images of the basis vectors
+        \fill[blue!25] (0,0) rectangle (1,1);
+        \draw[blue!70!black, thick] (0,0) rectangle (1,1);
+        \draw[-{Stealth[length=2mm]}, red!70!black, thick] (0,0) -- (4,3);
+        \draw[-{Stealth[length=2mm]}, red!70!black, thick] (0,0) -- (3,1);
+        \node[red!70!black, font=\scriptsize, above left] at (2.4,1.9) {$(A^2-I)e_1=(4,3)$};
+        \node[red!70!black, font=\scriptsize, below right] at (2.1,0.55) {$(A^2-I)e_2=(3,1)$};
+
+        % integer points in [(A^2-I)[0,1)^2] (counted)
+        \foreach \px/\py in {0/0, 2/1, 3/2, 4/2, 5/3} {
+            \fill[blue!70!black] (\px,\py) circle (2.2pt);
+        }
+        % integer points on the excluded boundary (the vertices): hollow
+        \foreach \px/\py in {4/3, 3/1, 7/4} {
+            \draw[blue!70!black, fill=white] (\px,\py) circle (2.2pt);
+        }
+
+        % labels
+        \node[blue!70!black, font=\small] at (0.5,-0.35) {$[0,1)^2$};
+        \node[red!70!black, font=\small] at (6.1,2.3) {$(A^2-I)[0,1)^2$};
+        \node[blue!70!black, font=\small, align=center] at (1.8,3.9) {5 integer points\\$=|\det(A^2-I)|$};
+    \end{tikzpicture}
+    \caption{Counting fixed points of $T_A^2$. The map $A^2-I$ sends $[0,1)^2$ to a parallelogram of area $|\det(A^2-I)|=5$.
+    The fixed points of $T_A^2$ correspond bijectively to the integer points in it (blue dots; hollow dots lie
+    on the excluded boundary). Here there are $5=\lambda^2+\lambda^{-2}-2$.}
+    \label{fig:cat_fixed_points}
+\end{figure}
+
+\textbf{HW:} Show that \begin{equation*}
+    \# Fix(T_A^n)=|\det(A^n-I)|=|(\lambda^n-1)(\lambda^{-n}-1)|=\lambda^n+\lambda^{-n}-2
+\end{equation*}
+
+Hin, as shown in \autoref{fig:cat_fixed_points}: \begin{align*}
+    x\in Per(T^n_A(x))&\iff x\in(A^n-I)^{-1}\mathbb{Z}^2\iff \\
+    x\in(A^n-I)^{-1}\mathbb{Z}^2\cap[0,1)^2&=\#[(A^n-I)[0,1)^2]\cap \mathbb{Z}^2
+\end{align*}
+
+Another hint: You can use Pick's theorem.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1.3]
+        % ================= Left: the Etch A Sketch =================
+        \draw[thick, rounded corners=6pt, fill=red!8] (-0.2,-0.2) rectangle (3.4,2.9);
+        \draw[thick, fill=white] (0.2,0.8) rectangle (3.0,2.6);
+        \node[font=\small] at (0.38,2.4) {$R$};
+
+        % knobs
+        \foreach \kx/\kl in {0.5/x, 2.7/y} {
+            \draw[thick, fill=gray!20] (\kx,0.4) circle (0.22);
+            \draw[-{Stealth[length=1.6mm]}, thin] (\kx+0.3,0.4) arc (0:300:0.3);
+            \node[font=\small] at (\kx,0.4) {$\kl$};
+        }
+
+        % x-coordinates (dashed verticals)
+        \draw[blue!70!black, dashed, thin] (1.0,0.8) -- (1.0,2.6);
+        \draw[red!70!black, dashed, thin] (2.1,0.8) -- (2.1,2.6);
+
+        % p and T^n(p): labels on the left, away from the dashed lines
+        \fill[blue!70!black] (1.0,2.1) circle (1.6pt)
+            node[left=3pt, font=\scriptsize] {$p$};
+        \fill[red!70!black] (2.1,1.2) circle (1.6pt)
+            node[left=3pt, font=\scriptsize] {$T^n(p)$};
+
+        % turning knob x: p moves a little, T^n(p) moves a lot
+        \draw[-{Stealth[length=1.8mm]}, blue!70!black, thick] (1.0,1.75) -- (1.2,1.75);
+        \draw[-{Stealth[length=1.8mm]}, red!70!black, thick] (2.1,1.55) -- (2.9,1.55);
+
+        % explanation: below the device, not on the knobs
+        \node[font=\scriptsize, align=center, text width=4.2cm] at (1.6,-0.75)
+            {turning the $x$ knob, the $x$-coordinate of $p$ moves little (blue)
+             and that of $T^n(p)$ moves a lot (red)};
+
+        % ================= Right, top: x-coordinate graph (knob x) =================
+        \begin{scope}[shift={(5.6,1.6)}]
+            \def\S{2.2}
+            \draw[thick] (0,0) rectangle (\S,\S);
+            \draw[gray, dashed] (0,0) -- (\S,\S);
+            % slope 4, wrapped mod 1 (4 branches)
+            \foreach \k in {0,1,2,3} {
+                \draw[red!70!black, very thick] ({\k*\S/4},0) -- ({(\k+1)*\S/4},\S);
+            }
+            \foreach \px in {0.3333,0.6667} {
+                \fill ({\px*\S},{\px*\S}) circle (1.8pt);
+            }
+            \draw[fill=white] (0,0) circle (1.8pt);
+            \node[font=\scriptsize, below=2pt] at (0.5*\S,0) {$x(p)$};
+            \node[font=\scriptsize, rotate=90, above=2pt] at (0,0.5*\S) {$x(T^n p)$};
+            \node[font=\small, align=center, above=3pt] at (0.5*\S,\S)
+                {horizontal knob:\\unstable direction};
+        \end{scope}
+
+        % ================= Right, bottom: y-coordinate graph (knob y) =================
+        \begin{scope}[shift={(5.6,-2.9)}]
+            \def\S{2.2}
+            \draw[thick] (0,0) rectangle (\S,\S);
+            \draw[gray, dashed] (0,0) -- (\S,\S);
+            % slope 3, wrapped mod 1 (3 branches)
+            \foreach \k in {0,1,2} {
+                \draw[blue!70!black, very thick] ({\k*\S/3},0) -- ({(\k+1)*\S/3},\S);
+            }
+            \fill (0.5*\S,0.5*\S) circle (1.8pt);
+            \draw[fill=white] (0,0) circle (1.8pt);
+            \node[font=\scriptsize, below=2pt] at (0.5*\S,0) {$y(p)$};
+            \node[font=\scriptsize, rotate=90, above=2pt] at (0,0.5*\S) {$y(T^{-n} p)$};
+            \node[font=\small, align=center, above=3pt] at (0.5*\S,\S)
+                {vertical knob:\\stable direction, time reversed};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Etch A Sketch picture of why periodic points appear. We control the two coordinates of
+    $p\in R$ with two independent knobs. Turning the $x$ knob moves $p$ a little, but
+    $T^n(p)$ is moved a lot, so the graph of the $x$-coordinate of $T^n(p)$ against that of $p$ is steep and must meet the bisector
+    (black dots: the two $x$-coordinates coincide). The same happens for the $y$ knob, using $T^{-n}$.
+    When the steep graph wraps around the torus it has several branches, hence more crossings and more
+    periodic points. Hollow dot: $0\equiv1$.}
+    \label{fig:etch_a_sketch}
+\end{figure}
+
+\textbf{Pub talk:} Why is having infinite periodic points more chaotic?
+
+Heuristically: imagine you have a stable and unstable direction. If you take a rectangle in the space, it will get thinner on the unstable direction, and it will inevitably end up crossing the original rectangle. Imagine then to be able to control where you are, and take your point's x and look at its evolution: it will be some other point in the rectangle, so having a little change in x in the unstable thing makes a big one in the whole thing. You can see though that by going down/up the two horizontal lines will be coincident. You can do the same when moving on the horizontal line. And you can do it as much as you want because you are topologically mixing. If it wraps around you even get more points. Those are, in fact, your periodic points. \footnote{Sorry for this. I know it's confusing, and I will revise it. I hope the image at least helps.} 
+
+Let's go back to being formal. Although chaoticity is a bit of a fuzzy concept, someone gave a formal definition.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % ================= Left: time 0, x and x' in a tiny neighbourhood U =================
+        \draw[thick, fill=blue!4] (0,0) rectangle (4,3.5);
+        \node[font=\small] at (0.35,3.1) {$M$};
+        \node[font=\small] at (2,-0.45) {$t=0$};
+
+        % neighbourhood U of x
+        \draw[blue!70!black, thick, fill=blue!15] (1.2,1.7) circle (0.45);
+        \node[blue!70!black, font=\small] at (1.2,2.4) {$U$};
+        \fill[blue!70!black] (1.2,1.7) circle (1.6pt) node[below left, font=\scriptsize] {$x$};
+        \fill[red!70!black] (1.4,1.85) circle (1.6pt) node[above right, font=\scriptsize] {$x'$};
+
+        % ================= Arrow between the panels =================
+        \draw[-{Stealth}, thick] (4.3,1.75) -- (5.3,1.75) node[midway, above, font=\small] {$\phi^t$};
+
+        % ================= Right: time t, images are far apart =================
+        \begin{scope}[shift={(5.6,0)}]
+            \draw[thick, fill=blue!4] (0,0) rectangle (4,3.5);
+            \node[font=\small] at (2,-0.45) {time $t$};
+
+            % delta-ball around phi^t(x)
+            \draw[gray, dashed, thick] (1.0,1.3) circle (0.9);
+            \fill[blue!70!black] (1.0,1.3) circle (1.6pt)
+                node[below left, font=\scriptsize] {$\phi^t(x)$};
+            \fill[red!70!black] (3.0,2.5) circle (1.6pt)
+                node[above right, font=\scriptsize] {$\phi^t(x')$};
+
+            % delta radius
+            \draw[gray, thin, <->] (1.0,1.3) -- ++(-40:0.9);
+            \node[gray, font=\scriptsize] at (1.65,0.65) {$\delta$};
+
+            % distance larger than delta
+            \draw[<->, thin] (1.1,1.4) -- (2.9,2.4)
+                node[midway, above left, font=\scriptsize] {$d>\delta$};
+        \end{scope}
+
+        % ================= Trajectories (drawn across the panels) =================
+        \draw[blue!70!black, thick, -{Stealth[length=2mm]}]
+            (1.2,1.7) .. controls (2.4,2.9) and (6.0,0.4) .. (6.6,1.3);
+        \draw[red!70!black, thick, -{Stealth[length=2mm]}]
+            (1.4,1.85) .. controls (2.8,3.3) and (7.5,3.3) .. (8.6,2.5);
+    \end{tikzpicture}
+    \caption{Sensitive dependence on initial conditions. However small the neighbourhood $U$ of $x$ is,
+    it contains a point $x'$ whose orbit separates from that of $x$: at some time $t$ the distance
+    $d(\phi^t(x'),\phi^t(x))$ exceeds $\delta$, a constant that depends only on the system.}
+    \label{fig:sensitive_dependence}
+\end{figure}
+
+\begin{definition}[R. Devaney's definition of chaos (1986)]
+    For a dynamical system on a metric space we say that $(M, \phi^t)$ is Devaney chaotic if\begin{enumerate}
+        \item $(M, \phi^t)$ is topologically transitive;
+        \item $Per(\phi^t)$ is dense in M;
+        \item there is sensitive dependence on the initial conditions, i.e. \begin{equation*}
+            \exists \delta>0 | \forall x\in M, \forall U \text{ nbhd of } x \exists x'\in U, t\in\mathbb{R}^+(\mathbb{Z}^+) | d(\phi^t(x'), \phi^t(x))>\delta
+        \end{equation*}
+    \end{enumerate}
+\end{definition}
