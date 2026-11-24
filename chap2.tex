@@ -1890,17 +1890,28 @@ We shall now prove that the cat map is topologically mixing, which is easy to se
     \# Fix(T_A^n)=|\det(A^n-I)|=|(\lambda^n-1)(\lambda^{-n}-1)|=\lambda^n+\lambda^{-n}-2
 \end{equation*}
 
-Hin, as shown in \autoref{fig:cat_fixed_points}: \begin{align*}
+Hint, as shown in \autoref{fig:cat_fixed_points}: \begin{align*}
     x\in Per(T^n_A(x))&\iff x\in(A^n-I)^{-1}\mathbb{Z}^2\iff \\
     x\in(A^n-I)^{-1}\mathbb{Z}^2\cap[0,1)^2&=\#[(A^n-I)[0,1)^2]\cap \mathbb{Z}^2
 \end{align*}
 
 Another hint: You can use Pick's theorem.
 
+\textbf{Pub talk:} Why is having infinite periodic points more chaotic?
+
 \begin{figure}[ht]
     \centering
-    \begin{tikzpicture}[scale=1.3]
-        % ================= Left: the Etch A Sketch =================
+    \includegraphics[width=0.6\textwidth]{img/cap2/etchasketch.png}
+    \caption{A broken etch-a-sketch showing the inner mechanism.}
+    \label{fig:etch_a_sketch}
+\end{figure}
+
+We stated briefly, before, that chaoticity is actually linked with the number of periodic points in the counterintuitive way that more periodic points means more chaos, and not the opposite way around. Now, having delved a bit into the concept of expanding and reducing directions, and what they do to a set, we may be able to visualize a more illustrative example. The image I want you to picture is that of some kind of video game in which you can control the position of some point in a rectangle, by selecting the horizontal and vertical lines that generate said point by intersecting. One way to see such a thing is an Etch-A-Sketch, the common\footnote{Outside of Italy, actually. I included it as it was the most immediate to me, since it is commonly seen in movies, but feel free to suggest more apt ways to show it. For the record, the other example I had in mind was the aiming mechanism used in the PS1 version of Quake 2, but I highly doubt that such an experience may be common, particularly among my peers.} mechanical drawing toy shown in \autoref{fig:etch_a_sketch}, where the lines (and as such the points) are controlled with two knobs. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1.2]
+        % ================= Left: the Etch A Sketch, time 0 =================
         \draw[thick, rounded corners=6pt, fill=red!8] (-0.2,-0.2) rectangle (3.4,2.9);
         \draw[thick, fill=white] (0.2,0.8) rectangle (3.0,2.6);
         \node[font=\small] at (0.38,2.4) {$R$};
@@ -1912,73 +1923,73 @@ Another hint: You can use Pick's theorem.
             \node[font=\small] at (\kx,0.4) {$\kl$};
         }
 
-        % x-coordinates (dashed verticals)
-        \draw[blue!70!black, dashed, thin] (1.0,0.8) -- (1.0,2.6);
-        \draw[red!70!black, dashed, thin] (2.1,0.8) -- (2.1,2.6);
+        % the two lines selecting p
+        \draw[blue!70!black, dashed, thick] (1.2,0.8) -- (1.2,2.6);
+        \draw[green!50!black, dashed, thick] (0.2,1.8) -- (3.0,1.8);
+        \fill (1.2,1.8) circle (1.6pt) node[above right, font=\scriptsize] {$p$};
 
-        % p and T^n(p): labels on the left, away from the dashed lines
-        \fill[blue!70!black] (1.0,2.1) circle (1.6pt)
-            node[left=3pt, font=\scriptsize] {$p$};
-        \fill[red!70!black] (2.1,1.2) circle (1.6pt)
-            node[left=3pt, font=\scriptsize] {$T^n(p)$};
+        % turning the x knob moves the vertical line a little
+        \draw[-{Stealth[length=1.8mm]}, blue!70!black, thick] (1.2,1.25) -- (1.55,1.25);
 
-        % turning knob x: p moves a little, T^n(p) moves a lot
-        \draw[-{Stealth[length=1.8mm]}, blue!70!black, thick] (1.0,1.75) -- (1.2,1.75);
-        \draw[-{Stealth[length=1.8mm]}, red!70!black, thick] (2.1,1.55) -- (2.9,1.55);
-
-        % explanation: below the device, not on the knobs
         \node[font=\scriptsize, align=center, text width=4.2cm] at (1.6,-0.75)
-            {turning the $x$ knob, the $x$-coordinate of $p$ moves little (blue)
-             and that of $T^n(p)$ moves a lot (red)};
+            {time $0$: knob $x$ moves the vertical line, knob $y$ the horizontal one};
 
-        % ================= Right, top: x-coordinate graph (knob x) =================
-        \begin{scope}[shift={(5.6,1.6)}]
-            \def\S{2.2}
-            \draw[thick] (0,0) rectangle (\S,\S);
-            \draw[gray, dashed] (0,0) -- (\S,\S);
-            % slope 4, wrapped mod 1 (4 branches)
-            \foreach \k in {0,1,2,3} {
-                \draw[red!70!black, very thick] ({\k*\S/4},0) -- ({(\k+1)*\S/4},\S);
-            }
-            \foreach \px in {0.3333,0.6667} {
-                \fill ({\px*\S},{\px*\S}) circle (1.8pt);
-            }
-            \draw[fill=white] (0,0) circle (1.8pt);
-            \node[font=\scriptsize, below=2pt] at (0.5*\S,0) {$x(p)$};
-            \node[font=\scriptsize, rotate=90, above=2pt] at (0,0.5*\S) {$x(T^n p)$};
-            \node[font=\small, align=center, above=3pt] at (0.5*\S,\S)
-                {horizontal knob:\\unstable direction};
-        \end{scope}
+        % ================= Right: time n, T^n(R) unrolled =================
+        \begin{scope}[shift={(4.8,0)}]
+            % torus period W = 1.5; the band is 3 widths long (3 wraps)
+            \fill[red!70!black, opacity=0.25] (0,1.5) rectangle (4.5,2.0);
+            \draw[red!70!black, thick] (0,1.5) rectangle (4.5,2.0);
+            \node[red!70!black, font=\small, anchor=west, align=left] at (0,3.1)
+                {$T^n(R)$, unrolled:\\stretched $3\times$ horizontally, squeezed vertically};
 
-        % ================= Right, bottom: y-coordinate graph (knob y) =================
-        \begin{scope}[shift={(5.6,-2.9)}]
-            \def\S{2.2}
-            \draw[thick] (0,0) rectangle (\S,\S);
-            \draw[gray, dashed] (0,0) -- (\S,\S);
-            % slope 3, wrapped mod 1 (3 branches)
-            \foreach \k in {0,1,2} {
-                \draw[blue!70!black, very thick] ({\k*\S/3},0) -- ({(\k+1)*\S/3},\S);
+            % period marks (the torus identification) and pass labels
+            \foreach \px in {0,1.5,3,4.5} {
+                \draw[gray, dashed, thin] (\px,1.2) -- (\px,2.3);
             }
-            \fill (0.5*\S,0.5*\S) circle (1.8pt);
-            \draw[fill=white] (0,0) circle (1.8pt);
-            \node[font=\scriptsize, below=2pt] at (0.5*\S,0) {$y(p)$};
-            \node[font=\scriptsize, rotate=90, above=2pt] at (0,0.5*\S) {$y(T^{-n} p)$};
-            \node[font=\small, align=center, above=3pt] at (0.5*\S,\S)
-                {vertical knob:\\stable direction, time reversed};
+            \foreach \px/\lab in {0.75/{1st pass}, 2.25/{2nd pass}, 3.75/{3rd pass}} {
+                \node[gray, font=\scriptsize] at (\px,2.5) {\lab};
+            }
+
+            % the original vertical line, repeated once per pass (same line on the torus)
+            \foreach \bx in {0.5,2.0,3.5} {
+                \draw[blue!70!black, dashed, thick] (\bx,1.3) -- (\bx,2.2);
+            }
+            % the vertical line through T^n(p)
+            \draw[red!70!black, very thick] (1.1,1.3) -- (1.1,2.2);
+            \fill[red!70!black] (1.1,1.75) circle (1.6pt);
+            \node[red!70!black, font=\scriptsize, below] at (1.1,1.3) {$T^n(p)$};
+
+            % turning knob x: red moves 3 times as fast, so it hits a blue copy in every pass
+            \draw[-{Stealth[length=1.8mm]}, red!70!black, thick] (1.15,1.9) -- (1.95,1.9);
+            \foreach \bx in {0.5,2.0,3.5} {
+                \fill (\bx,1.75) circle (2pt);
+            }
+
+            % ---- the passes lie on top of each other on the torus ----
+            \draw[thick, fill=blue!6] (1.5,-2.6) rectangle (3.0,-1.1);
+            \node[font=\small] at (2.25,-2.85) {the torus, seen as $R$};
+            % three strips on top of each other (drawn slightly apart only to be visible)
+            \foreach \sy/\sc in {-2.3/30, -1.95/20, -1.6/10} {
+                \fill[red!70!black, opacity=0.35] (1.5,\sy) rectangle (3.0,\sy+0.14);
+            }
+            \draw[-{Stealth[length=1.8mm]}, gray, thin] (0.75,1.15) to[bend right=25] (1.8,-1.12);
+            \draw[-{Stealth[length=1.8mm]}, gray, thin] (2.25,1.15) to[bend right=8]  (2.25,-1.12);
+            \draw[-{Stealth[length=1.8mm]}, gray, thin] (3.75,1.15) to[bend left=25]  (2.7,-1.12);
+            \node[font=\scriptsize, align=left, anchor=west, text width=2.4cm] at (3.15,-1.85)
+                {the 3 passes lie over each other (drawn slightly apart)};
         \end{scope}
     \end{tikzpicture}
-    \caption{Etch A Sketch picture of why periodic points appear. We control the two coordinates of
-    $p\in R$ with two independent knobs. Turning the $x$ knob moves $p$ a little, but
-    $T^n(p)$ is moved a lot, so the graph of the $x$-coordinate of $T^n(p)$ against that of $p$ is steep and must meet the bisector
-    (black dots: the two $x$-coordinates coincide). The same happens for the $y$ knob, using $T^{-n}$.
-    When the steep graph wraps around the torus it has several branches, hence more crossings and more
-    periodic points. Hollow dot: $0\equiv1$.}
-    \label{fig:etch_a_sketch}
+    \caption{Why many periodic points. Left: the Etch A Sketch selects $p\in R$ with a vertical and a
+    horizontal line. Right: after time $n$ the rectangle is stretched horizontally (here by a factor $3$)
+    and squeezed vertically. Wrapped around the torus, this long band does not spread over it: it goes
+    over itself three times, one pass per period (bottom). The original vertical line (blue) appears once
+    per pass, while the line through $T^n(p)$ (red) moves three times faster when we turn the $x$ knob,
+    so it coincides with a blue copy in every pass (black dots). More wraps give more coincidences.
+    Running time backwards, the same argument handles the horizontal line.}
+    \label{fig:periodic_points_thought}
 \end{figure}
 
-\textbf{Pub talk:} Why is having infinite periodic points more chaotic?
-
-Heuristically: imagine you have a stable and unstable direction. If you take a rectangle in the space, it will get thinner on the unstable direction, and it will inevitably end up crossing the original rectangle. Imagine then to be able to control where you are, and take your point's x and look at its evolution: it will be some other point in the rectangle, so having a little change in x in the unstable thing makes a big one in the whole thing. You can see though that by going down/up the two horizontal lines will be coincident. You can do the same when moving on the horizontal line. And you can do it as much as you want because you are topologically mixing. If it wraps around you even get more points. Those are, in fact, your periodic points. \footnote{Sorry for this. I know it's confusing, and I will revise it. I hope the image at least helps.} 
+Then, take an arbitrary rectangle in the plane, and an arbitrary point in said rectangle (again, by using the knobs). Now: say that our space has a contracting and an expanding direction, respectively the vertical and horizontal ones. Then, the rectangle that we took before must stretch in the horizontal direction while shrinking in the vertical one, as time passes. Now, try to visualize that would happen if we could see the horizontal and vertical lines we use to select our starting point in the new, stretched rectangle: if we move our initial point vertically, thus translating the horizontal line, at one point the original horizontal line and the one in the future will inevitably be the same line, and the same is true for the horizontal one. The points for which this happens are the periodic points. If we are dealing with a torus, this rectangle will wrap around the torus, and so the periodic points will be more and more. The way the future rectangle behaved is an index of chaoticity, after all: high sensitivity to the initial conditions. In short, we just showed, heuristically, how a high number of periodic points is the result of high chaoticity; the whole reasoning is shown in \autoref{fig:periodic_points_thought}.
 
 Let's go back to being formal. Although chaoticity is a bit of a fuzzy concept, someone gave a formal definition.
 
