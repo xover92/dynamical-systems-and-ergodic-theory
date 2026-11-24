@@ -1,0 +1,44 @@
+{/* Auto-compile on save to mimic Overleaf's auto-save behavior */
+    "latex-workshop.latex.autoBuild.run": "onFileChange",
+
+    /* Open the PDF viewer in a new tab inside VS Code */
+    "latex-workshop.view.pdf.viewer": "tab",
+
+    /* Clean auxiliary files after a successful build to keep your folder tidy */
+    "latex-workshop.latex.autoClean.run": "onBuilt",
+
+    /* Use the internal viewer for SyncTeX (click on PDF to go to code) */
+    "latex-workshop.view.pdf.internal.synctex.keybinding": "double-click",
+    "editor.defaultFormatter": "ms-python.python",
+    "js/ts.suggest.enabled": false,
+    "terminal.integrated.suggest.enabled": false,
+    "editor.quickSuggestions": {
+
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+    },
+
+    "latex-workshop.latex.tools": [
+    {
+        "name": "latexmk-shell-escape",
+        "command": "latexmk",
+        "args": [
+            "-shell-escape",
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "-file-line-error",
+            "-pdf",
+            "-outdir=%OUTDIR%",
+            "%DOC%"
+        ]
+    }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (shell-escape)",
+            "tools": ["latexmk-shell-escape"]
+        }
+    ],
+    "latex-workshop.latex.recipe.default": "first"
+}

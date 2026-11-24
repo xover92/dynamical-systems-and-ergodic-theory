@@ -13,3 +13,4 @@
 *.snm
 *.vrb
 *.auxlock
+tikz-cache/
