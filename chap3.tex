@@ -1,0 +1,18 @@
+\chapter{Ergodic theory}
+
+Sometimes, we are gifted with the possibility to have neat formalization of dynamical systems, like in the case of the rotations $O(x)=\{x+nq, \mod 1\}$; topological dynamics was our first approach to look at orbits, looking at their topological properties, writing them in nice ways. 
+
+Ergodic theory, instead, looks at dynamical systems form the probabilistic point of view: they are still deterministic systems, but the initial condition is probabilistic. To be more precise, ergodic theory deals with dynamical systems defined over a measure space $M$.Vaguely, the idea is that $\mu$ on M is a function $\mu: \mathcal{A\rightarrow \mathbb{R}^+_0}$, where $\mathcal{A}$ is the class of all measurable sets of M, and $\mu(A)$ is the measure of A. $\mu$ has a lot of natural properties, all stemming from \begin{enumerate}
+    \item $\mu(\emptyset)=0$;
+    \item if $\{A_n\}$ is a countable family of disjoint sets, then $\mu(\cup_n A_n)=\sum_{n}\mu(A_n)$;
+\end{enumerate}
+Every intuitive property (such as $\mu(A\cup B)=\mu(A)+\mu(B)-\mu(A\cap B)$) come from those. In practice, \begin{equation*}
+\mu(A)=\int_A \phi(x) dLeb(x)|^{\text{with }\phi: M\rightarrow \mathbb{R}^+_0}
+\end{equation*}
+where dLeb(x) means using the Lebesgue measure.
+Another possibility is to have the measure be \begin{equation*}
+\mu=\delta_{\bar{x}}, \begin{cases}
+    1, \bar{x}\in A \\ 0, \bar{x}\notin A
+\end{cases}
+\end{equation*}
+so the delta function. This is used to measure a set, for example if you take a set A that does not contain $\bar{x}$, its measure is 0, while some set B that contains $\bar{x}$ has a measure of 1. You may easily see how this leads to the measure of a set by integrating it.

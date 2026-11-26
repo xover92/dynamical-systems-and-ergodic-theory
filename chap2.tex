@@ -2052,3 +2052,147 @@ Let's go back to being formal. Although chaoticity is a bit of a fuzzy concept, 
         \end{equation*}
     \end{enumerate}
 \end{definition}
+
+Let's look at some of the systems we dealt with.
+
+\begin{proposition}
+    $T_2$ is Devaney chaotic.
+\end{proposition}
+\begin{proof}
+    First, remember the way the graph of $T_2$ looks both on the torus and on the circle, as shown in \autoref{fig:doubling_map}; as such, it is also easy to recall that it is continuous. We have already proven that it is topologically transitive and that the periodic points are dense (we actually know more than that, they are the dyadic numbers). 
+
+    So, we just need to prove the third assertion in the definition; the simplest way to do so is by simply realizing that by taking two arbitrary points, their distance doubles every time step. Noticing that, let's take any $0<\delta\leq0.25$, and also any $x$ and $U$. Now, let's also take some $x'\neq x$ in such a set; there are two situations possible: either $d(x, x')\geq\delta$, either $0<d(x, x')<\delta$. In the first case, we already meet the definition either for $t=0$ or $t=1$. 
+
+    In the second case, it is certain that there is some even $k$ for which $\frac{\delta}{k}<d(x, x')$. So, you can halve $\delta$ enough to get a number smaller than any distance. This directly implies that if $t>k$, then $d(T_2^t(x), T_2^t(x'))>\delta$; notice that this is guaranteed by the boundaries we took from $\delta$, since on $T^1$ the maximum distance is 0.5.
+\end{proof}
+
+\textbf{HW} Show that $T_A$ (Arnold's cat map) is Devaney chaotic.
+
+We have manually shown some maps to be Devaney chaotic, but in reality, under very broad conditions, you can prove that topological transitivity and density of periodic points implies sensitive dependence on initial conditions. To show that we need a lemma.
+
+\begin{lemma}
+    Let $(M, T^t)$ be a dynamical system on a metric space, then: \begin{align*}
+        (M, T^t)\text{ is top. transitive, }Per(T^t)\text{ is dense, }T\in C^1,\,t\in\mathbb{Z}\Rightarrow \\
+        \exists\bar{\delta}>0| \forall x\in M, \exists q=q(x)\in Per(T)|dist(O(q),x)>\bar{\delta}
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Due to the density of periodic points, we can certainly state that there are at least two periodic points $q_1\neq q_2 \in Per(T)$ such that $O(q_1)\cap O(q_2)=\emptyset$.
+    
+    This directly implies that there is some distance between those orbits, which we call $3\bar{\delta}$: \begin{equation*}
+    3\bar{\delta}=dist(O(q_1), O(q_2))>0
+    \end{equation*}
+
+    Now, if I take a random point $x$ there are two possible situations: either $dist(x, O(q_1))> \bar{\delta}$, in which case $q_1$ is the $q(x)$ of the proposition, or $dist(x, O(q_1))\leq \bar{\delta}$; in that case: \begin{equation*}
+    dist(x, O(q_2))\geq \bar{\delta}
+    \end{equation*} 
+    This has to be true because otherwise, by triangular equality, \begin{equation*}
+        dist(O(q_1), O(q_2))\leq dist(O(q_1), x)+dist(x, O(q_2))\leq 2\bar{\delta}
+    \end{equation*}
+    which is a contradiction. So, $dist(x, O(q(x)))>\bar{\delta}$, where $q_2=q(x)$.
+\end{proof}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.9]
+        % delta = 1 unit, bar delta = 4 units, period m = 3.
+
+        % ================= Step 0: x, U_0, p, y =================
+        \draw[blue!70!black, thick, fill=blue!12] (0,0) circle (1);
+        \node[blue!70!black, font=\small] at (-1.5,-0.9) {$U_0$};
+        \fill (0,0) circle (1.8pt) node[left=2pt, font=\scriptsize] {$x$};
+        \fill[blue!70!black] (0.5,-0.5) circle (2pt) node[below=1pt, font=\scriptsize] {$p$};
+        \fill[green!50!black] (-0.45,0.4) circle (2pt) node[above=1pt, font=\scriptsize] {$y$};
+
+        % p comes back to itself
+        \node[blue!70!black, font=\scriptsize, align=center] at (0,2.0)
+            {$T^{mj}(p)=p$\\(periodic)};
+        \draw[blue!70!black, thin, -{Stealth[length=1.5mm]}] (0.15,1.55) to[bend left=25] (0.65,-0.25);
+
+        % ================= The orbit of q, with a delta-ball around each point =================
+        \foreach \px/\py in {5.5/1.8, 7.8/-0.6, 5.6/-2.8} {
+            \draw[red!70!black, dashed, fill=red!8] (\px,\py) circle (1);
+            \fill[red!70!black] (\px,\py) circle (2pt);
+        }
+        \node[red!70!black, font=\small] at (9.4,1.8) {$O(q)$};
+        \node[red!70!black, font=\scriptsize] at (6.1,2.3) {$q$};
+        \node[red!70!black, font=\scriptsize] at (7.8,-1.15) {$T^{mj-k}(q)$};
+
+        % V: small neighbourhood of q
+        \draw[orange!80!black, thick, fill=orange!35] (5.5,1.8) circle (0.4);
+        \node[orange!80!black, font=\small] at (4.2,3.0) {$V$};
+        \draw[orange!80!black, thin] (4.4,2.85) -- (5.2,2.1);
+
+        % ================= distance between x and the orbit of q =================
+        \draw[gray, dotted, thick] (0,0) -- (4.7,-2.35)
+            node[midway, below left, font=\scriptsize, text=black] {$\mathrm{dist}(x,O(q))>4\delta$};
+
+        % ================= Step 1: T^k sends y into V =================
+        \draw[-{Stealth[length=2mm]}, green!50!black, thick]
+            (-0.45,0.4) to[bend left=22] (5.1,1.9);
+        \node[green!50!black, font=\scriptsize, above] at (2.6,2.55) {$T^k$};
+
+        % ================= Step 2: T^{mj-k} sends V near O(q) =================
+        \draw[-{Stealth[length=2mm]}, green!50!black, thick]
+            (5.85,1.6) to[bend left=25] (7.5,-0.15);
+        \node[green!50!black, font=\scriptsize, right] at (7.0,1.2) {$T^{mj-k}$};
+        \fill[green!50!black] (7.55,-0.15) circle (2pt);
+        \node[green!50!black, font=\scriptsize, above right=0pt] at (7.55,-0.15) {$T^{mj}(y)$};
+
+        % ================= Last step (box) =================
+        \draw[gray, rounded corners=4pt] (-1.4,-7.7) rectangle (9.9,-4.7);
+        \node[font=\small, anchor=west] at (-1.2,-5.0)
+            {Last step: the two images are far apart};
+
+        % the three points on a line
+        \draw[gray, thin] (1.0,-6.3) -- (6.8,-6.3);
+        \fill[blue!70!black] (2.5,-6.3) circle (2pt)
+            node[above=2pt, font=\scriptsize] {$T^{mj}(p)$};
+        \fill[green!50!black] (5.3,-6.3) circle (2pt)
+            node[above=2pt, font=\scriptsize] {$T^{mj}(y)$};
+        \fill (3.3,-6.3) circle (2pt)
+            node[below=3pt, font=\scriptsize] {$T^{mj}(x)$};
+        % delta-ball around T^{mj}(x): contains one of them, not both
+        \draw[black!60, dashed] (3.3,-6.3) circle (1);
+        \draw[<->, thin] (2.5,-7.3) -- (5.3,-7.3)
+            node[midway, below, font=\scriptsize] {$>2\delta$};
+
+        \node[font=\scriptsize, align=left, anchor=west, text width=2.8cm] at (7.1,-6.3)
+            {no ball of radius $\delta$ contains both, so $x'=p$ or $y$};
+    \end{tikzpicture}
+    \caption{Proof of Devaney's theorem ($(1.)+(2.)\Rightarrow(3.)$). The periodic point $p\in U_0$ has
+    $T^{mj}(p)=p$, so it stays $\delta$-close to $x$. By transitivity, some $y\in U_0$ enters $V$ after $k$ steps
+    (green arrow); since $V$ keeps every point $\delta$-close to $O(q)$ for the next $m$ steps, $T^{mj}(y)=T^{mj-k}(T^k y)$
+    is $\delta$-close to a point of $O(q)$, which is more than $4\delta$ away from $x$. Hence $T^{mj}(p)$ and $T^{mj}(y)$
+    are more than $2\delta$ apart (box), and $T^{mj}(x)$ cannot be $\delta$-close to both. The one that is
+    farther than $\delta$ from $T^{mj}(x)$ is the required $x'\in U$.}
+    \label{fig:devaney_theorem}
+\end{figure}
+
+\begin{theorem}[1992]
+    Let $(M, T^t)$ be a dynamical system in a metric space. Then, if $T$ is continuous and $t\in\mathbb{Z}$: \begin{equation*}
+        (1.)+(2.)\Rightarrow(3.)
+    \end{equation*}
+    where (1.), (2.) and (3.) are the conditions in the definition of Devaney's chaoticity.
+\end{theorem}
+\begin{proof}
+    Let's start by setting $\delta=\frac{\bar{\delta}}{4}$ where $\bar{\delta}$ is the quantity that we are guaranteed to exist by the lemma, which clearly applies in this situation. Then, given $x, U$ as in (3.), set $U_0=U\cap B_{\delta}(x)$, which is open since it is the intersection of two open sets. Because of the density of periodic points, there must be some periodic point $p\in U_0\cap Per(T)$. Let's call its period $m$. Also, we will call $q=q(x)$ the periodic point guaranteed to exist by the lemma.
+
+    Let's also set \begin{equation*}
+    V=\cap^{m-1}_{i=0} T^{-i} (B_{\delta}(T^i(q)))
+    \end{equation*}
+    We may observe that $V$ is open due to the continuity of T and non-empty because $q\in V$. Basically, as shown in the image, $V$ is the set such that if you take a point in it, you will always be as close as $\delta$ to the trajectory of q.
+
+    Another consideration that we must make is that, because of topological transitivity, you can have some point $y\in U_0, k\in\mathbb{Z}^+$, such that $T^{k}(y)\in V$ (remember: topological transitivity was about two arbitrary open sets). Also, we may set $j=\lceil\frac{k}{m}\rceil$\footnote{This is the ceiling function, which is defined as \begin{equation*} \lceil x \rceil=\min\{n\in\mathbb{Z}|n\geq x\}\end{equation*}}. For such a j, we can say:\begin{equation*}j-1< \frac{k}{m} \leq j\Rightarrow mj\footnote{https://www.youtube.com/watch?v=8ZZR3HIDFe0}-m<k\leq mj\footnote{This is note number 23.} \Leftrightarrow 0\leq mj-k <m\end{equation*}
+    So, $mj-k$ is a time between the beginning and the end of a period.
+
+    Now, let's take into consideration $T^{mj}(p)$ and $T^{mj}(y)$. Since p is by definition a periodic point,  $T^{mj}(p)=p$, while for the other one we may say: \begin{equation*}
+    T^{mj}(y)=T^{mj-k}(T^k(y))\in T^{mj-k}V
+    \end{equation*}
+    where the last inclusion is true by definition of $y$ and $k$.
+
+    Finally, $T^{mj}(p)$ is $\delta$-close to x, because $p$ is in $U_0$; also, $T^{mj}(y)$ is $\delta$-close to O(q) because of the definition of $V$ (remember, y is a point that after k time steps is in V). So, by definition, we may say: \begin{equation*}
+    dist(x, O(q))>\bar{\delta}=4\delta\Rightarrow dist(T^{mj}(p), T^{mj}(y))>2\delta
+    \end{equation*}
+    And the proof is complete, since we are in the same situation as in the proof of the lemma: it cannot be that $T^{mj}(x)$ is $\delta$-close to both $T^{mj}(p)$ and $T^{mj}(y)$. Since we are trying to prove that there is some $x'$ such that, for some time ($mj$ in this case), the distance between $T^t(x)$ and $T^t(x')$ is more than $\delta$, the theorem is proved by taking $x'$ to be either $p$ or $y$, depending on which one is further away, as in the lemma.
+\end{proof}
