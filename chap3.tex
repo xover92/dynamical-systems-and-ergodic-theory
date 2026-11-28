@@ -2,17 +2,458 @@
 
 Sometimes, we are gifted with the possibility to have neat formalization of dynamical systems, like in the case of the rotations $O(x)=\{x+nq, \mod 1\}$; topological dynamics was our first approach to look at orbits, looking at their topological properties, writing them in nice ways. 
 
-Ergodic theory, instead, looks at dynamical systems form the probabilistic point of view: they are still deterministic systems, but the initial condition is probabilistic. To be more precise, ergodic theory deals with dynamical systems defined over a measure space $M$.Vaguely, the idea is that $\mu$ on M is a function $\mu: \mathcal{A\rightarrow \mathbb{R}^+_0}$, where $\mathcal{A}$ is the class of all measurable sets of M, and $\mu(A)$ is the measure of A. $\mu$ has a lot of natural properties, all stemming from \begin{enumerate}
+Ergodic theory, instead, looks at dynamical systems from the probabilistic point of view: they are still deterministic systems, but the initial condition is probabilistic. To be more precise, ergodic theory deals with dynamical systems defined over a measure space $M$.
+
+\section{Measures, measure spaces and other mathematical concepts}
+\footnote{This part needs some polish, I am aware of that}
+\begin{definition}
+    A $\sigma$-agebra of M $\mathcal{A}$ is a collection of subsets of M with the following properties: \begin{enumerate}
+        \item $M\in\mathcal{A}$;
+        \item $A\in\mathcal{A}\Rightarrow A^c=M\setminus A\in\mathcal{A}$;
+        \item $A_n\in\mathcal{A},\,n\in\mathbb{N}\Rightarrow\bigcup_{n}A_n\in\mathcal{A}$
+    \end{enumerate}
+\end{definition}
+
+\begin{example}[Trivial measure]
+The most obvious $\sigma$-algebra in any M is the trivial measure: \begin{equation*}
+    \mathcal{A}_{trivial}=\{\emptyset, M\}
+\end{equation*}
+\end{example}
+
+When you define a sigma algebra on the set you are defining how deep you can look in the set. For instance, partition a set in four disjoint sets $E_1...E-4$, call it a partition: you cannot look smaller than one of those sets. Take $\mathcal{A}=\{\text{all the finite unions of sets }E_i\}$. This satisfies the definition.
+
+\begin{example}[for $M\subseteq\mathbb{R}^d,\Pi^d$ or similar\footnote{sic: I think he meant something like $\mathbb{R}^d$ or derived from it.}]
+    If $f:M\rightarrow\mathbb{R}_0^+$ is a measurable function, then $\mu(A)=\int_A fdLeb$ is a measure, as is $\delta_{\bar{x}}$ (sometimes called atomic measure).
+\end{example}
+
+\begin{definition}
+    $\mu$ on M is a function $\mu: \mathcal{A\rightarrow \mathbb{R}^+_0}$, where $\mathcal{A}$(a $\sigma$-agebra) is the class of all measurable sets of M, and $\mu(A)$ is the measure of A, such that: \begin{enumerate}
     \item $\mu(\emptyset)=0$;
-    \item if $\{A_n\}$ is a countable family of disjoint sets, then $\mu(\cup_n A_n)=\sum_{n}\mu(A_n)$;
+    \item if $\{A_n\}$ is a countable family of disjoint sets, then $\mu(\bigcup_n A_n)=\sum_{n}\mu(A_n)$;\footnote{union of disjoint sets also $\bigsqcup$}
 \end{enumerate}
-Every intuitive property (such as $\mu(A\cup B)=\mu(A)+\mu(B)-\mu(A\cap B)$) come from those. In practice, \begin{equation*}
+\end{definition}
+
+Every intuitive property of measures (such as $\mu(A\cup B)=\mu(A)+\mu(B)-\mu(A\cap B)$) comes from those 2 properties. In practice, \begin{equation*}
 \mu(A)=\int_A \phi(x) dLeb(x)|^{\text{with }\phi: M\rightarrow \mathbb{R}^+_0}
 \end{equation*}
-where dLeb(x) means using the Lebesgue measure.
-Another possibility is to have the measure be \begin{equation*}
-\mu=\delta_{\bar{x}}, \begin{cases}
+where dLeb(x) is the Lebesgue measure.
+Another possibility is to have the measure be the delta function: \begin{equation*}
+\mu=\delta_{\bar{x}}= \begin{cases}
     1, \bar{x}\in A \\ 0, \bar{x}\notin A
 \end{cases}
 \end{equation*}
-so the delta function. This is used to measure a set, for example if you take a set A that does not contain $\bar{x}$, its measure is 0, while some set B that contains $\bar{x}$ has a measure of 1. You may easily see how this leads to the measure of a set by integrating it.
+You can use this to measure a full set: for example, if you take a set A that does not contain $\bar{x}$, its measure is 0, while some set B that contains $\bar{x}$ has a measure of 1. You may easily see how this leads to the measure of a set by integrating it.
+
+\begin{example}[Cantor set, example of "uncanny" measures]
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[x=9cm, y=1cm]
+        % Unit of x = length of [0,1]. Each row n draws C_n as 2^n segments of length 3^{-n}.
+        % Segment k is [a, a+3^{-n}], where a has ternary digits 0/2 (list written by hand).
+
+        % ---- C_0 ----
+        \draw[blue!70!black, line width=3pt] (0,0) -- (1,0);
+        \node[left, font=\small] at (-0.02,0) {$C_0$};
+        \node[right, font=\scriptsize, gray] at (1.02,0) {$1$ piece, length $1$};
+
+        % ---- C_1 ----
+        \foreach \a in {0, 0.66667} {
+            \draw[blue!70!black, line width=3pt] (\a,-1) -- (\a+0.33333,-1);
+        }
+        \node[left, font=\small] at (-0.02,-1) {$C_1$};
+        \node[right, font=\scriptsize, gray] at (1.02,-1) {$2$ pieces, length $\frac13$ each};
+
+        % ---- C_2 ----
+        \foreach \a in {0, 0.22222, 0.66667, 0.88889} {
+            \draw[blue!70!black, line width=3pt] (\a,-2) -- (\a+0.11111,-2);
+        }
+        \node[left, font=\small] at (-0.02,-2) {$C_2$};
+        \node[right, font=\scriptsize, gray] at (1.02,-2) {$4$ pieces, length $\frac19$ each};
+
+        % ---- C_3 ----
+        \foreach \a in {0, 0.07407, 0.22222, 0.29630, 0.66667, 0.74074, 0.88889, 0.96296} {
+            \draw[blue!70!black, line width=3pt] (\a,-3) -- (\a+0.03704,-3);
+        }
+        \node[left, font=\small] at (-0.02,-3) {$C_3$};
+        \node[right, font=\scriptsize, gray] at (1.02,-3) {$8$ pieces, length $\frac1{27}$ each};
+
+        % ---- dots: the construction continues ----
+        \node[font=\large] at (0.5,-3.8) {$\vdots$};
+        \node[left, font=\small] at (-0.02,-4.6) {$C=\bigcap_n C_n$};
+        \node[font=\small, gray] at (0.5,-4.6) {uncountably many points, total length $\lim (2/3)^n=0$};
+
+        % ---- dashed guides marking the removed middle thirds ----
+        \draw[gray, dashed, thin] (0.33333,0.3) -- (0.33333,-3.3);
+        \draw[gray, dashed, thin] (0.66667,0.3) -- (0.66667,-3.3);
+        \node[font=\scriptsize, gray, above] at (0.5,0.3) {removed};
+    \end{tikzpicture}
+    \caption{Construction of the Cantor set. At each step the middle third of every remaining
+    interval is removed. $C_n$ consists of $2^n$ intervals of length $3^{-n}$, so its Lebesgue measure is
+    $(2/3)^n\to0$. The Cantor set $C=\bigcap_n C_n$ is what is left: it has Lebesgue measure zero, but it is uncountable.}
+    \label{fig:cantor_set}
+\end{figure}
+
+    To build the Cantor set, take the interval $[0,1]$, divide it in three sets and drop the middle one, so you are left with $[0, 1/3]\cup[2/3, 1]$, and do that again infinite times and find the common points (disegno della retta che man mano ha meno pezzetti). In Lebesgue measure, the Cantor set has measure zero. But there are some measures for which it is not true. Now, Cantor is uncountable, so one basic way to do so is to assign 0 measure to any point but 1 to the ones in the Cantor set. You may verify that this is indeed a measure. \footnote{I am a bit unsure about this part.} 
+\end{example}
+
+You must remember how and why the Lebesgue mesaure was built: you take $\sigma$-functions $f=\sum_{i=1}^{k}a_i\mathbb{I}_{A_i}$, for which with Lebesgue you can do $\int f d\mu=\sum_{i=1}^{k}a_i\mu(A_i)$, so, basically, from a measure you have the notion of an integral, and if you do this by, say, applying the $\delta$ function, it turns out that, under some mild hypotheses (i.e. f is continuous around $\bar{x}$) \begin{equation*}
+    \int_M f d\delta_{\bar{x}}=f(\bar{x})
+\end{equation*}
+Notice that a probability is a measure whose total is 1, so probability is indeed just another measure (this was proven and formalized by Kolmogorov).
+
+Ergodic theory is nothing but dynamical systems on measure spaces; we need to use such spaces as we are studying from a random point of view, so we need a measure, namely a probability measure: our knowledge of the initial point.
+
+In practice, the spaces M we will deal with are a measure space together with a measure $\mu$ on it. Very often in this book\footnote{Book is a bit much I know}, $\mu$ is a probability measure, meaning $\mu(M)=1$. 
+
+\section{Measure preserving dynamical systems}
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % Three copies of the space M, side by side. The regions have the same area (here 1.2 x 1.2 = 1.44)
+        % but different shapes: the preimage is cut into pieces, as for a non-invertible map.
+
+        % ---- M, with T^{-2}A ----
+        \begin{scope}[shift={(0,0)}]
+            \fill[blue!4] (0,0) rectangle (3,3);
+            \draw[thick] (0,0) rectangle (3,3);
+            \node[font=\small] at (0.3,2.7) {$M$};
+            % three pieces, total area 1.44 (0.6 x 0.8 + 0.6 x 0.8 + 0.4 x 0.4 ... = 0.48+0.48+0.48)
+            \foreach \x/\y/\w/\h in {0.3/0.4/0.6/0.8, 1.4/1.7/0.6/0.8, 2.1/0.5/0.6/0.8} {
+                \draw[red!70!black, thick, fill=red!25] (\x,\y) rectangle (\x+\w,\y+\h);
+            }
+            \node[red!70!black, font=\small] at (1.5,-0.4) {$T^{-2}A$};
+        \end{scope}
+
+        % ---- M, with T^{-1}A ----
+        \begin{scope}[shift={(4.6,0)}]
+            \fill[blue!4] (0,0) rectangle (3,3);
+            \draw[thick] (0,0) rectangle (3,3);
+            \foreach \x/\y/\w/\h in {0.4/1.6/0.9/0.8, 1.9/0.4/0.6/1.2} {
+                \draw[orange!80!black, thick, fill=orange!30] (\x,\y) rectangle (\x+\w,\y+\h);
+            }
+            \node[orange!80!black, font=\small] at (1.5,-0.4) {$T^{-1}A$};
+        \end{scope}
+
+        % ---- M, with A ----
+        \begin{scope}[shift={(9.2,0)}]
+            \fill[blue!4] (0,0) rectangle (3,3);
+            \draw[thick] (0,0) rectangle (3,3);
+            \draw[blue!70!black, thick, fill=blue!25] (0.9,0.9) rectangle (2.1,2.1);
+            \node[blue!70!black, font=\small] at (1.5,-0.4) {$A$};
+        \end{scope}
+
+        % ---- arrows: T maps each region onto the next ----
+        \draw[-{Stealth[length=2.5mm]}, thick] (3.15,1.5) -- (4.45,1.5)
+            node[midway, above, font=\small] {$T$};
+        \draw[-{Stealth[length=2.5mm]}, thick] (7.75,1.5) -- (9.05,1.5)
+            node[midway, above, font=\small] {$T$};
+
+        % ---- equal measures ----
+        \node[font=\small] at (6.1,-1.2)
+            {$\mu(T^{-2}A)=\mu(T^{-1}A)=\mu(A)$};
+    \end{tikzpicture}
+    \caption{A measure preserving map. The preimages $T^{-1}A$ and $T^{-2}A$ can have a very different shape
+    from $A$ (here they are split into several pieces), but they have the same measure (same area). Since
+    $\mu(T^{-1}B)=\mu(B)$ holds for every measurable $B$, applying it to $B=A$ and then to $B=T^{-1}A$ gives
+    $\mu(T^{-2}A)=\mu(T^{-1}A)=\mu(A)$, and so on for every $n$.}
+    \label{fig:mpds}
+\end{figure}
+\begin{definition}
+    A measure preserving dynamical system (MPDS) $(M, \mu, \phi^t)$\footnote{To be pedantic $(M, \mathcal{A}, \mu, \phi^t)$, but the knowledge of the $\sigma$ algebra is "inside" the measure.} is a dynamical system for which \begin{equation*}
+        \mu(\phi^{-t}A)=\mu(A) \forall t>0,\,\forall A\in\mathcal{A}\text{ (measurable)}
+    \end{equation*}
+\end{definition}
+
+In the case of maps (discrete time), the above definition is equivalent to $\mu(T^{-1}A)=\mu(A)$, as shown in \autoref{fig:mpds}.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        % ---- Domain M (left) ----
+        \fill[blue!4] (0,0) rectangle (3.4,3.6);
+        \draw[thick] (0,0) rectangle (3.4,3.6);
+        \node[font=\small] at (0.35,3.3) {$M$};
+
+        \draw[red!70!black, thick, fill=red!25] (0.5,2.1) rectangle (2.0,3.0);
+        \node[red!70!black, font=\small] at (1.25,2.55) {$A_1$};
+        \draw[orange!80!black, thick, fill=orange!30] (1.3,0.5) rectangle (2.8,1.4);
+        \node[orange!80!black, font=\small] at (2.05,0.95) {$A_2$};
+
+        % ---- Codomain M (right) ----
+        \begin{scope}[shift={(7,0)}]
+            \fill[blue!4] (0,0) rectangle (3.4,3.6);
+            \draw[thick] (0,0) rectangle (3.4,3.6);
+            \draw[blue!70!black, thick, fill=blue!25] (0.8,1.2) rectangle (2.6,2.4);
+            \node[blue!70!black, font=\small] at (1.7,1.8) {$B$};
+        \end{scope}
+
+        % ---- T: both A_1 and A_2 go onto B ----
+        \draw[-{Stealth[length=2.5mm]}, red!70!black, thick] (2.05,2.55) -- (7.75,1.95);
+        \draw[-{Stealth[length=2.5mm]}, orange!80!black, thick] (2.85,0.95) -- (7.75,1.45);
+        \node[font=\small, above] at (4.9,2.45) {$T$};
+
+        % ---- the images and preimage, as text below ----
+        \node[font=\small, align=center] at (1.7,-0.9) {$TA_1=B,\quad TA_2=B$};
+        \node[font=\small, align=center] at (8.7,-0.9) {$T^{-1}(TA_1)=T^{-1}B=A_1\cup A_2\neq A_1$};
+    \end{tikzpicture}
+    \caption{Why bijectivity is needed. If $T$ is not injective, two different sets $A_1$ and $A_2$ can have
+    the same image $B$. Then $T^{-1}(TA_1)=T^{-1}B=A_1\cup A_2$, which is strictly bigger than $A_1$,
+    so the step $T^{-1}(TA)=A$ used in the proof fails. For a bijection, $T^{-1}(TA)=A$ always.}
+    \label{fig:bijectivity_needed}
+\end{figure}
+
+\begin{proposition}
+    If $T$ is bijective, then \begin{equation*}
+    \mu(T^{-1}A)=\mu(A)\iff\mu(TA)=\mu(A)\forall A\in\mathcal{A}
+    \end{equation*}
+\end{proposition}
+\begin{proof} 
+    We shall start by proving $\Rightarrow$.
+
+    If we apply $\mu(T^{-1}A)=\mu(A)$ to $TA$, we get \begin{equation*}
+        \mu(\underbrace{T^{-1}(TA)}_A)=\mu(TA)
+    \end{equation*}
+    by just noticing that $T^{-1}(TA)=A$, the proof is complete.
+
+    We go on to $\Leftarrow$.
+    
+    The approach is the same as before; in fact, if we apply the hypothesis to $T^{-1}A$, we get \begin{equation*}
+        \mu(\underbrace{T(T^{-1}A)}_A)=\mu(T^{-1}A)
+    \end{equation*} 
+    
+    Notice that we used bijectivity in the first one since $T^{-1}(T A)\neq A$ in general, as shown in \autoref{fig:bijectivity_needed}.
+\end{proof}
+
+But why do we look at counterimages in the definition? We can prove that, in general, the flows that satisfy the condition with the image are a subset of those that do with the counterimages.
+
+\begin{proposition}
+    \begin{equation*}
+        \forall t>0,\, \mu(\phi^{t}A)=\mu(A)\Rightarrow \mu(\phi^{-t} A)=\mu(A)
+    \end{equation*}
+\end{proposition}
+\begin{proof}
+    This is proven by applying the hypothesis to $\phi^{-t} A$.
+\end{proof}
+
+Most of the dynamical systems we have look at in this course are measure preserving.
+\begin{figure}[ht]
+    \centering
+    % ======================= (a) Rotation on the circle =======================
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.2]
+            \draw[gray] (0,0) circle (1.3);
+            % A: arc from 20 to 80 degrees; R_alpha(A): same length, shifted by 90 degrees
+            \draw[blue!70!black, ultra thick] (20:1.3) arc (20:80:1.3);
+            \node[blue!70!black, font=\small] at (50:1.65) {$A$};
+            \draw[red!70!black, ultra thick] (110:1.3) arc (110:170:1.3);
+            \node[red!70!black, font=\small] at (140:1.75) {$R_\alpha(A)$};
+            \draw[-{Stealth[length=2mm]}, gray, thick] (85:0.9) arc (85:105:0.9);
+            \node[gray, font=\scriptsize] at (95:0.6) {$R_\alpha$};
+            \node[font=\small] at (0,0) {$T^1$};
+        \end{tikzpicture}
+        \caption{Rotation on the circle: the arc is only moved, so its length is unchanged.}
+        \label{fig:mpds_a}
+    \end{subfigure}\hfill
+    % ======================= (b) Discrete translations on the torus =======================
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.8]
+            \fill[blue!4] (0,0) rectangle (2.4,2.4);
+            \draw[thick] (0,0) rectangle (2.4,2.4);
+            \draw[blue!70!black, thick, fill=blue!25] (0.3,0.3) rectangle (1.0,0.9);
+            \node[blue!70!black, font=\small] at (0.65,0.6) {$A$};
+            \draw[red!70!black, thick, fill=red!25] (1.3,1.2) rectangle (2.0,1.8);
+            \node[red!70!black, font=\small] at (1.65,1.5) {$T_\gamma A$};
+            \draw[-{Stealth[length=2mm]}, gray, thick] (0.65,0.6) -- (1.65,1.5)
+                node[midway, below right, font=\scriptsize] {$\gamma$};
+        \end{tikzpicture}
+        \caption{Discrete translation on the torus: same rectangle, shifted by $\gamma$.}
+        \label{fig:mpds_b}
+    \end{subfigure}
+
+    \vspace{1.5em}
+
+    % ======================= (c) Kronecker flow =======================
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.8]
+            \fill[blue!4] (0,0) rectangle (2.4,2.4);
+            \draw[thick] (0,0) rectangle (2.4,2.4);
+            \draw[blue!70!black, thick, fill=blue!25] (0.3,1.5) rectangle (0.9,2.1);
+            \node[blue!70!black, font=\small] at (0.6,1.8) {$A$};
+            % phi^t(A): shifted by (1.5, 0.9); it wraps through the top edge
+            \draw[red!70!black, thick, fill=red!25] (1.8,0) rectangle (2.4,0.6);
+            \node[red!70!black, font=\small] at (2.1,0.3) {$\phi^tA$};
+            % trajectory of the centre, wrapping around
+            \draw[gray, thick] (0.6,1.8) -- (1.6,2.4);
+            \draw[gray, thick, -{Stealth[length=2mm]}] (1.6,0) -- (2.1,0.3);
+            \draw[gray, dashed, thin] (1.6,2.4) -- (1.6,0);
+        \end{tikzpicture}
+        \caption{Kronecker flow: the rectangle moves in a fixed direction and re-enters from the opposite side.}
+        \label{fig:mpds_c}
+    \end{subfigure}\hfill
+    % ======================= (d) Doubling map =======================
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=3]
+            % graph of T_2(x) = 2x mod 1 on the unit square (side 1 in these units)
+            \draw[gray] (0,0) rectangle (1,1);
+            \draw[-{Stealth}, gray] (-0.1,0) -- (1.2,0) node[right, font=\small] {$x$};
+            \draw[-{Stealth}, gray] (0,-0.1) -- (0,1.2) node[above, font=\small] {$T_2(x)$};
+            \draw[gray, dashed, thin] (0.5,0) -- (0.5,1);
+            \draw[very thick, black!60] (0,0) -- (0.5,1);
+            \draw[very thick, black!60] (0.5,0) -- (1,1);
+
+            % A on the vertical axis: [0.4,0.8], length 0.4
+            \fill[blue!70!black, opacity=0.15] (0,0.4) rectangle (1,0.8);
+            \draw[blue!70!black, line width=3pt] (0,0.4) -- (0,0.8);
+            \node[blue!70!black, font=\small, left=2pt] at (0,0.6) {$A$};
+            \draw[blue!70!black, dotted] (0,0.4) -- (1,0.4) (0,0.8) -- (1,0.8);
+
+            % preimages on the horizontal axis: [0.2,0.4] and [0.7,0.9], length 0.2 each
+            \draw[red!70!black, dotted] (0.2,0.4) -- (0.2,0) (0.4,0.8) -- (0.4,0)
+                                        (0.7,0.4) -- (0.7,0) (0.9,0.8) -- (0.9,0);
+            \draw[red!70!black, line width=3pt] (0.2,0) -- (0.4,0);
+            \draw[red!70!black, line width=3pt] (0.7,0) -- (0.9,0);
+            \node[red!70!black, font=\scriptsize, below=3pt] at (0.3,0) {$\frac12|A|$};
+            \node[red!70!black, font=\scriptsize, below=3pt] at (0.8,0) {$\frac12|A|$};
+            \node[red!70!black, font=\small, below=14pt] at (0.55,0) {$T_2^{-1}A$};
+
+            % the two graph points
+            \fill (0.3,0.6) circle (0.6pt);
+            \fill (0.8,0.6) circle (0.6pt);
+        \end{tikzpicture}
+        \caption{Doubling map: the interval $A$ on the vertical axis has two preimages on the horizontal one, one for each branch of the graph. Each is half as long as $A$, so $\mu(T_2^{-1}A)=\mu(A)$.}
+        \label{fig:mpds_d}
+    \end{subfigure}
+
+    \caption{Examples of measure preserving systems for $\mu=\mathrm{Leb}$. In each case
+    $\mu(T^{-1}A)=\mu(A)$.}
+    \label{fig:mpds_examples}
+\end{figure}
+
+\begin{example}[of MPDS we have seen]
+    These simple examples of dynamical systems all preserve $\mu=Leb$ (wherever defined), as shown in \autoref{fig:mpds_examples}: \begin{itemize}
+    \item rotation on the circle;
+    \item discrete translations on the torus;
+    \item Kronecker flow;
+    \item doubling map on the $\Pi^1$ (which is not invertible, so you can only use the definition with counterimages);
+\end{itemize}
+\end{example}
+
+We did speak a bit about measurable functions, let's define them correctly.
+
+\begin{definition}
+    Suppose  $M_1, M_2$ are two measure spaces and there exists a $\phi:M_1\rightarrow M_2$. $\phi$ is measurable if $\forall B\in\mathcal{A}_2,\, \phi^{-1}B\in\mathcal{A}_1$, so, in layman terms, a measurable function's inverse conserves measurability.
+\end{definition}
+
+\begin{figure}[ht]
+    \centering
+    % ======================= (a) Push-forward measure =======================
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            % ---- M_1 with the preimage of B ----
+            \fill[blue!4] (0,0) rectangle (3,3);
+            \draw[thick] (0,0) rectangle (3,3);
+            \node[font=\small] at (0.35,2.7) {$M_1$};
+            \draw[red!70!black, thick, fill=red!25] (0.3,0.4) rectangle (1.0,1.4);
+            \draw[red!70!black, thick, fill=red!25] (1.8,1.7) rectangle (2.5,2.6);
+            \node[red!70!black, font=\small] at (1.4,0.35) {$\phi^{-1}B$};
+
+            % ---- M_2 with B ----
+            \begin{scope}[shift={(6,0)}]
+                \fill[blue!4] (0,0) rectangle (3,3);
+                \draw[thick] (0,0) rectangle (3,3);
+                \node[font=\small] at (2.65,2.7) {$M_2$};
+                \draw[blue!70!black, thick, fill=blue!25] (1,1) rectangle (2.2,2.2);
+                \node[blue!70!black, font=\small] at (1.6,1.6) {$B$};
+            \end{scope}
+
+            % ---- phi: both pieces are sent into B ----
+            \draw[-{Stealth[length=2.2mm]}, thick] (1.0,0.9) to[bend right=12] (6.95,1.3);
+            \draw[-{Stealth[length=2.2mm]}, thick] (2.5,2.15) to[bend left=12] (7.2,2.15);
+            \node[font=\small] at (4.5,2.9) {$\phi$};
+
+            % ---- measures ----
+            \node[red!70!black, font=\small] at (1.5,-0.7) {$\mu(\phi^{-1}B)$};
+            \node[blue!70!black, font=\small] at (7.5,-0.7) {$(\phi_*\mu)(B)$};
+            \node[font=\small] at (4.5,-0.7) {$=$};
+            \draw[-{Stealth[length=2mm]}, gray, dashed, thick] (2.4,-0.7) -- (3.9,-0.7);
+            \node[gray, font=\scriptsize, below] at (3.15,-0.75) {push forward};
+        \end{tikzpicture}
+        \caption{Push-forward measure: to measure $B\subseteq M_2$ we take its preimage $\phi^{-1}B\subseteq M_1$
+        and measure that with $\mu$.}
+        \label{fig:pushforward_a}
+    \end{subfigure}
+
+    \vspace{1.5em}
+
+    % ======================= (b) Probability interpretation =======================
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            % ---- time 0 ----
+            \fill[blue!4] (0,0) rectangle (3,3);
+            \draw[thick] (0,0) rectangle (3,3);
+            \node[font=\small] at (1.5,-0.5) {time $0$, distribution $\mu$};
+            \draw[red!70!black, thick, dashed, fill=red!10] (0.3,0.4) rectangle (1.5,1.6);
+            \node[red!70!black, font=\small] at (0.9,1.85) {$\phi^{-t}A$};
+            % points starting in the preimage (red) and elsewhere (grey)
+            \foreach \px/\py in {0.5/0.7, 0.9/1.3, 1.2/0.6, 1.0/0.9, 0.6/1.4} {
+                \fill[red!70!black] (\px,\py) circle (1.8pt);
+            }
+            \foreach \px/\py in {2.2/0.5, 2.5/1.2, 1.9/2.3, 0.5/2.4, 1.7/1.8, 0.4/2.2, 2.4/2.5} {
+                \fill[gray] (\px,\py) circle (1.8pt);
+            }
+
+            % ---- arrow between the panels ----
+            \draw[-{Stealth[length=2.5mm]}, thick] (3.3,1.5) -- (4.6,1.5)
+                node[midway, above, font=\small] {$\phi^t$};
+
+            % ---- time t ----
+            \begin{scope}[shift={(5,0)}]
+                \fill[blue!4] (0,0) rectangle (3,3);
+                \draw[thick] (0,0) rectangle (3,3);
+                \node[font=\small] at (1.5,-0.5) {time $t$, distribution $\phi^t_*\mu$};
+                \draw[blue!70!black, thick, fill=blue!10] (1.2,1.2) rectangle (2.4,2.4);
+                \node[blue!70!black, font=\small] at (1.8,2.65) {$A$};
+                % the same points, moved by phi^t
+                \foreach \px/\py in {1.6/1.5, 2.1/2.0, 1.4/2.2, 2.0/1.4, 2.3/2.2} {
+                    \fill[red!70!black] (\px,\py) circle (1.8pt);
+                }
+                \foreach \px/\py in {0.6/0.5, 0.5/1.8, 1.0/2.5, 2.4/0.6, 1.1/0.9, 0.4/1.2, 1.6/0.5} {
+                    \fill[gray] (\px,\py) circle (1.8pt);
+                }
+            \end{scope}
+
+            % ---- the equality ----
+            \node[font=\small, align=center] at (4.0,-1.5)
+                {$\mathrm{Prob}(\phi^t(x_0)\in A)=\mu(\phi^{-t}A)=(\phi^t_*\mu)(A)$};
+        \end{tikzpicture}
+        \caption{Probabilistic meaning ($M_1=M_2=M$). The initial points are distributed according to $\mu$.
+        The red ones are those that start in $\phi^{-t}A$: after time $t$ they are exactly the ones in $A$.
+        So the probability of being in $A$ at time $t$ equals the probability of starting in $\phi^{-t}A$.
+        If $\phi^t_*\mu=\mu$ the two clouds have the same distribution.}
+        \label{fig:pushforward_b}
+    \end{subfigure}
+
+    \caption{The push-forward measure and its meaning for a dynamical system.}
+    \label{fig:pushforward}
+\end{figure}
+
+\begin{definition}[/terminology]
+    Suppose you have two measure spaces $M_1, M_2$ and a measurable $\phi:M_1\rightarrow M_2$ and suppose you have a measure $\mu_{M_1}$ (with respect to $\mathcal{A}_1$) The push-forward measure of $\mu$ on $M_2$ via $\phi$, denoted $\phi_*\mu$, is the measure $\mu\circ\phi^{-1}$, meaning \begin{equation*}
+    \forall B\in \mathcal{A}_2,\, (\phi_*\mu)(B)=\mu(\phi^{-1}B)
+    \end{equation*}
+\end{definition}
+
+\begin{observation}
+    So, you can redefine a MPDS $(M, \mu, \phi^t)$ as one for which $\phi^t_*\mu=\mu$.
+
+    In other words, \begin{equation*}
+    Prob(\phi^t(x_0)\in A)=Prob(x_0\in\phi^{-t}A)=\mu(\phi^{-t}A)=\phi^t_*\mu(A)
+    \end{equation*}
+    so, $Prob(\phi^t(x_0)\in A)=(\phi^t_*\mu)(A)$
+\end{observation}
